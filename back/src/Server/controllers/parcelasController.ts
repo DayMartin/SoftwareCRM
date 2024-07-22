@@ -43,11 +43,11 @@ const parcelasController = {
 
 	// Função para buscar uma parcela por id_os
 	getParcelaOs: async (req:Request, res:Response) => {
-		const { os_id } = req.body;
-		const query = "SELECT * FROM parcelas WHERE os_id = ?";
+		const { tipo_id } = req.body;
+		const query = "SELECT * FROM parcelas WHERE tipo_id = ?";
 
 		try {
-			const rows = await queryDatabase(query, [os_id]);
+			const rows = await queryDatabase(query, [tipo_id]);
 
 			// Verificar se a parcelas foi encontrada
 			if (rows === null || rows === undefined) {

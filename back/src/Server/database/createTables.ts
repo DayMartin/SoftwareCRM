@@ -3,18 +3,22 @@ import queryDatabase from '../database/queryPromise'
 require("dotenv").config();
 
 export class CreateTables{
-    constructor() {}
+    constructor(
+	) {}
 
 	// Chamar as funções para criar as tabelas durante a inicialização do banco de dados
     async createAllTables() {
         try {
             await this.createUsuariosTable();
-            await this.createServicosTable();
-            await this.createOsTable();
+            // await this.createServicosTable();
+            await this.createVendaTable();
+			await this.createCompraTable();
             await this.createParcelasTable();
 			await this.createCategoriaTable();
 			await this.createEstoqueTable();
 			await this.createHistoricEstoqueTable();
+			await this.createLogs();
+
         } catch (error) {
             console.error("Erro ao criar as tabelas:", error);
         }
@@ -25,6 +29,7 @@ export class CreateTables{
 			const consulta = `SHOW TABLES LIKE 'usuarios'`;
 			// Verifique se a tabela 'usuarios' existe
 			const rows = await queryDatabase(consulta);
+
 	
 			// Se a tabela 'usuarios' não existir, crie-a
 			if (rows.length === 0) {
@@ -49,70 +54,97 @@ export class CreateTables{
 		}
 	}
 
-	async createServicosTable() {
+	// async createServicosTable() {
+	// 	try {
+	// 		// Verifique se a tabela 'servicos' existe
+	// 		const rows = await queryDatabase(
+	// 			`SHOW TABLES LIKE 'servicos'`
+	// 		);
+
+	// 		// Se a tabela 'servicos' não existir, crie-a
+	// 		if (rows.length === 0) {
+	// 			await queryDatabase(`
+	// 				CREATE TABLE servicos (
+	// 					id INT AUTO_INCREMENT PRIMARY KEY,
+	// 					nome VARCHAR(100),
+	// 					descricao VARCHAR(100),
+	// 					preco_avulso DECIMAL(10, 2),
+	// 					preco_convenio DECIMAL(10, 2),
+	// 					status VARCHAR(50),
+	// 					data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	// 				)
+	// 			`);
+	// 			console.log("Tabela 'servicos' criada com sucesso.");
+	// 		}
+	// 	} catch (error) {
+	// 		console.error("Erro ao criar a tabela 'servicos':", error);
+	// 	}
+	// }
+
+	async createVendaTable() {
 		try {
-			// Verifique se a tabela 'servicos' existe
+			// Verifique se a tabela 'Venda' existe
 			const rows = await queryDatabase(
-				`SHOW TABLES LIKE 'servicos'`
+				`SHOW TABLES LIKE 'venda'`
 			);
 
-			// Se a tabela 'servicos' não existir, crie-a
+			// Se a tabela 'venda' não existir, crie-a
 			if (rows.length === 0) {
 				await queryDatabase(`
-					CREATE TABLE servicos (
+					CREATE TABLE venda (
 						id INT AUTO_INCREMENT PRIMARY KEY,
-						nome VARCHAR(100),
-						descricao VARCHAR(100),
-						preco_avulso DECIMAL(10, 2),
-						preco_convenio DECIMAL(10, 2),
-						status VARCHAR(50),
-						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-					)
-				`);
-				console.log("Tabela 'servicos' criada com sucesso.");
-			}
-		} catch (error) {
-			console.error("Erro ao criar a tabela 'servicos':", error);
-		}
-	}
-
-	async createOsTable() {
-		try {
-			// Verifique se a tabela 'OS' existe
-			const rows = await queryDatabase(
-				`SHOW TABLES LIKE 'os'`
-			);
-
-			// Se a tabela 'Os' não existir, crie-a
-			if (rows.length === 0) {
-				await queryDatabase(`
-					CREATE TABLE os (
-						id INT AUTO_INCREMENT PRIMARY KEY,
-						servico_id INT,
 						cliente_id INT,
 						funcionario_id INT,
-						convenio_id INT,
 						QTparcelas INT,
-						valorServico DECIMAL(10, 2),
+						valorTotal DECIMAL(10, 2),
 						valorDesconto DECIMAL(10, 2),
-						dataServico VARCHAR(50),
-						horaServico VARCHAR(50),
-						salaServico VARCHAR(50),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (servico_id) REFERENCES servicos(id),
 						FOREIGN KEY (cliente_id) REFERENCES usuarios(id),
-						FOREIGN KEY (funcionario_id) REFERENCES usuarios(id),
-						FOREIGN KEY (convenio_id) REFERENCES usuarios(id)
+						FOREIGN KEY (funcionario_id) REFERENCES usuarios(id)
 					)
 				`);
-				console.log("Tabela 'os' criada com sucesso.");
+				console.log("Tabela 'venda' criada com sucesso.");
 			}
 
 		} catch (error) {
-			console.error("Erro ao criar a tabela 'os':", error);
+			console.error("Erro ao criar a tabela 'venda':", error);
 		}
 	}
+
+	async createCompraTable() {
+		try {
+			// Verifique se a tabela 'compra' existe
+			const rows = await queryDatabase(
+				`SHOW TABLES LIKE 'compra'`
+			);
+
+			// Se a tabela 'compra' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE compra (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						funcionario_id INT,
+						fornecedor_id INT,
+						produto_id INT,
+						QTparcelas INT,
+						valorTotal DECIMAL(10, 2),
+						valorDesconto DECIMAL(10, 2),
+						status VARCHAR(50),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id),
+						FOREIGN KEY (funcionario_id) REFERENCES usuarios(id),
+						FOREIGN KEY (produto_id) REFERENCES estoque(id)
+					)
+				`);
+				console.log("Tabela 'compra' criada com sucesso.");
+			}
+
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'compra':", error);
+		}
+	}
+
 
 	async createParcelasTable() {
 		try {
@@ -127,13 +159,14 @@ export class CreateTables{
 				await queryDatabase(`
 					CREATE TABLE parcelas (
 						id INT AUTO_INCREMENT PRIMARY KEY,
-						os_id INT,
+						tipo_id INT NOT NULL,
 						parcela INT,
 						valorParcela DECIMAL(10, 2),
 						dataPagamento VARCHAR(50),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (os_id) REFERENCES os(id)
+						FOREIGN KEY (tipo_id) REFERENCES compra(id) ON DELETE CASCADE,
+						FOREIGN KEY (tipo_id) REFERENCES venda(id) ON DELETE CASCADE
 					)
 				`);
 				console.log("Tabela 'Parcelas' criada com sucesso.");
@@ -144,6 +177,7 @@ export class CreateTables{
 			console.error("Erro ao criar a tabela 'Parcelas':", error);
 		}
 	}
+
 
 	async createCategoriaTable() {
 		try {
@@ -208,9 +242,12 @@ export class CreateTables{
 						tipo VARCHAR(50),
 						quantidade INT,
 						estoque_id INT,
+            			tipo_id INT NOT NULL,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (estoque_id) REFERENCES estoque(id)
-					)
+						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
+						FOREIGN KEY (tipo_id) REFERENCES venda(id) ON DELETE CASCADE,
+						FOREIGN KEY (tipo_id) REFERENCES compra(id) ON DELETE CASCADE
+				)
 				`);
 				console.log("Tabela 'estoqueHistoric' criada com sucesso.");
 			}
@@ -218,5 +255,30 @@ export class CreateTables{
 			console.error("Erro ao criar a tabela 'estoqueHistoric':", error);
 		}
 	}
+
+	async createLogs() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'logs'`;
+			// Verifique se a tabela 'logs' existe
+			const rows = await queryDatabase(consulta);
+	
+			// Se a tabela 'logs' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE logs (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						user_id INT,
+						acao VARCHAR(255),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (user_id) REFERENCES usuarios(id)
+					)
+				`);
+				console.log("Tabela 'logs' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'logs':", error);
+		}
+	}
+
 }
  

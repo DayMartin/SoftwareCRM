@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { usersRouter } from "./users";
 import { servicoRouter } from "./servicos";
-import { osRouter } from "./os";
+import { vendaRouter } from "./venda";
 import { parcelasRouter } from "./parcelas";
 import { estoqueRouter } from './estoque';
 import { categoriaRouter } from './categoria';
@@ -11,7 +11,7 @@ const router = Router();
 
 router.use("/", usersRouter);
 router.use("/", servicoRouter);
-router.use("/", osRouter);
+router.use("/", vendaRouter);
 router.use("/", parcelasRouter);
 router.use("/", estoqueRouter);
 router.use("/", categoriaRouter);

@@ -13,8 +13,8 @@ const connectToDatabase = () => {
 		// // Chame o método createAllTables()
 	dbManager.createAllTables();
     connection = mysql.createConnection({
-        ...databaseConfig.config,
-        charset: 'UTF8_GENERAL_CI'
+        ...databaseConfig.config
+        // charset: 'UTF8_GENERAL_CI'
     });
     return connection;
 };
