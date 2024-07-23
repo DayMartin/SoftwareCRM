@@ -5,25 +5,25 @@ import queryDatabase from '../database/queryPromise'
 const parcelasController = {
 
 	getParcelas: async (_:Request, res:Response) => {
-		const query = "SELECT * FROM parcelas";
+		const query = "SELECT * FROM parcelas_venda";
 
 		try {
 			const rows = await queryDatabase(query);
 			// Verificar se tem Parcela cadastrada
 			if (rows === null || rows === undefined) {
-				return res.status(404).json({ error: "Nenhuma Parcela cadastrada" });
+				return res.status(404).json({ error: "Nenhuma parcelas_venda cadastrada" });
 			}
 			return res.status(200).json(rows);
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ error: "Erro ao buscar Parcelas" });
+			return res.status(500).json({ error: "Erro ao buscar parcelas_venda" });
 		}
 	},
 
 	// Função para buscar uma parcela
 	getParcela: async (req:Request, res:Response) => {
 		const { id } = req.body;
-		const query = "SELECT * FROM parcelas WHERE id = ?";
+		const query = "SELECT * FROM parcelas_venda WHERE id = ?";
 
 		try {
 			const [rows] = await queryDatabase(query, [id]);
@@ -44,7 +44,7 @@ const parcelasController = {
 	// Função para buscar uma parcela por id_os
 	getParcelaOs: async (req:Request, res:Response) => {
 		const { tipo_id } = req.body;
-		const query = "SELECT * FROM parcelas WHERE tipo_id = ?";
+		const query = "SELECT * FROM parcelas_venda WHERE tipo_id = ?";
 
 		try {
 			const rows = await queryDatabase(query, [tipo_id]);
@@ -65,8 +65,8 @@ const parcelasController = {
 	// Função para deletar uma Parcela
 	deleteParcela: async (req:Request, res:Response) => {
 		const { id } = req.body;
-		const queryVerificar = "SELECT * FROM parcelas WHERE id = ?";
-		const queryDeletar = "DELETE FROM parcelas WHERE id = ?";
+		const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
+		const queryDeletar = "DELETE FROM parcelas_venda WHERE id = ?";
 
 		try {
 			// Verificar se a Parcela existe
@@ -87,7 +87,7 @@ const parcelasController = {
 	// Função para trazer todas as parcelas do dia
 	PagamentoDia: async (req:Request, res:Response) => {
 		const { diapagamento } = req.body;
-		const query = "SELECT * FROM parcelas WHERE dataPagamento = ?";
+		const query = "SELECT * FROM parcelas_venda WHERE dataPagamento = ?";
 
 		try {
 			const [rows] = await queryDatabase(query, [diapagamento]);
@@ -112,7 +112,7 @@ const parcelasController = {
 		// Extrair o mês do formato 'MM/YYYY'
 		const [month, year] = mes.split('/');
 	
-		const query = "SELECT * FROM parcelas";
+		const query = "SELECT * FROM parcelas_venda";
 	
 		try {
 			const result = await queryDatabase(query);
@@ -143,7 +143,7 @@ const parcelasController = {
 	
     // Função para trazer o valor total recebido por mês
 	PagamentoTotalMes: async (req: Request, res: Response) => {
-		const query = "SELECT * FROM parcelas";
+		const query = "SELECT * FROM parcelas_venda";
 	
 		try {
 			const result = await queryDatabase(query);
@@ -186,7 +186,7 @@ const parcelasController = {
     // Função para buscar parcela por status
 	PagamentoStatus: async (req:Request, res:Response) => {
 		const { status } = req.body;
-		const query = "SELECT * FROM parcelas WHERE status = ? ";
+		const query = "SELECT * FROM parcelas_venda WHERE status = ? ";
 
 		try {
 			const rows = await queryDatabase(query, [status]);

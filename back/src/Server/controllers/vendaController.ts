@@ -32,24 +32,26 @@ const vendaController = {
 	createVenda: async (req:Request, res:Response) => {
 		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, status, parcelas, produtos } = req.body;
 		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, status) VALUES (?, ?, ?, ?, ?, ?)";
-		const insertFinanceiroQuery = "INSERT INTO parcelas (tipo_id, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?)";
+		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?)";
 
 		try {
 			// Inserir na tabela 'os'
 			const osResult = await queryDatabase(insertVendaQuery, [cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, status]);
 
 			// Recuperar o ID da OS recém-criada
-			const tipo_id = osResult.insertId;
+			const venda_id = osResult.insertId;
 
 			// Inserir na tabela 'financeiro' para cada parcela
 			for (const parcela of parcelas) {
-				await queryDatabase(insertFinanceiroQuery, [tipo_id, parcela.parcela, parcela.valorParcela, parcela.dataPagamento, parcela.status]);
+				await queryDatabase(insertFinanceiroQuery, [venda_id, parcela.parcela, parcela.valorParcela, parcela.dataPagamento, parcela.status]);
 			}
+
+			console.log(produtos)
 
 			// Inserir estoque e histórico
 			for ( const produto of produtos ) { 
-				const saveHistoric = await historicEstoqueService.createHistoricEstoque("Saida", produto.quantidade, produto.id, tipo_id)
-
+				const saveHistoric = await historicEstoqueService.createHistoricEstoque("Saída", produto.quantidade, produto.id, venda_id)
+				console.log('produtohistoric', saveHistoric)
 			}
 
 			return res.status(201).json({ message: `Venda criada com sucesso` });

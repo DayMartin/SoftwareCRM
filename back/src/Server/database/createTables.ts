@@ -10,12 +10,13 @@ export class CreateTables{
     async createAllTables() {
         try {
             await this.createUsuariosTable();
+			await this.createCategoriaTable();
+			await this.createEstoqueTable();
             // await this.createServicosTable();
             await this.createVendaTable();
 			await this.createCompraTable();
-            await this.createParcelasTable();
-			await this.createCategoriaTable();
-			await this.createEstoqueTable();
+            await this.createParcelasVenda();
+			await this.createParcelasCompra();
 			await this.createHistoricEstoqueTable();
 			await this.createLogs();
 
@@ -146,30 +147,60 @@ export class CreateTables{
 	}
 
 
-	async createParcelasTable() {
+	async createParcelasVenda() {
 		try {
 
-			// Verifique se a tabela 'Parcelas' existe
+			// Verifique se a tabela 'parcelas_venda' existe
 			const rows = await queryDatabase(
-				`SHOW TABLES LIKE 'parcelas'`
+				`SHOW TABLES LIKE 'parcelas_venda'`
 			);
 
-			// Se a tabela 'Parcelas' não existir, crie-a
+			// Se a tabela 'parcelas_venda' não existir, crie-a
 			if (rows.length === 0) {
 				await queryDatabase(`
-					CREATE TABLE parcelas (
+					CREATE TABLE parcelas_venda (
 						id INT AUTO_INCREMENT PRIMARY KEY,
-						tipo_id INT NOT NULL,
+						venda_id INT NOT NULL,
 						parcela INT,
 						valorParcela DECIMAL(10, 2),
 						dataPagamento VARCHAR(50),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (tipo_id) REFERENCES compra(id) ON DELETE CASCADE,
-						FOREIGN KEY (tipo_id) REFERENCES venda(id) ON DELETE CASCADE
+						FOREIGN KEY (venda_id) REFERENCES venda(id)
 					)
 				`);
-				console.log("Tabela 'Parcelas' criada com sucesso.");
+				console.log("Tabela 'parcelas_venda' criada com sucesso.");
+			}
+
+			// Libere a conexão
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'Parcelas':", error);
+		}
+	}
+
+	async createParcelasCompra() {
+		try {
+
+			// Verifique se a tabela 'parcelas_compra' existe
+			const rows = await queryDatabase(
+				`SHOW TABLES LIKE 'parcelas_compra'`
+			);
+
+			// Se a tabela 'parcelas_compra' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE parcelas_compra (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						compra_id INT NOT NULL,
+						parcela INT,
+						valorParcela DECIMAL(10, 2),
+						dataPagamento VARCHAR(50),
+						status VARCHAR(50),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (compra_id) REFERENCES compra(id)
+					)
+				`);
+				console.log("Tabela 'parcelas_compra' criada com sucesso.");
 			}
 
 			// Libere a conexão
@@ -242,11 +273,12 @@ export class CreateTables{
 						tipo VARCHAR(50),
 						quantidade INT,
 						estoque_id INT,
-            			tipo_id INT NOT NULL,
+            			venda_id INT,
+						compra_id INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
-						FOREIGN KEY (tipo_id) REFERENCES venda(id) ON DELETE CASCADE,
-						FOREIGN KEY (tipo_id) REFERENCES compra(id) ON DELETE CASCADE
+						FOREIGN KEY (venda_id) REFERENCES venda(id),
+						FOREIGN KEY (compra_id) REFERENCES compra(id)
 				)
 				`);
 				console.log("Tabela 'estoqueHistoric' criada com sucesso.");
