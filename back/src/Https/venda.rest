@@ -14,11 +14,11 @@ POST http://localhost:3048/api/venda/create
 Content-Type: application/json
 
 {
-  "cliente_id": 1,
-  "funcionario_id": 1,
-  "QTparcelas": 4,
+  "cliente_id": 2,
+  "funcionario_id": 3,
+  "QTparcelas": 1,
   "valorTotal": 48,
-  "valorDesconto": 48,
+  "valorDesconto": 2,
   "status":"Aguardando",
   "parcelas": [
     {

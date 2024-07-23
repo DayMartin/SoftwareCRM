@@ -17,7 +17,7 @@ Content-Type: application/json
   "endereco": "Rua dr jose maria whitaker",
   "email": "funcionario@gmail.com",
   "senha": "giovana0407",
-  "status":"Ativo"
+  "status":"ativo"
 }
 
 ### BUSCAR UM USUARIO POR ID
@@ -35,14 +35,11 @@ POST http://localhost:3048/api/user/getAlltipo
 Content-Type: application/json
 
 {
-  "tipo": "fornecedor"
+  "tipo": "cliente"
 }
 
 ### DELETAR UM USUARIO POR ID
 
-DELETE http://localhost:3048/api/user/delete
+DELETE http://localhost:3048/api/user/delete/id1
 Content-Type: application/json
 
-{
-  "id": 1
-}

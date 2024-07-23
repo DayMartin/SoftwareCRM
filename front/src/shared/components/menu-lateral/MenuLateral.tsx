@@ -104,7 +104,7 @@ export default function MenuLateral() {
 
   useEffect(() => {
     if (selectedItem === 'Contas') {
-      navigate('/paciente');
+      navigate('/user');
     }
   }, [selectedItem, navigate]);
 
