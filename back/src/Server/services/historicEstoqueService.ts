@@ -5,7 +5,6 @@ const historicEstoqueService = {
 		// Função para criar um novo Histórico de Estoque
 		createHistoricEstoque: async (tipo: string, quantidade:number, estoque_id:number, tipo_id:number) => {
 			console.log('Criando histórico de estoque', tipo, quantidade, estoque_id, tipo_id);
-			const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id, venda_id) VALUES (?, ?, ?, ?)";
 			const updateEstoque = "UPDATE estoque SET quantidade = ? WHERE id = ?";
 			const queryEstoque = "SELECT * FROM estoque WHERE id = ?";
 			
@@ -22,11 +21,15 @@ const historicEstoqueService = {
 				if (tipo === "Entrada") {
 					const soma = extracaoQuantidade + quantidade;
 					await queryDatabase(updateEstoque, [soma, extracaoId]);
+					const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id, compra_id) VALUES (?, ?, ?, ?)";
+
 					await queryDatabase(query, [tipo, quantidade, estoque_id, tipo_id]);
 					return "Entrada cadastrada com sucesso";
 				} else if (tipo === "Saída") {
 					const subtracao = extracaoQuantidade - quantidade;
 					await queryDatabase(updateEstoque, [subtracao, extracaoId]);
+					const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id, venda_id) VALUES (?, ?, ?, ?)";
+
 					await queryDatabase(query, [tipo, quantidade, estoque_id, tipo_id]);
 					return "Saída cadastrada com sucesso";
 				} else {
