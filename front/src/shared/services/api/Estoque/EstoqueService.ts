@@ -24,6 +24,7 @@ export interface IDetalheEstoque {
   fornecedor_id: number;
   categoria_id: number;
   data_criacao: string;
+  valorUnitario: number;
 
 }
 

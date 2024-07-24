@@ -12,7 +12,8 @@ Content-Type: application/json
   "nome": "Motorola",
   "quantidade": 10,
   "fornecedor_id": 1,
-  "categoria_id": 1
+  "categoria_id": 1,
+  "valorUnitario": 10
 }
 
 ### BUSCAR ESTOQUE POR ID

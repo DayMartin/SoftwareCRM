@@ -90,6 +90,7 @@ export const Estoque: React.VFC = () => {
                             <TableCell>Categoria</TableCell>
                             <TableCell>Fornecedor</TableCell>
                             <TableCell>Quantidade</TableCell>
+                            <TableCell>Valor Unitário</TableCell>
                             <TableCell>Data de criação</TableCell>
                             <TableCell>Ações</TableCell>
                         </TableRow>
@@ -117,6 +118,7 @@ export const Estoque: React.VFC = () => {
                                         <TableCell>{row.categoria_id}</TableCell>
                                         <TableCell>{row.fornecedor_id}</TableCell>
                                         <TableCell>{row.quantidade}</TableCell>
+                                        <TableCell>{row.valorUnitario}</TableCell>
                                         <TableCell>{row.data_criacao}</TableCell>
                                         <TableCell>
                                             <Button

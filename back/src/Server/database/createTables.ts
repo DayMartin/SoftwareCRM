@@ -247,6 +247,7 @@ export class CreateTables{
 						quantidade INT,
 						fornecedor_id INT,
 						categoria_id INT,
+						valorUnitario INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id),
 						FOREIGN KEY (categoria_id) REFERENCES categoria(id)
