@@ -1,8 +1,7 @@
 import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
 
-export interface IListagemUsers {
-  id: string;
+export interface IUser {
   tipo: string;
   cpfcnpj: string;
   nome: string;
@@ -38,7 +37,7 @@ export interface IDetalheUsers {
 }
 
 export interface IApiResponse {
-  consulta: IListagemUsers[]; 
+  consulta: IListagemCliente[]; 
   pagination: {
     totalOrdem: number;
     pageCount: number;
@@ -57,46 +56,11 @@ export interface IApiResponse {
 //   totalCount: number;
 // };
 
-// const getAll = async (page = 1, filter = ''): Promise<TUsersComTotalCount | Error> => {
-//   try {
-//     const urlRelativa = `${Environment.URL_BASE}/auth/register/${filter}?page=${page}`;
-
-//     const { data } = await Api.get(urlRelativa);
-
-//     if (data) {
-//       return data;
-//     }
-
-//     return new Error('Erro ao listar os registros.');
-//   } catch (error) {
-//     console.error(error);
-//     return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
-//   }
-// };
-
 const getAll = async (page = 1, filter = ''): Promise<IDetalheUsers | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/user/all`;
 
     const { data } = await Api.get(urlRelativa);
-
-    if (data) {
-      return data;
-    }
-
-    return new Error('Erro ao listar os registros.');
-  } catch (error) {
-    console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
-  }
-};
-
-const getFornecedores = async (page = 1, filter = '', tipo: string): Promise<IDetalheUsers | Error> => {
-  try {
-    const urlRelativa = `${Environment.URL_BASE}/user/getAlltipo`;
-    const params = { tipo: tipo };
-
-    const { data } = await Api.get(urlRelativa, { params });
 
     if (data) {
       return data;
@@ -126,20 +90,6 @@ const getClientes = async (tipo: string): Promise<IListagemCliente[] | Error> =>
   }
 };
 
-const getById = async (id: string): Promise<IDetalheUsers | Error> => {
-  try {
-    const { data } = await Api.get(`/auth/register/${id}`); 
-
-    if (data) {
-      return data;
-    }
-
-    return new Error('Erro ao consultar o registro.');
-  } catch (error) {
-    console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
-  }
-};
 
 const getByEmail = async (email: string): Promise<IDetalheUsers | Error> => {
   try {
@@ -156,19 +106,15 @@ const getByEmail = async (email: string): Promise<IDetalheUsers | Error> => {
   }
 };
 
-const create = async (dados: Omit<IDetalheUsers, 'id'>): Promise<string> => {
+const create = async (dados: IDetalheUsers): Promise<void | Error> => {
   try {
-    const { data } = await Api.post<IDetalheUsers>('/auth/register', dados);
+    await Api.post<IDetalheUsers>('user/create', dados);
 
-    if (data) {
-      return data.id;
-    }
-
-    throw new Error('Erro ao criar o registro.');
   } catch (error) {
     throw error;
   }
 };
+
 
 const updateById = async (id: string, dados: IListagemCliente): Promise<void | Error> => {
   try {
@@ -201,11 +147,9 @@ const ativarById = async (id: string): Promise<void | Error> => {
 export const UsersService = {
   getAll,
   create,
-  getById,
   updateById,
   deleteById,
   getByEmail,
-  getFornecedores,
   getClientes,
   ativarById
 };

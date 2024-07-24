@@ -1,4 +1,4 @@
-import { Box, Button, Modal } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { UsersService } from "../../../shared/services/api/Users/UsersService";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
@@ -7,6 +7,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
+import AdicionarUsers from "../../../pages/Users/components/AdicionarUsers";
 
 interface BarraUsuariosProps {
     onTipoChange: (tipo: string) => void;
@@ -19,12 +20,23 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const handleSubmit = async (formData: any) => {
+        try {
+            await UsersService.create(formData);
+            alert('Usuário criado com sucesso!');
+            handleClose();
+        } catch (error) {
+            console.error(error);
+            alert('Erro ao criar usuário');
+        }
+    };
+
     return (
         <Box
             sx={{
                 m: 1,
                 width: "auto",
-                marginLeft: "6%",
+                marginLeft: "8%",
                 marginRight: "2%",
                 padding: '2%',
                 backgroundColor: 'white',
@@ -32,6 +44,7 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                 alignItems: 'center', 
                 justifyContent: 'space-between', 
                 position: 'relative',
+                borderRadius: '8px'
             }}
         >
             <Button
@@ -92,11 +105,7 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                             }}
                             onClick={() => onTipoChange('fornecedor')}
                         >
-                            <CardContent
-                                sx={{
-
-                                }}
-                            >
+                            <CardContent>
                                 <Typography
                                     sx={{ fontSize: 16, textAlign: "center", margin: 'auto' }}
                                     color="text.secondary"
@@ -114,14 +123,9 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                                 borderRadius: 6,
                                 cursor: "pointer",
                             }}
-                            onClick={() => onTipoChange('funcionario')} 
+                            onClick={() => onTipoChange('funcionario')}
                         >
-                            <CardContent
-                                sx={{
-
-
-                                }}
-                            >
+                            <CardContent>
                                 <Typography
                                     sx={{ fontSize: 16, textAlign: "center", margin: 'auto' }}
                                     color="text.secondary"
@@ -134,34 +138,8 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                 </Grid>
             </Box>
 
-            {/* Modal */}
-            <Modal
-                open={open}
-                onClose={handleClose}
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <Box
-                    sx={{
-                        width: 400,
-                        bgcolor: 'background.paper',
-                        p: 4,
-                        borderRadius: 2,
-                        boxShadow: 24,
-                        textAlign: 'center',
-                    }}
-                >
-                    <Typography variant="h6" component="h2">
-                        Adicionar Novo
-                    </Typography>
-                    <Button onClick={handleClose} sx={{ mt: 2 }}>
-                        Fechar
-                    </Button>
-                </Box>
-            </Modal>
+            {/* Modal para adicionar usuários */}
+            <AdicionarUsers open={open} onClose={handleClose} title="Adicionar Novo Usuário" onSubmit={handleSubmit} />
         </Box>
     );
 };

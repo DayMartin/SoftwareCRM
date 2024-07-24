@@ -18,13 +18,14 @@ export const Cliente: React.VFC = () => {
     const [open, setOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState<IListagemCliente | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente'); // Novo estado para o tipo de usuário
+    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
+    const titulo = "Cadastros";
 
     const consultar = async (tipo: string) => {
         setIsLoading(true);
         try {
             const consulta = await UsersService.getClientes(tipo);
-            console.log('Consulta recebida:', consulta);
+           
 
             if (consulta instanceof Error) {
                 alert(consulta.message);
@@ -95,8 +96,11 @@ export const Cliente: React.VFC = () => {
 
     return (
         <Box>
-            <BarraUsuarios onTipoChange={setTipoUsuario} /> {/* Passa a função de atualização */}
-            <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '6%', marginRight: '2%' }}>
+            <BarraInicial titulo={titulo} />
+
+            <BarraUsuarios onTipoChange={setTipoUsuario} /> 
+            
+            <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -138,7 +142,7 @@ export const Cliente: React.VFC = () => {
                                                 variant="contained"
                                                 color="primary"
                                                 onClick={() => handleVisualizar(row)}
-                                                sx={{ mr: 1 }}
+                                                sx={{ mr: 1, height:'24px' }}
                                             >
                                                 <VisibilityIcon />
                                             </Button>
@@ -146,7 +150,7 @@ export const Cliente: React.VFC = () => {
                                                 variant="contained"
                                                 color="secondary"
                                                 onClick={() => handleEditar(row)}
-                                                sx={{ mr: 1 }}
+                                                sx={{ mr: 1, height:'24px' }}
                                             >
                                                 <EditIcon />
                                             </Button>
@@ -155,6 +159,8 @@ export const Cliente: React.VFC = () => {
                                                     variant="contained"
                                                     color="error"
                                                     onClick={() => handleDesativar(row.id)}
+                                                    sx={{ mr: 1, height:'24px' }}
+
                                                 >
                                                     <DeleteIcon />
                                                 </Button>
@@ -163,6 +169,8 @@ export const Cliente: React.VFC = () => {
                                                     variant="contained"
                                                     color="success"
                                                     onClick={() => handleAtivar(row.id)}
+                                                    sx={{ mr: 1, height:'24px' }}
+
                                                 >
                                                     <CheckCircleIcon />
                                                 </Button>

@@ -215,7 +215,6 @@ export default function MenuLateral() {
         {selectedItem === 'Home' && (
           <Box>
             <Box sx={{ bgcolor: 'background.paper', p: 3 }} className = 'grid'>
-            <BarraInicial/>
             </Box>
             <Box sx={{ bgcolor: 'background.paper', p: 3 }} className = 'grid'>
             <Home/>

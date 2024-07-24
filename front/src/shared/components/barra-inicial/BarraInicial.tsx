@@ -14,7 +14,11 @@ import { TextField } from "@mui/material";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export const BarraInicial = () => {
+interface BarraInicialProps {
+  titulo: string;
+}
+
+export const BarraInicial: React.VFC<BarraInicialProps> = ({ titulo }) => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -32,10 +36,11 @@ export const BarraInicial = () => {
       sx={{
         m: 1,
         width: "auto",
-        marginLeft: "6%",
+        marginLeft: "8%",
         marginRight: "2%",
         padding: '2%',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        borderRadius: '8px'
       }}
     >
       <Grid container spacing={2}>
@@ -44,7 +49,7 @@ export const BarraInicial = () => {
           color="#0d47a1"
           gutterBottom
         >
-          Home
+          {titulo}
         </Typography>
       </Grid>
       <Grid container spacing={2} alignItems="center">
@@ -59,7 +64,7 @@ export const BarraInicial = () => {
             color="#0d47a1"
             gutterBottom
           >
-            DashBoard
+            {titulo}
           </Typography>
         </Grid>
         <Grid item xs={4}>

@@ -16,8 +16,8 @@ export const ListagemUsers: React.VFC = () => {
         console.log(consulta)
     }
     return (
-        <Box>
-            <BarraInicial />
+        <Box
+        >
             <Cliente />
         </Box>
 

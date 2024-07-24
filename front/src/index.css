@@ -50,3 +50,8 @@ code {
   width: 40px;
   height: 40px;
 }
+
+main.MuiBox-root {
+  padding: 0px;
+  margin: 0px;
+}
