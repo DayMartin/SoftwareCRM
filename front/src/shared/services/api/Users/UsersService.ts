@@ -91,10 +91,10 @@ const getAll = async (page = 1, filter = ''): Promise<IDetalheUsers | Error> => 
   }
 };
 
-const getFornecedores = async (page = 1, filter = ''): Promise<IDetalheUsers | Error> => {
+const getFornecedores = async (page = 1, filter = '', tipo: string): Promise<IDetalheUsers | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/user/getAlltipo`;
-    const params = { tipo: 'fornecedor' };
+    const params = { tipo: tipo };
 
     const { data } = await Api.get(urlRelativa, { params });
 
@@ -109,10 +109,10 @@ const getFornecedores = async (page = 1, filter = ''): Promise<IDetalheUsers | E
   }
 };
 
-const getClientes = async (): Promise<IListagemCliente[] | Error> => {
+const getClientes = async (tipo: string): Promise<IListagemCliente[] | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/user/getAlltipo`;
-    const params = { tipo: 'cliente' };
+    const params = { tipo: tipo };
     const { data } = await Api.post<IListagemCliente[]>(urlRelativa, params);
 
     if (data) {

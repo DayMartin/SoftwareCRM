@@ -6,19 +6,18 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add'; // Importa ícone de adicionar
+import AddIcon from '@mui/icons-material/Add';
 
-export const BarraUsuarios: React.VFC = () => {
+interface BarraUsuariosProps {
+    onTipoChange: (tipo: string) => void;
+}
+
+export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) => {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-
-    const consultar = async () => {
-        const consulta = await UsersService.getAll();
-        console.log(consulta);
-    };
 
     return (
         <Box
@@ -30,18 +29,17 @@ export const BarraUsuarios: React.VFC = () => {
                 padding: '2%',
                 backgroundColor: 'white',
                 display: 'flex',
-                alignItems: 'center', // Centraliza verticalmente
-                justifyContent: 'space-between', // Espaçamento entre o botão de adicionar e os outros botões
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
                 position: 'relative',
             }}
         >
-            {/* Botão de adicionar */}
             <Button
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '16px',
-                    transform: 'translateY(-50%)', // Centraliza verticalmente
+                    transform: 'translateY(-50%)',
                     backgroundColor: '#0d47a1',
                     color: 'white',
                     borderRadius: '50%',
@@ -67,18 +65,14 @@ export const BarraUsuarios: React.VFC = () => {
                         <Card
                             sx={{
                                 maxWidth: 120,
-                                minWidth: 120, // Garante altura mínima para melhor alinhamento
+                                minWidth: 120, 
                                 backgroundColor: "#F0F8FF",
                                 borderRadius: 6,
                                 cursor: "pointer",
-
                             }}
-                            onClick={() => navigate(`/cliente`)}
+                            onClick={() => onTipoChange('cliente')} 
                         >
-                            <CardContent
-                                sx={{
-                                }}
-                            >
+                            <CardContent>
                                 <Typography
                                     sx={{ fontSize: 16, textAlign: "center", margin: 'auto' }}
                                     color="text.secondary"
@@ -96,7 +90,7 @@ export const BarraUsuarios: React.VFC = () => {
                                 borderRadius: 6,
                                 cursor: "pointer",
                             }}
-                            onClick={() => navigate(`/fornecedor`)}
+                            onClick={() => onTipoChange('fornecedor')}
                         >
                             <CardContent
                                 sx={{
@@ -120,7 +114,7 @@ export const BarraUsuarios: React.VFC = () => {
                                 borderRadius: 6,
                                 cursor: "pointer",
                             }}
-                            onClick={() => navigate(`/funcionario`)}
+                            onClick={() => onTipoChange('funcionario')} 
                         >
                             <CardContent
                                 sx={{

@@ -11,17 +11,15 @@ export const ListagemUsers: React.VFC = () => {
 
 
     const consultar = async () => {
-    
+
         const consulta = await UsersService.getAll()
         console.log(consulta)
     }
-    return( 
+    return (
         <Box>
-                        <BarraInicial/>
-                        <BarraUsuarios />
-                        <Cliente/>
-                        
+            <BarraInicial />
+            <Cliente />
         </Box>
 
-     )
+    )
 }
