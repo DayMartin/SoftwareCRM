@@ -38,7 +38,7 @@ const estoqueController = {
 
 	// Função para buscar um Estoque por ID
 	getEstoque: async (req:Request, res:Response) => {
-		const { id } = req.body;
+		const { id } = req.params;
 		const query = "SELECT * FROM estoque WHERE id = ?";
 
 		try {
@@ -57,11 +57,11 @@ const estoqueController = {
 
 	// Função para buscar um Estoque por categoria
 	getCategoriaEstoque: async (req:Request, res:Response) => {
-		const { categoria_id } = req.body;
+		const { categoria_id } = req.params;
 		const query = "SELECT * FROM estoque WHERE categoria_id = ?";
 
 		try {
-			const [rows, fields] = await queryDatabase(query, [categoria_id]);
+			const rows = await queryDatabase(query, [categoria_id]);
 
 			// Verificar se o Estoque foi encontrado
 			if (rows === null || rows === undefined) {
@@ -76,11 +76,11 @@ const estoqueController = {
 
 	// Função para buscar um Estoque por fornecedor
 	getFornecedorEstoque: async (req:Request, res:Response) => {
-		const { fornecedor_id } = req.body;
+		const { fornecedor_id } = req.params;
 		const query = "SELECT * FROM estoque WHERE fornecedor_id = ?";
 
 		try {
-			const [rows, fields] = await queryDatabase(query, [fornecedor_id]);
+			const rows = await queryDatabase(query, [fornecedor_id]);
 
 			// Verificar se o Estoque foi encontrado
 			if (rows === null || rows === undefined) {
@@ -95,7 +95,7 @@ const estoqueController = {
 
 	// Função para deletar um Estoque
 	deleteEstoque: async (req:Request, res:Response) => {
-		const { id } = req.body;
+		const { id } = req.params;
 		const queryVerificar = "SELECT * FROM estoque WHERE id = ?";
 		const queryDeletar = "DELETE FROM estoque WHERE id = ?";
 

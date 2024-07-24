@@ -25,13 +25,8 @@ Content-Type: application/json
 
 ### BUSCAR HISTORICO DE ESTOQUE POR ID DE UM ESTOQUE
 
-POST http://localhost:3048/api/historic/AllEstoque
+GET http://localhost:3048/api/historic/AllEstoque/1
 Content-Type: application/json
-
-{
-  "estoque_id": 1
-}
-
 
 
 ### DELETAR HISTORICO DE ESTOQUE POR ID

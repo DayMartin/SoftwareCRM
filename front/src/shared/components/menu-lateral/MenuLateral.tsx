@@ -105,6 +105,9 @@ export default function MenuLateral() {
   useEffect(() => {
     if (selectedItem === 'Contas') {
       navigate('/user');
+    } 
+    if ( selectedItem === 'Estoque') {
+      navigate('/estoque');
     }
   }, [selectedItem, navigate]);
 
@@ -204,14 +207,14 @@ export default function MenuLateral() {
             </Typography>
           </Box>
         )}
-        {selectedItem === 'Estoque' && (
+        {/* {selectedItem === 'Estoque' && (
           <Box sx={{ bgcolor: 'background.paper', p: 3 }}>
             <Typography variant="h5">Estoque</Typography>
             <Typography paragraph>
               Conteúdo para Estoque...
             </Typography>
           </Box>
-        )}
+        )} */}
         {selectedItem === 'Home' && (
           <Box>
             <Box sx={{ bgcolor: 'background.paper', p: 3 }} className = 'grid'>

@@ -4,7 +4,8 @@ import { useDrawerContext } from '../shared/contexts';
 import { useEffect } from 'react';
 
 import {
-  Home, Contas
+  Home, Contas,
+  Estoque
 } from '../pages';
 import React from 'react';
 import { ListagemUsers } from '../pages/Users/components/ListagemUsers';
@@ -53,6 +54,12 @@ export const AppRoutes = () => {
         path="/user"
         element={
             <ListagemUsers />
+        }
+      />
+       <Route
+        path="/estoque"
+        element={
+            <Estoque />
         }
       />
       {/* Rota padrão */}

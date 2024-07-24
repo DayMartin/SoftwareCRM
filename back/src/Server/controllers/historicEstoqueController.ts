@@ -90,7 +90,7 @@ const historicEstoqueController = {
 
 	// Função para buscar um Histórico de Estoque por ID do estoque
 	getEstoque: async (req:Request, res:Response) => {
-		const { estoque_id } = req.body;
+		const { estoque_id } = req.params;
 		const query = "SELECT * FROM estoqueHistoric WHERE estoque_id = ?";
 
 		try {

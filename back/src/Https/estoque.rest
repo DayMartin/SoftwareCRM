@@ -9,44 +9,31 @@ POST http://localhost:3048/api/estoque/create
 Content-Type: application/json
 
 {
-  "nome": "Espátula",
-  "quantidade": 0,
+  "nome": "Motorola",
+  "quantidade": 10,
   "fornecedor_id": 1,
   "categoria_id": 1
 }
 
 ### BUSCAR ESTOQUE POR ID
 
-POST http://localhost:3048/api/estoque/get
+GET http://localhost:3048/api/estoque/1
 Content-Type: application/json
 
-{
-  "id": 1
-}
 
 ### BUSCAR ESTOQUE POR ID DA CATEGORIA
 
-POST http://localhost:3048/api/estoque/AllCategoria
+GET http://localhost:3048/api/estoque/AllCategoria/1
 Content-Type: application/json
-
-{
-  "categoria_id": 2
-}
 
 ### BUSCAR ESTOQUE POR ID DO FORNECEDOR
 
-POST http://localhost:3048/api/estoque/AllFornecedor
+GET http://localhost:3048/api/estoque/AllFornecedor/1
 Content-Type: application/json
 
-{
-  "fornecedor_id": 9
-}
 
 ### DELETAR ESTOQUE POR ID
 
-DELETE http://localhost:3048/api/estoque/delete
+DELETE http://localhost:3048/api/estoque/delete/1
 Content-Type: application/json
 
-{
-  "id": 1
-}
