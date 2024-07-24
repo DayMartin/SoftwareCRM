@@ -77,8 +77,8 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                     <Grid item>
                         <Card
                             sx={{
-                                maxWidth: 120,
-                                minWidth: 120, 
+                                maxWidth: 150,
+                                minWidth: 200, 
                                 backgroundColor: "#F0F8FF",
                                 borderRadius: 6,
                                 cursor: "pointer",
@@ -98,7 +98,8 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                     <Grid item>
                         <Card
                             sx={{
-                                maxWidth: 120,
+                                maxWidth: 150,
+                                minWidth: 200,
                                 backgroundColor: "#F5F5DC",
                                 borderRadius: 6,
                                 cursor: "pointer",
@@ -118,7 +119,8 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                     <Grid item>
                         <Card
                             sx={{
-                                maxWidth: 120,
+                                maxWidth: 150,
+                                minWidth: 200,
                                 backgroundColor: "#FFDAB9",
                                 borderRadius: 6,
                                 cursor: "pointer",

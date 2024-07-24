@@ -55,3 +55,9 @@ main.MuiBox-root {
   padding: 0px;
   margin: 0px;
 }
+
+.css-h4y409-MuiList-root { background-color: #003e74;} 
+
+@media (min-width: 600px) {
+  .css-1k69ezp-MuiDrawer-docked .MuiDrawer-paper { background-color: #003e74;}
+}
