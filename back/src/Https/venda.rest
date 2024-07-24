@@ -26,6 +26,18 @@ Content-Type: application/json
       "valorParcela": 48,
       "dataPagamento": "24/09/2024",
       "status": "Pendente"
+    },
+	{
+      "parcela": 2,
+      "valorParcela": 48,
+      "dataPagamento": "24/10/2024",
+      "status": "Pendente"
+    },
+	{
+      "parcela":31,
+      "valorParcela": 48,
+      "dataPagamento": "24/11/2024",
+      "status": "Pendente"
     }
   ],
   "produtos": [

@@ -107,6 +107,25 @@ const historicEstoqueController = {
 		}
 	},
 
+		// Função para buscar um Histórico de Estoque por ID do estoque
+		getVenda: async (req:Request, res:Response) => {
+			const { venda_id } = req.params;
+			const query = "SELECT * FROM estoqueHistoric WHERE venda_id = ?";
+	
+			try {
+				const rows = await queryDatabase(query, [venda_id]);
+	
+				// Verificar se o Estoque foi encontrado
+				if (rows === null || rows === undefined) {
+					return res.status(404).json({ error: "Histórico não encontrado" });
+				}
+				return res.status(200).json(rows);
+			} catch (error) {
+				console.error(error);
+				return res.status(500).json({ error: "Erro ao buscar Histórico" });
+			}
+		},
+
 	// Função para deletar um Estoque
 	deleteHistoricEstoque: async (req:Request, res:Response) => {
 		const { id } = req.body;

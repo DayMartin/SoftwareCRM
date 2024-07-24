@@ -109,6 +109,9 @@ export default function MenuLateral() {
     if (selectedItem === "Estoque") {
       navigate("/estoque");
     }
+    if (selectedItem === "Venda") {
+      navigate("/venda");
+    }
   }, [selectedItem, navigate]);
 
   // const handleDrawerOpen = () => {
@@ -129,7 +132,7 @@ export default function MenuLateral() {
       <Drawer variant="permanent" open={open} sx={{ backgroundColor: "black" }}>
         <Divider />
         <List>
-          {["Contas", "Consultas", "Financeiro", "Estoque"].map(
+          {["Contas", "Venda", "Financeiro", "Estoque"].map(
             (text, index) => (
               <ListItem key={text} disablePadding sx={{ display: "block" }}>
                 <ListItemButton
@@ -198,12 +201,12 @@ export default function MenuLateral() {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {selectedItem === "Consultas" && (
+        {/* {selectedItem === "Venda" && (
           <Box sx={{ bgcolor: "background.paper", p: 3 }}>
             <Typography variant="h5">Consultas</Typography>
             <Typography paragraph>Conteúdo para Consultas...</Typography>
           </Box>
-        )}
+        )} */}
         {selectedItem === "Financeiro" && (
           <Box sx={{ bgcolor: "background.paper", p: 3 }}>
             <Typography variant="h5">Financeiro</Typography>

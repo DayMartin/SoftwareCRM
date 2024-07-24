@@ -14,12 +14,9 @@ Content-Type: application/json
 
 ### BUSCAR PARCELA POR ID DA OS
 
-POST http://localhost:3048/api/parcelas/idOs
+GET http://localhost:3048/api/parcelas/venda/1
 Content-Type: application/json
 
-{
-  "os_id": 9
-}
 
 ### BUSCAR PARCELA POR DIA DE PAGAMENTO
 
