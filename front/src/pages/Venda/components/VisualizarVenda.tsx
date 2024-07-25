@@ -24,7 +24,7 @@ import {
   VendasService,
   IParcela,
 } from "../../../shared/services/api/Vendas/VendasService";
-import { IDetalheHistoric } from "../../../shared/services/api/Estoque/EstoqueService";
+import { EstoqueService, IDetalheHistoric } from "../../../shared/services/api/Estoque/EstoqueService";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -99,21 +99,32 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
     }
   };
 
-  const handleReceber = async (id: string) => {
+  const buscarNomeProduto = async(id:number) => {
     try {
-        await VendasService.receberById(id);
+      await EstoqueService.getByID(id);
     } catch (error) {
-        alert('Erro ao receber');
+      alert('Erro ao consulta');
     }
-};
+  }
 
-const handleDesfazerReceber = async (id: string) => {
+  const handleReceber = async (id: number, idvenda:number) => {
     try {
-        await VendasService.refazerReceberById(id);
+      await VendasService.receberById(id);
+      await BuscarParcelas(idvenda)
     } catch (error) {
-        alert('Erro ao desfazer o receber');
+      alert('Erro ao receber');
     }
-};
+  };
+
+  const handleDesfazerReceber = async (id: number, idvenda:number) => {
+    try {
+      await VendasService.refazerReceberById(id);
+      await BuscarParcelas(idvenda)
+
+    } catch (error) {
+      alert('Erro ao desfazer o receber');
+    }
+  };
 
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -155,7 +166,7 @@ const handleDesfazerReceber = async (id: string) => {
                     <TableRow>
                       <TableCell>Número da Parcela</TableCell>
                       <TableCell>Valor da Parcela</TableCell>
-                      <TableCell>Data de Pagamento</TableCell>
+                      <TableCell>Data de Vencimento</TableCell>
                       <TableCell>Status</TableCell>
                     </TableRow>
                   </TableHead>
@@ -170,20 +181,21 @@ const handleDesfazerReceber = async (id: string) => {
                           {parcela.status === "pendente" ? (
                             <Button
                               variant="contained"
-                              color="error"
-                              onClick={() => handleReceber(parcela.id)}
+                              color="success"
+                              onClick={() => handleReceber(parcela.id, parcela.venda_id)}
                               sx={{ height: "24px" }}
                             >
-                              <DeleteIcon />
+                              <CheckCircleIcon />
+
                             </Button>
                           ) : (
                             <Button
                               variant="contained"
-                              color="success"
-                              onClick={() => handleDesfazerReceber(parcela.id)}
+                              color="error"
+                              onClick={() => handleDesfazerReceber(parcela.id, parcela.venda_id)}
                               sx={{ height: "24px" }}
                             >
-                              <CheckCircleIcon />
+                              <DeleteIcon />
                             </Button>
                           )}
                         </TableCell>

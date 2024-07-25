@@ -21,11 +21,12 @@ export interface IListagemVenda {
 
 // Interface para uma parcela de uma venda
 export interface IParcela {
-    id: string;
+    id: number;
     parcela: number;
     valorParcela: number;
     dataPagamento: string;
     status: string;
+    venda_id: number;
   }
   
   // Interface para um produto de uma venda
@@ -186,21 +187,21 @@ const updateById = async (id: string, dados: IVenda): Promise<void | Error> => {
   }
 };
 
-const receberById = async (id: string): Promise<void | Error> => {
+const receberById = async (id: number): Promise<void | Error> => {
   try {
-    await Api.delete(`user/delete/${id}`); 
+    await Api.put(`parcelas/receber/${id}`); 
   } catch (error) {
     console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao apagar o registro.');
+    return new Error((error as { message: string }).message || 'Erro ao receber a parcela.');
   }
 };
 
-const refazerReceberById = async (id: string): Promise<void | Error> => {
+const refazerReceberById = async (id: number): Promise<void | Error> => {
   try {
-    await Api.put(`user/ativar/${id}`); 
+    await Api.put(`parcelas/pendente/${id}`); 
   } catch (error) {
     console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao ativar o usuário.');
+    return new Error((error as { message: string }).message || 'Erro ao definir parcela como pendente.');
   }
 };
 

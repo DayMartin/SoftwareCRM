@@ -11,7 +11,7 @@ Content-Type: application/json
 {
   "nome": "Motorola",
   "quantidade": 10,
-  "fornecedor_id": 1,
+  "fornecedor_id": 2,
   "categoria_id": 1,
   "valorUnitario": 10
 }

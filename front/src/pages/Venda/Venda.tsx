@@ -69,17 +69,6 @@ export const Venda: React.VFC = () => {
     // };
 
 
-    const getTipoColor = (tipo: string) => {
-        switch (tipo) {
-            case 'Saída':
-                return { color: 'red' };
-            case 'entrada':
-                return { color: 'green' };
-            default:
-                return { fontWeight: 'bold' };
-        }
-    };
-
     return (
         <Box>
             <BarraInicial titulo={titulo} />

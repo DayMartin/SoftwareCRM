@@ -62,6 +62,46 @@ const parcelasController = {
 		}
 	},
 
+	receberParcela: async (req: Request, res: Response) => {
+		const { id } = req.params;
+        const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
+        const queryPagar = 'UPDATE parcelas_venda SET status= ? WHERE id = ?';
+
+        try {
+            const [rows] = await queryDatabase(queryVerificar, [id]);
+            if (rows === null || rows === undefined) {
+                return res.status(404).json({ error: "Parcela não encontrada" });
+            }
+            await queryDatabase(queryPagar, ['pago', id]);
+            return res.status(200).json({ message: "Parcela recebida com sucesso" });
+
+			
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Erro ao pagar Parcela" });
+        }
+    },
+
+	pendeciaParcela: async (req: Request, res: Response) => {
+		const { id } = req.params;
+        const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
+        const queryPagar = 'UPDATE parcelas_venda SET status= ? WHERE id = ?';
+
+        try {
+            const [rows] = await queryDatabase(queryVerificar, [id]);
+            if (rows === null || rows === undefined) {
+                return res.status(404).json({ error: "Parcela não encontrada" });
+            }
+            await queryDatabase(queryPagar, ['pendente', id]);
+            return res.status(200).json({ message: "Parcela em pendencia com sucesso" });
+
+			
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Erro ao deixar parcela em pendencia" });
+        }
+    },
+
 	// Função para deletar uma Parcela
 	deleteParcela: async (req:Request, res:Response) => {
 		const { id } = req.body;

@@ -123,7 +123,6 @@ const usersController = {
     // Função para desativar um Usuario
     desativarUser: async (req: Request, res: Response) => {
 		const { id } = req.params;
-		console.log('id', id)
         const queryVerificar = "SELECT * FROM usuarios WHERE id = ?";
         const queryDesativar = 'UPDATE financeiro.usuarios SET status= ? WHERE id = ?';
 

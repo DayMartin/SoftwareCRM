@@ -52,6 +52,17 @@ Content-Type: application/json
   "status": "Pendente"
 }
 
+### ALTERAR STATUS DA PARCELA PARA PAGO
+
+PUT http://localhost:3048/api/parcelas/receber/1
+Content-Type: application/json
+
+### ALTERAR STATUS DA PARCELA PARA PENDENTE
+
+PUT http://localhost:3048/api/parcelas/pendente/1
+Content-Type: application/json
+
+
 ### DELETAR PARCELA POR ID
 
 DELETE http://localhost:3048/api/parcelas/delete
