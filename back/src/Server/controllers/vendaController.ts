@@ -30,13 +30,13 @@ const vendaController = {
 
 	// Função para criar uma nova venda
 	createVenda: async (req:Request, res:Response) => {
-		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, status, parcelas, produtos } = req.body;
-		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto,  status, parcelas, produtos } = req.body;
+		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
 
 		try {
 			// Inserir na tabela 'os'
-			const osResult = await queryDatabase(insertVendaQuery, [cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, status]);
+			const osResult = await queryDatabase(insertVendaQuery, [cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status]);
 
 			// Recuperar o ID da OS recém-criada
 			const venda_id = osResult.insertId;

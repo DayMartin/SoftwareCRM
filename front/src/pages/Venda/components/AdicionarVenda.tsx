@@ -27,7 +27,6 @@ import {
   EstoqueService,
   IDetalheEstoque,
 } from "../../../shared/services/api/Estoque/EstoqueService";
-import { VendasService, IParcelaCreate } from "../../../shared/services/api/Vendas/VendasService";
 
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
@@ -51,14 +50,17 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     QTparcelas: 0,
     valorTotal: 0,
     valorDesconto: 0,
-    status: "Pendente",
+    valorTotalDesconto: 0,
+    totalPago: 0,
+    status: "pendente",
     parcelas: [
       {
         parcela: 0,
         valorParcela: 0,
         dataPagamento: "",
-        status: "Pendente",
+        status: "pendente",
         venda_id: 0,
+        tipoPagamento: "",
       },
     ],
     produtos: [
@@ -75,7 +77,6 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
   const [quantidade, setQuantidade] = useState<number>(1);
   const [abaSelecionada, setAbaSelecionada] = useState<number>(0);
 
-  // Funções de consulta
   const ConsultarClientes = async () => {
     try {
       const consultar = await UsersService.getClientes("cliente");
@@ -122,22 +123,37 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     }
   };
 
+  const calcularParcelas = () => {
+    const valorTotalFinal = formData.valorTotalDesconto;
+    const qtParcelas = formData.QTparcelas;
+    const valorParcela = qtParcelas > 0 ? valorTotalFinal / qtParcelas : 0;
+    const novasParcelas = Array.from({ length: qtParcelas }, (_, i) => ({
+      parcela: i + 1,
+      valorParcela: valorParcela,
+      dataPagamento: formData.parcelas[i]?.dataPagamento || "",
+      status: "pendente",
+      venda_id: 0,
+      tipoPagamento: "",
+    }));
+  
+    setFormData((prevData) => ({
+      ...prevData,
+      parcelas: novasParcelas,
+    }));
+  };
+
   useEffect(() => {
     ConsultarClientes();
     ConsultarFuncionarios();
     ConsultarEstoque();
-  }, []);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
+    const valorTotalDesconto = formData.valorTotal - formData.valorDesconto;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      valorTotalDesconto,
     }));
-  };
-
+    calcularParcelas();
+  }, [formData.QTparcelas, formData.valorTotal, formData.valorDesconto, formData.valorTotalDesconto]);
+  
   const handleSelectChange = (event: SelectChangeEvent<number | "">) => {
     const { name, value } = event.target;
     if (name === "produto_id") {
@@ -213,14 +229,17 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
       QTparcelas: 0,
       valorTotal: 0,
       valorDesconto: 0,
-      status: "",
+      valorTotalDesconto: 0,
+      totalPago: 0,
+      status: "pendente",
       parcelas: [
         {
           parcela: 0,
           valorParcela: 0,
           dataPagamento: "",
-          status: "Pendente",
+          status: "pendente",
           venda_id: 0,
+          tipoPagamento: "",
         },
       ],
       produtos: [],
@@ -246,7 +265,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
           borderRadius: 2,
           boxShadow: 24,
           width: "100%",
-          maxWidth: "800px",
+          maxWidth: "50%",
         }}
       >
         <Typography variant="h6" component="h2" gutterBottom>
@@ -300,17 +319,6 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  type="number"
-                  label="Desconto"
-                  name="valorDesconto"
-                  value={formData.valorDesconto}
-                  onChange={handleDescontoChange}
-                  fullWidth
-                  margin="normal"
-                />
-              </Grid>
             </Grid>
           )}
           {abaSelecionada === 1 && (
@@ -344,6 +352,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                     margin="normal"
                   />
                 </Grid>
+
                 <Grid item xs={12} sm={2}>
                   <Button
                     variant="contained"
@@ -362,7 +371,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                 <Table>
                   <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
                     <TableRow>
-                      <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
+                      <TableCell sx={{ p: 1.8, paddingLeft: "8px" }}>
                         Produto
                       </TableCell>
                       <TableCell sx={{ p: 0.1 }}>Quantidade</TableCell>
@@ -412,90 +421,136 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
           {abaSelecionada === 2 && (
             <Box>
               <Grid container spacing={2} sx={{ alignItems: "center" }}>
-                <Grid item xs={12} sm={5}>
+                <Grid item xs={12} sm={3}>
                   <TextField
                     type="number"
                     label="Quantidade de parcelas"
-                    value={quantidade}
-                    onChange={(e) => setQuantidade(Number(e.target.value))}
+                    value={formData.QTparcelas}
+                    onChange={(e) => {
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        QTparcelas: Number(e.target.value),
+                      }));
+                    }}
                     fullWidth
                     margin="normal"
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddProduto}
+                <Grid item xs={12} sm={3}>
+                  <TextField
+                    type="number"
+                    label="Desconto"
+                    name="valorDesconto"
+                    value={formData.valorDesconto}
+                    onChange={handleDescontoChange}
                     fullWidth
-                  >
-                    <AddIcon />
-                  </Button>
+                    margin="normal"
+                  />
                 </Grid>
               </Grid>
               <TableContainer
                 component={Paper}
-                sx={{ mt: 2, maxHeight: "150px", overflowY: "auto" }}
+                sx={{ mt: 1, maxHeight: "300px", overflowY: "auto" }}
               >
                 <Table>
                   <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
                     <TableRow>
-                      <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
-                        Produto
+                      <TableCell sx={{ p: 1, width: "20%" }}>Parcela</TableCell>
+                      <TableCell sx={{ p: 1, width: "20%" }}>
+                        Valor Parcela
                       </TableCell>
-                      <TableCell sx={{ p: 0.1 }}>Quantidade</TableCell>
-                      <TableCell sx={{ p: 0.1 }}>Valor Unitário</TableCell>
-                      <TableCell sx={{ p: 0.1 }}>Valor Total</TableCell>
-                      <TableCell sx={{ p: 0.1 }}>Ação</TableCell>
+                      <TableCell sx={{ p: 1, width: "20%" }}>
+                        Data Pagamento
+                      </TableCell>
+                      <TableCell sx={{ p: 1, width: "20%" }}>
+                        Tipo Pagamento
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{ backgroundColor: "#fafafa" }}>
-                    {formData.produtos.map((produto, index) => {
-                      const detalheProduto = produtos.find(
-                        (p) => p.id === produto.id
-                      );
-                      const valorTotal =
-                        (detalheProduto?.valorUnitario || 0) *
-                        produto.quantidade;
-                      return (
-                        <TableRow key={index}>
-                          <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
-                            {detalheProduto?.nome}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            {produto.quantidade}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            R$ {detalheProduto?.valorUnitario.toFixed(2)}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            R$ {valorTotal.toFixed(2)}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            <IconButton
-                              color="error"
-                              onClick={() => handleRemoveProduto(produto.id)}
+                    {formData.parcelas.map((parcela, index) => (
+                      <TableRow key={index}>
+                        <TableCell sx={{ p: 1, width: "20%" }}>
+                          {parcela.parcela}
+                        </TableCell>
+                        <TableCell sx={{ p: 1, width: "20%" }}>
+                          R$ {parcela.valorParcela.toFixed(2)}
+                        </TableCell>
+                        <TableCell sx={{ p: 1, width: "20%" }}>
+                          <TextField
+                            type="date"
+                            value={parcela.dataPagamento}
+                            onChange={(e) => {
+                              const novaDataPagamento = e.target.value;
+                              setFormData((prevData) => ({
+                                ...prevData,
+                                parcelas: prevData.parcelas.map((p, i) =>
+                                  i === index
+                                    ? { ...p, dataPagamento: novaDataPagamento }
+                                    : p
+                                ),
+                              }));
+                            }}
+                            size="small"
+                            sx={{
+                              width: "100%",
+                              padding: "2px",
+                              fontSize: "0.875rem",
+                            }}
+                            margin="none"
+                          />
+                        </TableCell>
+                        <TableCell sx={{ p: 1, width: "20%" }}>
+                          <FormControl fullWidth margin="none">
+                            <InputLabel id={`tipoPagamento-label-${index}`}>
+                              Tipo Pagamento
+                            </InputLabel>
+                            <Select
+                              labelId={`tipoPagamento-label-${index}`}
+                              name={`tipoPagamento-${index}`}
+                              value={parcela.tipoPagamento}
+                              onChange={(e) => {
+                                const novoTipoPagamento = e.target.value;
+                                setFormData((prevData) => ({
+                                  ...prevData,
+                                  parcelas: prevData.parcelas.map((p, i) =>
+                                    i === index
+                                      ? {
+                                          ...p,
+                                          tipoPagamento: novoTipoPagamento,
+                                        }
+                                      : p
+                                  ),
+                                }));
+                              }}
+                              size="small"
                             >
-                              <RemoveIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                              <MenuItem value="dinheiro">Dinheiro</MenuItem>
+                              <MenuItem value="cartao">Cartão</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
             </Box>
           )}
-          <Box mt={2}>
-            <Typography variant="h6">
+
+          {/* Bloco para Valores Totais */}
+          <Box sx={{ textAlign: "right", paddingTop: 2, paddingBottom: 2 }}>
+            <Typography variant="body2" sx={{ mb: 0.5 }}>
+              Valor Total (sem desconto): R$ {formData.valorTotal.toFixed(2)}
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 0.5 }}>
               Desconto: R$ {formData.valorDesconto.toFixed(2)}
             </Typography>
-
             <Typography variant="h6">
               Total: R$ {valorTotalFinal.toFixed(2)}
             </Typography>
           </Box>
+
           <Grid container spacing={1} mt={1}>
             <Grid item xs={6}>
               <Button

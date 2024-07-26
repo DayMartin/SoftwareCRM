@@ -94,6 +94,7 @@ export class CreateTables {
 						QTparcelas INT,
 						valorTotal DECIMAL(10, 2),
 						valorDesconto DECIMAL(10, 2),
+						valorTotalDesconto DECIMAL(10, 2),
 						valorPago DECIMAL(10, 2),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

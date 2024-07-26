@@ -50,6 +50,7 @@ export interface IParcela {
     QTparcelas: number;
     valorTotal: number;
     valorDesconto: number;
+    valorTotalDesconto: number;
     status: string;
     parcelas: IParcelaCreate[];
     produtos: IProduto[];
@@ -65,7 +66,7 @@ export interface IParcela {
     valorPago: number;
     status: string;
     data_criacao: string;
-
+    valorTotalDesconto: number;
 
   }
 

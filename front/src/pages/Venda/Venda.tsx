@@ -83,8 +83,9 @@ export const Venda: React.VFC = () => {
                             <TableCell>Cliente</TableCell>
                             <TableCell>Funcionário</TableCell>
                             <TableCell>Status</TableCell>
-                            <TableCell>Desconto</TableCell>
                             <TableCell>Valor Total</TableCell>
+                            <TableCell>Desconto</TableCell>
+                            <TableCell>Valor Final</TableCell>
                             <TableCell>Valor Pago</TableCell>
                             <TableCell>Data de criação</TableCell>
                             <TableCell>Ações</TableCell>
@@ -112,8 +113,9 @@ export const Venda: React.VFC = () => {
                                         <TableCell>{row.cliente_id}</TableCell>
                                         <TableCell>{row.funcionario_id}</TableCell>
                                         <TableCell>{row.status}</TableCell>
-                                        <TableCell>{row.valorDesconto}</TableCell>
                                         <TableCell>{row.valorTotal}</TableCell>
+                                        <TableCell>{row.valorDesconto}</TableCell>
+                                        <TableCell>{row.valorTotalDesconto}</TableCell>
                                         <TableCell>{row.valorPago}</TableCell>
                                         <TableCell>{row.data_criacao}</TableCell>
 
