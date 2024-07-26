@@ -41,7 +41,7 @@ export interface IDetalheHistoric {
 
 
 export interface IApiResponse {
-  consulta: IListagemEstoque[]; 
+  consulta: IDetalheEstoque[]; 
   pagination: {
     totalOrdem: number;
     pageCount: number;
@@ -60,7 +60,7 @@ export interface IApiResponse {
 //   totalCount: number;
 // };
 
-const getAll = async (page = 1, filter = ''): Promise<IDetalheEstoque | Error> => {
+const getAll = async (page = 1, filter = ''): Promise<[IDetalheEstoque] | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/estoque/all`;
 

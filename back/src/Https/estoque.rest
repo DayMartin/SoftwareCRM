@@ -9,11 +9,11 @@ POST http://localhost:3048/api/estoque/create
 Content-Type: application/json
 
 {
-  "nome": "Motorola",
-  "quantidade": 10,
+  "nome": "Xiaomi",
+  "quantidade": 1,
   "fornecedor_id": 2,
   "categoria_id": 1,
-  "valorUnitario": 10
+  "valorUnitario": 44
 }
 
 ### BUSCAR ESTOQUE POR ID

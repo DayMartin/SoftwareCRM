@@ -80,7 +80,7 @@ export const Estoque: React.VFC = () => {
     return (
         <Box>
             <BarraInicial titulo={titulo} />
-            
+
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
                     <TableHead>
@@ -117,7 +117,11 @@ export const Estoque: React.VFC = () => {
                                         <TableCell>{row.nome}</TableCell>
                                         <TableCell>{row.categoria_id}</TableCell>
                                         <TableCell>{row.fornecedor_id}</TableCell>
-                                        <TableCell>{row.quantidade}</TableCell>
+                                        <TableCell
+                                            sx={{
+                                                color: row.quantidade < 2 ? 'red' : 'inherit'
+                                            }}
+                                        >{row.quantidade}</TableCell>
                                         <TableCell>{row.valorUnitario}</TableCell>
                                         <TableCell>{row.data_criacao}</TableCell>
                                         <TableCell>
@@ -125,7 +129,7 @@ export const Estoque: React.VFC = () => {
                                                 variant="contained"
                                                 color="primary"
                                                 onClick={() => handleVisualizar(row)}
-                                                sx={{ mr: 1, height:'24px' }}
+                                                sx={{ mr: 1, height: '24px' }}
                                             >
                                                 <VisibilityIcon />
                                             </Button>
@@ -146,7 +150,7 @@ export const Estoque: React.VFC = () => {
                 </Table>
             </TableContainer>
 
-            {/* Modal para Exibir Histórico */}
+            {/* Modal para Exibir Histórico --- ENVIAR PARA UM COMPONENT SEPERADO*/}
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
                 <DialogTitle>Histórico do Estoque</DialogTitle>
                 <DialogContent>
@@ -167,7 +171,7 @@ export const Estoque: React.VFC = () => {
                                 historicoEstoque.map(historico => (
                                     <TableRow key={historico.id}>
                                         <TableCell>{historico.id}</TableCell>
-                                        <TableCell>{historico.compra_id}</TableCell>
+                                        <TableCell>{historico.compra_id || 'Não se aplica'}</TableCell>
                                         <TableCell>{historico.venda_id || 'Não se aplica'}</TableCell>
                                         <TableCell>{historico.quantidade}</TableCell>
                                         <TableCell>{historico.estoque_id}</TableCell>

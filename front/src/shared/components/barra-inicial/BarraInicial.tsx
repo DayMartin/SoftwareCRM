@@ -36,6 +36,7 @@ export const BarraInicial: React.VFC<BarraInicialProps> = ({ titulo }) => {
       sx={{
         m: 1,
         width: "auto",
+        height: '70px',
         marginLeft: "8%",
         marginRight: "2%",
         padding: '2%',
@@ -44,22 +45,14 @@ export const BarraInicial: React.VFC<BarraInicialProps> = ({ titulo }) => {
       }}
     >
       <Grid container spacing={2}>
-        <Typography
-          sx={{ fontSize: 16, marginLeft: 2 }}
-          color="#0d47a1"
-          gutterBottom
-        >
-          {titulo}
-        </Typography>
       </Grid>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={6}>
           <Typography
             sx={{
-              fontSize: 28,
+              fontSize: 18,
               marginLeft: 0,
               marginTop: 2,
-              fontWeight: "bold",
             }}
             color="#0d47a1"
             gutterBottom
@@ -86,7 +79,7 @@ export const BarraInicial: React.VFC<BarraInicialProps> = ({ titulo }) => {
               <Avatar
                 alt="Logo"
                 src="https://gizmodo.uol.com.br/wp-content/blogs.dir/8/files/2023/07/robo-humanoide-chines.png"
-                sx={{ width: 56, height: 56 }}
+                sx={{ width: 20, height: 28 }}
               />
             </IconButton>
           </Tooltip>

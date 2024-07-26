@@ -18,10 +18,17 @@ export interface IListagemVenda {
 
 }
 
-
 // Interface para uma parcela de uma venda
 export interface IParcela {
     id: number;
+    parcela: number;
+    valorParcela: number;
+    dataPagamento: string;
+    status: string;
+    venda_id: number;
+  }
+
+  export interface IParcelaCreate {
     parcela: number;
     valorParcela: number;
     dataPagamento: string;
@@ -43,7 +50,7 @@ export interface IParcela {
     valorTotal: number;
     valorDesconto: number;
     status: string;
-    parcelas: IParcela[];
+    parcelas: IParcelaCreate[];
     produtos: IProduto[];
   }
 
@@ -171,7 +178,7 @@ const getByHistoric = async (id: number): Promise<IVenda[] | Error> => {
 
 const create = async (dados: IVenda): Promise<void | Error> => {
   try {
-    await Api.post<IVenda>('estoque/create', dados);
+    await Api.post<IVenda>('venda/create', dados);
 
   } catch (error) {
     throw error;

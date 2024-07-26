@@ -207,12 +207,12 @@ export default function MenuLateral() {
             <Typography paragraph>Conteúdo para Consultas...</Typography>
           </Box>
         )} */}
-        {selectedItem === "Financeiro" && (
+        {/* {selectedItem === "Financeiro" && (
           <Box sx={{ bgcolor: "background.paper", p: 3 }}>
             <Typography variant="h5">Financeiro</Typography>
             <Typography paragraph>Conteúdo para Financeiro...</Typography>
           </Box>
-        )}
+        )} */}
         {/* {selectedItem === 'Estoque' && (
           <Box sx={{ bgcolor: 'background.paper', p: 3 }}>
             <Typography variant="h5">Estoque</Typography>

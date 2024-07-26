@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import AdicionarUsers from "../../../pages/Users/components/AdicionarUsers";
+import { CenterFocusStrong } from "@mui/icons-material";
 
 interface BarraUsuariosProps {
     onTipoChange: (tipo: string) => void;
@@ -36,6 +37,7 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
             sx={{
                 m: 1,
                 width: "auto",
+                height: '30px',
                 marginLeft: "8%",
                 marginRight: "2%",
                 padding: '2%',
@@ -51,13 +53,14 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                 sx={{
                     position: 'absolute',
                     top: '50%',
-                    left: '16px',
+                    left: '28px',
                     transform: 'translateY(-50%)',
                     backgroundColor: '#0d47a1',
                     color: 'white',
-                    borderRadius: '50%',
-                    width: 56,
-                    height: 56,
+                    borderRadius: '100%',
+                    width: 28,
+                    minWidth: 28,
+                    height: 28,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -68,26 +71,32 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                 }}
                 onClick={handleOpen}
             >
-                <AddIcon />
+                <AddIcon/>
             </Button>
 
             {/* Botões de ação */}
-            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}>
-                <Grid container spacing={2} justifyContent="flex-end">
+            <Box sx={{ flexGrow: 1, 
+                display: 'flex', 
+                justifyContent: 'center',
+                alignItems: 'center',
+
+                 }}>
+                <Grid container spacing={2} justifyContent="flex-end" alignItems={'center'}>
                     <Grid item>
                         <Card
                             sx={{
                                 maxWidth: 150,
-                                minWidth: 200, 
+                                minWidth: 150, 
+                                height: '28px',
                                 backgroundColor: "#F0F8FF",
-                                borderRadius: 6,
+                                borderRadius: 2,
                                 cursor: "pointer",
                             }}
                             onClick={() => onTipoChange('cliente')} 
                         >
-                            <CardContent>
+                            <CardContent sx={{paddingBottom: 0, padding: 0}}>
                                 <Typography
-                                    sx={{ fontSize: 16, textAlign: "center", margin: 'auto' }}
+                                    sx={{ fontSize: 16, textAlign: "center", alignItems: 'center' }}
                                     color="text.secondary"
                                 >
                                     Cliente
@@ -99,16 +108,17 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                         <Card
                             sx={{
                                 maxWidth: 150,
-                                minWidth: 200,
+                                minWidth: 150,
+                                height: '28px',
                                 backgroundColor: "#F5F5DC",
-                                borderRadius: 6,
+                                borderRadius: 2,
                                 cursor: "pointer",
                             }}
                             onClick={() => onTipoChange('fornecedor')}
                         >
-                            <CardContent>
+                            <CardContent sx={{paddingBottom: 0, padding: 0}}>
                                 <Typography
-                                    sx={{ fontSize: 16, textAlign: "center", margin: 'auto' }}
+                                    sx={{ fontSize: 16, textAlign: "center", alignItems: 'center' }}
                                     color="text.secondary"
                                 >
                                     Fornecedor
@@ -120,16 +130,17 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                         <Card
                             sx={{
                                 maxWidth: 150,
-                                minWidth: 200,
+                                minWidth: 150,
+                                height: '28px',
                                 backgroundColor: "#FFDAB9",
-                                borderRadius: 6,
+                                borderRadius: 2,
                                 cursor: "pointer",
                             }}
                             onClick={() => onTipoChange('funcionario')}
                         >
-                            <CardContent>
+                            <CardContent sx={{paddingBottom: 0, padding: 0}}>
                                 <Typography
-                                    sx={{ fontSize: 16, textAlign: "center", margin: 'auto' }}
+                                    sx={{ fontSize: 16, textAlign: "center", alignItems: 'center' }}
                                     color="text.secondary"
                                 >
                                     Funcionário
