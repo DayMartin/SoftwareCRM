@@ -1,29 +1,27 @@
-import queryDatabase from '../database/queryPromise'
+import queryDatabase from "../database/queryPromise";
 
 require("dotenv").config();
 
-export class CreateTables{
-    constructor(
-	) {}
+export class CreateTables {
+	constructor() {}
 
 	// Chamar as funções para criar as tabelas durante a inicialização do banco de dados
-    async createAllTables() {
-        try {
-            await this.createUsuariosTable();
+	async createAllTables() {
+		try {
+			await this.createUsuariosTable();
 			await this.createCategoriaTable();
 			await this.createEstoqueTable();
-            // await this.createServicosTable();
-            await this.createVendaTable();
+			// await this.createServicosTable();
+			await this.createVendaTable();
 			await this.createCompraTable();
-            await this.createParcelasVenda();
+			await this.createParcelasVenda();
 			await this.createParcelasCompra();
 			await this.createHistoricEstoqueTable();
 			await this.createLogs();
-
-        } catch (error) {
-            console.error("Erro ao criar as tabelas:", error);
-        }
-    }
+		} catch (error) {
+			console.error("Erro ao criar as tabelas:", error);
+		}
+	}
 
 	async createUsuariosTable() {
 		try {
@@ -31,7 +29,6 @@ export class CreateTables{
 			// Verifique se a tabela 'usuarios' existe
 			const rows = await queryDatabase(consulta);
 
-	
 			// Se a tabela 'usuarios' não existir, crie-a
 			if (rows.length === 0) {
 				await queryDatabase(`
@@ -85,9 +82,7 @@ export class CreateTables{
 	async createVendaTable() {
 		try {
 			// Verifique se a tabela 'Venda' existe
-			const rows = await queryDatabase(
-				`SHOW TABLES LIKE 'venda'`
-			);
+			const rows = await queryDatabase(`SHOW TABLES LIKE 'venda'`);
 
 			// Se a tabela 'venda' não existir, crie-a
 			if (rows.length === 0) {
@@ -99,6 +94,7 @@ export class CreateTables{
 						QTparcelas INT,
 						valorTotal DECIMAL(10, 2),
 						valorDesconto DECIMAL(10, 2),
+						valorPago DECIMAL(10, 2),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (cliente_id) REFERENCES usuarios(id),
@@ -107,7 +103,6 @@ export class CreateTables{
 				`);
 				console.log("Tabela 'venda' criada com sucesso.");
 			}
-
 		} catch (error) {
 			console.error("Erro ao criar a tabela 'venda':", error);
 		}
@@ -116,9 +111,7 @@ export class CreateTables{
 	async createCompraTable() {
 		try {
 			// Verifique se a tabela 'compra' existe
-			const rows = await queryDatabase(
-				`SHOW TABLES LIKE 'compra'`
-			);
+			const rows = await queryDatabase(`SHOW TABLES LIKE 'compra'`);
 
 			// Se a tabela 'compra' não existir, crie-a
 			if (rows.length === 0) {
@@ -140,16 +133,13 @@ export class CreateTables{
 				`);
 				console.log("Tabela 'compra' criada com sucesso.");
 			}
-
 		} catch (error) {
 			console.error("Erro ao criar a tabela 'compra':", error);
 		}
 	}
 
-
 	async createParcelasVenda() {
 		try {
-
 			// Verifique se a tabela 'parcelas_venda' existe
 			const rows = await queryDatabase(
 				`SHOW TABLES LIKE 'parcelas_venda'`
@@ -161,6 +151,7 @@ export class CreateTables{
 					CREATE TABLE parcelas_venda (
 						id INT AUTO_INCREMENT PRIMARY KEY,
 						venda_id INT NOT NULL,
+						tipoPagamento VARCHAR(50), 
 						parcela INT,
 						valorParcela DECIMAL(10, 2),
 						dataPagamento VARCHAR(50),
@@ -180,7 +171,6 @@ export class CreateTables{
 
 	async createParcelasCompra() {
 		try {
-
 			// Verifique se a tabela 'parcelas_compra' existe
 			const rows = await queryDatabase(
 				`SHOW TABLES LIKE 'parcelas_compra'`
@@ -192,6 +182,7 @@ export class CreateTables{
 					CREATE TABLE parcelas_compra (
 						id INT AUTO_INCREMENT PRIMARY KEY,
 						compra_id INT NOT NULL,
+						tipoPagamento VARCHAR(50), 
 						parcela INT,
 						valorParcela DECIMAL(10, 2),
 						dataPagamento VARCHAR(50),
@@ -209,13 +200,12 @@ export class CreateTables{
 		}
 	}
 
-
 	async createCategoriaTable() {
 		try {
 			const consulta = `SHOW TABLES LIKE 'categoria'`;
 			// Verifique se a tabela 'Categoria' existe
 			const rows = await queryDatabase(consulta);
-	
+
 			// Se a tabela 'Categoria' não existir, crie-a
 			if (rows.length === 0) {
 				await queryDatabase(`
@@ -237,7 +227,7 @@ export class CreateTables{
 			const consulta = `SHOW TABLES LIKE 'estoque'`;
 			// Verifique se a tabela 'estoque' existe
 			const rows = await queryDatabase(consulta);
-	
+
 			// Se a tabela 'estoque' não existir, crie-a
 			if (rows.length === 0) {
 				await queryDatabase(`
@@ -265,7 +255,7 @@ export class CreateTables{
 			const consulta = `SHOW TABLES LIKE 'estoqueHistoric'`;
 			// Verifique se a tabela 'estoqueHistoric' existe
 			const rows = await queryDatabase(consulta);
-	
+
 			// Se a tabela 'estoqueHistoric' não existir, crie-a
 			if (rows.length === 0) {
 				await queryDatabase(`
@@ -294,7 +284,7 @@ export class CreateTables{
 			const consulta = `SHOW TABLES LIKE 'logs'`;
 			// Verifique se a tabela 'logs' existe
 			const rows = await queryDatabase(consulta);
-	
+
 			// Se a tabela 'logs' não existir, crie-a
 			if (rows.length === 0) {
 				await queryDatabase(`
@@ -312,6 +302,4 @@ export class CreateTables{
 			console.error("Erro ao criar a tabela 'logs':", error);
 		}
 	}
-
 }
- 

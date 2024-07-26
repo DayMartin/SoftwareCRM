@@ -26,6 +26,7 @@ export interface IParcela {
     dataPagamento: string;
     status: string;
     venda_id: number;
+    tipoPagamento: string;
   }
 
   export interface IParcelaCreate {
@@ -33,7 +34,7 @@ export interface IParcela {
     valorParcela: number;
     dataPagamento: string;
     status: string;
-    venda_id: number;
+    tipoPagamento: string;
   }
   
   // Interface para um produto de uma venda
@@ -61,8 +62,10 @@ export interface IParcela {
     QTparcelas: number;
     valorTotal: number;
     valorDesconto: number;
+    valorPago: number;
     status: string;
     data_criacao: string;
+
 
   }
 
@@ -194,18 +197,18 @@ const updateById = async (id: string, dados: IVenda): Promise<void | Error> => {
   }
 };
 
-const receberById = async (id: number): Promise<void | Error> => {
+const receberById = async (id: number, valorPago: number): Promise<void | Error> => {
   try {
-    await Api.put(`parcelas/receber/${id}`); 
+    await Api.put(`parcelas/receber/${id}`, {valorPago}); 
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao receber a parcela.');
   }
 };
 
-const refazerReceberById = async (id: number): Promise<void | Error> => {
+const refazerReceberById = async (id: number, valorPago: number): Promise<void | Error> => {
   try {
-    await Api.put(`parcelas/pendente/${id}`); 
+    await Api.put(`parcelas/pendente/${id}`, {valorPago}); 
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao definir parcela como pendente.');

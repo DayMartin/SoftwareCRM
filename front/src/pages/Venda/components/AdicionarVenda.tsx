@@ -27,6 +27,8 @@ import {
   EstoqueService,
   IDetalheEstoque,
 } from "../../../shared/services/api/Estoque/EstoqueService";
+import { VendasService, IParcelaCreate } from "../../../shared/services/api/Vendas/VendasService";
+
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -257,6 +259,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
         >
           <Tab label="Dados Gerais" />
           <Tab label="Produtos" />
+          <Tab label="Pagamento" />
         </Tabs>
         <Box component="form" mt={2}>
           {abaSelecionada === 0 && (
@@ -335,6 +338,84 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                   <TextField
                     type="number"
                     label="Quantidade"
+                    value={quantidade}
+                    onChange={(e) => setQuantidade(Number(e.target.value))}
+                    fullWidth
+                    margin="normal"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddProduto}
+                    fullWidth
+                  >
+                    <AddIcon />
+                  </Button>
+                </Grid>
+              </Grid>
+              <TableContainer
+                component={Paper}
+                sx={{ mt: 2, maxHeight: "150px", overflowY: "auto" }}
+              >
+                <Table>
+                  <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
+                    <TableRow>
+                      <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
+                        Produto
+                      </TableCell>
+                      <TableCell sx={{ p: 0.1 }}>Quantidade</TableCell>
+                      <TableCell sx={{ p: 0.1 }}>Valor Unitário</TableCell>
+                      <TableCell sx={{ p: 0.1 }}>Valor Total</TableCell>
+                      <TableCell sx={{ p: 0.1 }}>Ação</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody sx={{ backgroundColor: "#fafafa" }}>
+                    {formData.produtos.map((produto, index) => {
+                      const detalheProduto = produtos.find(
+                        (p) => p.id === produto.id
+                      );
+                      const valorTotal =
+                        (detalheProduto?.valorUnitario || 0) *
+                        produto.quantidade;
+                      return (
+                        <TableRow key={index}>
+                          <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
+                            {detalheProduto?.nome}
+                          </TableCell>
+                          <TableCell sx={{ p: 0.1 }}>
+                            {produto.quantidade}
+                          </TableCell>
+                          <TableCell sx={{ p: 0.1 }}>
+                            R$ {detalheProduto?.valorUnitario.toFixed(2)}
+                          </TableCell>
+                          <TableCell sx={{ p: 0.1 }}>
+                            R$ {valorTotal.toFixed(2)}
+                          </TableCell>
+                          <TableCell sx={{ p: 0.1 }}>
+                            <IconButton
+                              color="error"
+                              onClick={() => handleRemoveProduto(produto.id)}
+                            >
+                              <RemoveIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+          )}
+          {abaSelecionada === 2 && (
+            <Box>
+              <Grid container spacing={2} sx={{ alignItems: "center" }}>
+                <Grid item xs={12} sm={5}>
+                  <TextField
+                    type="number"
+                    label="Quantidade de parcelas"
                     value={quantidade}
                     onChange={(e) => setQuantidade(Number(e.target.value))}
                     fullWidth

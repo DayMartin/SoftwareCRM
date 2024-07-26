@@ -10,12 +10,12 @@ POST http://localhost:3048/api/user/create
 Content-Type: application/json
 
 {
-  "tipo": "cliente",
+  "tipo": "fornecedor",
   "cpfcnpj": "12345678900",
   "nome": "Doria",
   "telefone": "(99) 991745323",
   "endereco": "Rua dr jose maria whitaker",
-  "email": "cliente3@gmail.com",
+  "email": "fornecedor3@gmail.com",
   "senha": "giovana0407",
   "status":"ativo"
 }

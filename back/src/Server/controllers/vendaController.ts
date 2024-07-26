@@ -30,20 +30,20 @@ const vendaController = {
 
 	// Função para criar uma nova venda
 	createVenda: async (req:Request, res:Response) => {
-		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, status, parcelas, produtos } = req.body;
-		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, status) VALUES (?, ?, ?, ?, ?, ?)";
-		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?)";
+		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, status, parcelas, produtos } = req.body;
+		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
 
 		try {
 			// Inserir na tabela 'os'
-			const osResult = await queryDatabase(insertVendaQuery, [cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, status]);
+			const osResult = await queryDatabase(insertVendaQuery, [cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, status]);
 
 			// Recuperar o ID da OS recém-criada
 			const venda_id = osResult.insertId;
 
 			// Inserir na tabela 'financeiro' para cada parcela
 			for (const parcela of parcelas) {
-				await queryDatabase(insertFinanceiroQuery, [venda_id, parcela.parcela, parcela.valorParcela, parcela.dataPagamento, parcela.status]);
+				await queryDatabase(insertFinanceiroQuery, [venda_id, parcela.tipoPagamento, parcela.parcela, parcela.valorParcela, parcela.dataPagamento, parcela.status]);
 			}
 
 			console.log(produtos)

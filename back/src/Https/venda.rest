@@ -14,18 +14,27 @@ POST http://localhost:3048/api/venda/create
 Content-Type: application/json
 
 {
-  "cliente_id": 3,
-  "funcionario_id": 1,
-  "QTparcelas": 3,
-  "valorTotal": 48,
+  "cliente_id": 1,
+  "funcionario_id": 2,
+  "QTparcelas": 2,
+  "valorTotal": 48.00,
   "valorDesconto": 2,
+  "valorPago": 0,
   "status":"Aguardando",
   "parcelas": [
     {
+	  "tipoPagamento": "credito",
       "parcela": 1,
-      "valorParcela": 48,
+      "valorParcela": 24.00,
       "dataPagamento": "24/09/2024",
-      "status": "Pendente"
+      "status": "pendente"
+    },
+	{
+	  "tipoPagamento": "credito",
+      "parcela": 2,
+      "valorParcela": 24.00,
+      "dataPagamento": "24/10/2024",
+      "status": "pendente"
     }
   ],
   "produtos": [
@@ -52,5 +61,5 @@ DELETE http://localhost:3048/api/venda/delete
 Content-Type: application/json
 
 {
-  "id": 3
+  "id": 1
 }

@@ -107,18 +107,18 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
     }
   }
 
-  const handleReceber = async (id: number, idvenda:number) => {
+  const handleReceber = async (id: number, idvenda:number, valorPago:number) => {
     try {
-      await VendasService.receberById(id);
+      await VendasService.receberById(id, valorPago);
       await BuscarParcelas(idvenda)
     } catch (error) {
       alert('Erro ao receber');
     }
   };
 
-  const handleDesfazerReceber = async (id: number, idvenda:number) => {
+  const handleDesfazerReceber = async (id: number, idvenda:number, valorPago:number) => {
     try {
-      await VendasService.refazerReceberById(id);
+      await VendasService.refazerReceberById(id, valorPago);
       await BuscarParcelas(idvenda)
 
     } catch (error) {
@@ -167,6 +167,8 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
                       <TableCell>Número da Parcela</TableCell>
                       <TableCell>Valor da Parcela</TableCell>
                       <TableCell>Data de Vencimento</TableCell>
+                      <TableCell>Forma de Pagamento</TableCell>
+
                       <TableCell>Status</TableCell>
                     </TableRow>
                   </TableHead>
@@ -176,13 +178,14 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
                         <TableCell>{parcela.parcela}</TableCell>
                         <TableCell>{parcela.valorParcela}</TableCell>
                         <TableCell>{parcela.dataPagamento}</TableCell>
+                        <TableCell>{parcela.tipoPagamento}</TableCell>
                         <TableCell>{parcela.status}</TableCell>
                         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
                           {parcela.status === "pendente" ? (
                             <Button
                               variant="contained"
                               color="success"
-                              onClick={() => handleReceber(parcela.id, parcela.venda_id)}
+                              onClick={() => handleReceber(parcela.id, parcela.venda_id, parcela.valorParcela)}
                               sx={{ height: "24px" }}
                             >
                               <CheckCircleIcon />
@@ -192,7 +195,7 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
                             <Button
                               variant="contained"
                               color="error"
-                              onClick={() => handleDesfazerReceber(parcela.id, parcela.venda_id)}
+                              onClick={() => handleDesfazerReceber(parcela.id, parcela.venda_id, parcela.valorParcela)}
                               sx={{ height: "24px" }}
                             >
                               <DeleteIcon />

@@ -10,7 +10,7 @@ POST http://localhost:3048/api/categoria/create
 Content-Type: application/json
 
 {
-  "nome": "Materias"
+  "nome": "Mobile"
 }
 
 ### BUSCAR CATEGORIA POR ID
