@@ -6,7 +6,7 @@ const router = Router();
 router.route("/estoque/all").get((req: Request, res: Response) => estoqueController.getEstoques(req, res));
 router.route("/estoque/:id").get((req: Request, res: Response) => estoqueController.getEstoque(req, res));
 router.route("/estoque/create").post((req: Request, res: Response) => estoqueController.createEstoque(req, res));
-router.route("/estoque/AllCategoria/:categoria_id").get((req: Request, res: Response) => estoqueController.getCategoriaEstoque(req, res));
+router.route("/estoque/AllMarca/:marca_id").get((req: Request, res: Response) => estoqueController.getMarcaEstoque(req, res));
 router.route("/estoque/AllFornecedor/:fornecedor_id").get((req: Request, res: Response) => estoqueController.getFornecedorEstoque(req, res));
 router.route("/estoque/delete/:id").delete((req: Request, res: Response) => estoqueController.deleteEstoque(req, res));
 

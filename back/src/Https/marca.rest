@@ -10,17 +10,19 @@ POST http://localhost:3048/api/marca/create
 Content-Type: application/json
 
 {
-  "nome": "Motorola"
+  "nome": "Samsung", 
+  "categoria_id": 1
 }
+
+### BUSCAR Marca POR Categoria
+
+GET http://localhost:3048/api/marca/getCategoria/1
+Content-Type: application/json
 
 ### BUSCAR Marca POR ID
 
-POST http://localhost:3048/api/marca/get
+GET http://localhost:3048/api/marca/get/1
 Content-Type: application/json
-
-{
-  "id": 1
-}
 
 
 ### DELETAR MARCA POR ID

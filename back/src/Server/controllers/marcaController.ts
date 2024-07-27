@@ -5,7 +5,7 @@ import queryDatabase from '../database/queryPromise'
 
 const marcaController = {
 
-	getMarcas: async (_:Request, res:Response) => {
+	getMarcas: async (_: Request, res: Response) => {
 		const query = "SELECT * FROM marca";
 
 		try {
@@ -23,12 +23,12 @@ const marcaController = {
 	},
 
 	// Função para criar uma nova Marca
-	createMarca: async (req:Request, res:Response) => {
-		const { nome } = req.body;
-		const query = "INSERT INTO marca (nome) VALUES (?)";
+	createMarca: async (req: Request, res: Response) => {
+		const { nome, categoria_id } = req.body;
+		const query = "INSERT INTO marca (nome, categoria_id ) VALUES (?,?)";
 
 		try {
-			await queryDatabase(query, [nome]);
+			await queryDatabase(query, [nome, categoria_id]);
 			return res.status(201).json({ message: "Marca criada com sucesso" });
 		} catch (error) {
 			console.error(error);
@@ -37,8 +37,8 @@ const marcaController = {
 	},
 
 	// Função para buscar uma Marca por ID
-	getMarca: async (req:Request, res:Response) => {
-		const { id } = req.body;
+	getMarca: async (req: Request, res: Response) => {
+		const { id } = req.params;
 		const query = "SELECT * FROM marca WHERE id = ?";
 
 		try {
@@ -55,8 +55,27 @@ const marcaController = {
 		}
 	},
 
+	// Função para buscar uma Marca por categoria
+	getMarcaCategoria: async (req: Request, res: Response) => {
+		const { categoria_id } = req.params;
+		const query = "SELECT * FROM marca WHERE categoria_id = ?";
+
+		try {
+			const rows = await queryDatabase(query, [categoria_id]);
+
+			// Verificar se o Marca foi encontrada
+			if (rows === null || rows === undefined) {
+				return res.status(404).json({ error: "Marca não encontrada" });
+			}
+			return res.status(200).json(rows);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar Marca por categoria" });
+		}
+	},
+
 	// Função para deletar uma Marca
-	deleteMarca: async (req:Request, res:Response) => {
+	deleteMarca: async (req: Request, res: Response) => {
 		const { id } = req.body;
 		const queryVerificar = "SELECT * FROM marca WHERE id = ?";
 		const queryDeletar = "DELETE FROM marca WHERE id = ?";

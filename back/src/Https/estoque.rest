@@ -9,12 +9,12 @@ POST http://localhost:3048/api/estoque/create
 Content-Type: application/json
 
 {
-  "nome": "Asus",
-  "quantidade": 30,
-  "fornecedor_id": 1,
+  "nome": "Motorola G5",
+  "quantidade": 15,
+  "fornecedor_id": 3,
   "categoria_id": 1,
   "marca_id": 1,
-  "valorUnitario": 150
+  "valorUnitario": 200
 }
 
 ### BUSCAR ESTOQUE POR ID
@@ -25,7 +25,7 @@ Content-Type: application/json
 
 ### BUSCAR ESTOQUE POR ID DA CATEGORIA
 
-GET http://localhost:3048/api/estoque/AllCategoria/1
+GET http://localhost:3048/api/estoque/AllMarca/1
 Content-Type: application/json
 
 ### BUSCAR ESTOQUE POR ID DO FORNECEDOR

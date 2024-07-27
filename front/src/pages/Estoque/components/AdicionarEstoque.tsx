@@ -97,32 +97,40 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     }
   };
 
-  const ConsultarMarca = async () => {
+  const ConsultarMarca = async (id: number) => {
     try {
-      const consultar = await MarcaService.consultaCategoria();
-      if (consultar instanceof Error) {
-        console.error("Erro ao consultar marca:", consultar.message);
+      const marcas = await MarcaService.consultaMarcaCategoria(id);
+      console.log("Marcas retornadas:", marcas);
+      if (marcas instanceof Error) {
+        console.error("Erro ao consultar marcas:", marcas.message);
+        setMarcaSelecionada([]);
+      } else if (Array.isArray(marcas)) {
+        setMarcaSelecionada(marcas);
       } else {
-        setMarcaSelecionada(consultar);
+        setMarcaSelecionada([marcas]);
       }
     } catch (error) {
-      console.error("Erro ao consultar marca:", error);
+      console.error("Erro ao consultar marcas:", error);
+      setMarcaSelecionada([]);
     }
   };
 
   useEffect(() => {
     ConsultarFornecedor();
     ConsultarCategoria();
-    ConsultarMarca();
-  }, []);
+    if (formData.categoria_id) {
+      ConsultarMarca(formData.categoria_id);
+    }
+  }, [formData.categoria_id]);
 
   const handleSelectChange = (event: SelectChangeEvent<number | "">) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value as number,
+      [name]: value !== "" ? Number(value) : "",
     }));
   };
+  
 
   const resetForm = () => {
     setFormData({
@@ -202,25 +210,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth margin="normal">
-                <InputLabel id="marca-label">Marca</InputLabel>
-                <Select
-                  labelId="marca-label"
-                  name="marca_id"
-                  value={formData.marca_id}
-                  onChange={handleSelectChange}
-                  displayEmpty
-                >
-                  {marcaSelecionada.map((marca) => (
-                    <MenuItem key={marca.id} value={marca.id}>
-                      {marca.nome}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth margin="normal">
-                <InputLabel id="fornecedor-label">Categoria</InputLabel>
+                <InputLabel id="categoria-label">Categoria</InputLabel>
                 <Select
                   labelId="categoria-label"
                   name="categoria_id"
@@ -235,6 +225,29 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="marca-label">Marca</InputLabel>
+                <Select
+                  labelId="marca-label"
+                  name="marca_id"
+                  value={formData.marca_id || ""}
+                  onChange={handleSelectChange}
+                  displayEmpty
+                >
+                  {marcaSelecionada.length > 0 ? (
+                    marcaSelecionada.map((marca) => (
+                      <MenuItem key={marca.id} value={marca.id}>
+                        {marca.nome}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem disabled>Nenhuma marca disponível</MenuItem>
+                  )}
+                </Select>
+              </FormControl>
+
             </Grid>
           </Grid>
           <Button

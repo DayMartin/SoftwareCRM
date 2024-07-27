@@ -40,6 +40,7 @@ export interface IDetalheHistoric {
   venda_id: number;
   compra_id: number;
   data_criacao: string;
+  fornecedor_id: number
 
 }
 

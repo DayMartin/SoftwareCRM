@@ -56,12 +56,12 @@ const estoqueController = {
 	},
 
 	// Função para buscar um Estoque por categoria
-	getCategoriaEstoque: async (req:Request, res:Response) => {
-		const { categoria_id } = req.params;
-		const query = "SELECT * FROM estoque WHERE categoria_id = ?";
+	getMarcaEstoque: async (req:Request, res:Response) => {
+		const { marca_id } = req.params;
+		const query = "SELECT * FROM estoque WHERE marca_id = ?";
 
 		try {
-			const rows = await queryDatabase(query, [categoria_id]);
+			const rows = await queryDatabase(query, [marca_id]);
 
 			// Verificar se o Estoque foi encontrado
 			if (rows === null || rows === undefined) {

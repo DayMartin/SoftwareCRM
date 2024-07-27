@@ -236,6 +236,7 @@ export class CreateTables {
 					CREATE TABLE marca (
 						id INT AUTO_INCREMENT PRIMARY KEY,
 						nome VARCHAR(100),
+						categoria_id INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 					)
 				`);
@@ -292,10 +293,13 @@ export class CreateTables {
 						estoque_id INT,
             			venda_id INT,
 						compra_id INT,
+						fornecedor_id INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
 						FOREIGN KEY (venda_id) REFERENCES venda(id),
-						FOREIGN KEY (compra_id) REFERENCES compra(id)
+						FOREIGN KEY (compra_id) REFERENCES compra(id),
+						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id)
+
 				)
 				`);
 				console.log("Tabela 'estoqueHistoric' criada com sucesso.");
