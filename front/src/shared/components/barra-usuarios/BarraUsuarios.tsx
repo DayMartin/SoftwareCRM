@@ -43,8 +43,8 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                 padding: '2%',
                 backgroundColor: 'white',
                 display: 'flex',
-                alignItems: 'center', 
-                justifyContent: 'space-between', 
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 position: 'relative',
                 borderRadius: '8px'
             }}
@@ -71,82 +71,90 @@ export const BarraUsuarios: React.VFC<BarraUsuariosProps> = ({ onTipoChange }) =
                 }}
                 onClick={handleOpen}
             >
-                <AddIcon/>
+                <AddIcon />
             </Button>
 
             {/* Botões de ação */}
-            <Box sx={{ flexGrow: 1, 
-                display: 'flex', 
+            <Box sx={{
+                flexGrow: 1,
+                display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
 
-                 }}>
+            }}>
                 <Grid container spacing={2} justifyContent="flex-end" alignItems={'center'}>
                     <Grid item>
-                        <Card
+
+                        <Button
                             sx={{
-                                maxWidth: 150,
-                                minWidth: 150, 
-                                height: '28px',
-                                backgroundColor: "#F0F8FF",
-                                borderRadius: 2,
-                                cursor: "pointer",
+                                backgroundColor: '#0d47a1',
+                                color: 'white',
+                                borderRadius: '6%',
+                                width: 'auto',
+                                minWidth: 120,
+                                height: 28,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                fontSize: 10,
+                                fontWeight: 'bold',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                                '&:hover': {
+                                    backgroundColor: '#0b3d91',
+                                },
                             }}
-                            onClick={() => onTipoChange('cliente')} 
+                            onClick={() => onTipoChange('cliente')}
                         >
-                            <CardContent sx={{paddingBottom: 0, padding: 0}}>
-                                <Typography
-                                    sx={{ fontSize: 16, textAlign: "center", alignItems: 'center' }}
-                                    color="text.secondary"
-                                >
-                                    Cliente
-                                </Typography>
-                            </CardContent>
-                        </Card>
+                            Cliente
+                        </Button>
                     </Grid>
                     <Grid item>
-                        <Card
+                        <Button
                             sx={{
-                                maxWidth: 150,
-                                minWidth: 150,
-                                height: '28px',
-                                backgroundColor: "#F5F5DC",
-                                borderRadius: 2,
-                                cursor: "pointer",
+                                backgroundColor: '#0d47a1',
+                                color: 'white',
+                                borderRadius: '6%',
+                                width: 'auto',
+                                minWidth: 120,
+                                height: 28,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                fontSize: 10,
+                                fontWeight: 'bold',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                                '&:hover': {
+                                    backgroundColor: '#0b3d91',
+                                },
                             }}
                             onClick={() => onTipoChange('fornecedor')}
                         >
-                            <CardContent sx={{paddingBottom: 0, padding: 0}}>
-                                <Typography
-                                    sx={{ fontSize: 16, textAlign: "center", alignItems: 'center' }}
-                                    color="text.secondary"
-                                >
-                                    Fornecedor
-                                </Typography>
-                            </CardContent>
-                        </Card>
+                            Fornecedor
+                        </Button>
                     </Grid>
                     <Grid item>
-                        <Card
+                        <Button
                             sx={{
-                                maxWidth: 150,
-                                minWidth: 150,
-                                height: '28px',
-                                backgroundColor: "#FFDAB9",
-                                borderRadius: 2,
-                                cursor: "pointer",
+                                backgroundColor: '#0d47a1',
+                                color: 'white',
+                                borderRadius: '6%',
+                                width: 'auto',
+                                minWidth: 120,
+                                height: 28,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                fontSize: 10,
+                                fontWeight: 'bold',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                                '&:hover': {
+                                    backgroundColor: '#0b3d91',
+                                },
                             }}
                             onClick={() => onTipoChange('funcionario')}
                         >
-                            <CardContent sx={{paddingBottom: 0, padding: 0}}>
-                                <Typography
-                                    sx={{ fontSize: 16, textAlign: "center", alignItems: 'center' }}
-                                    color="text.secondary"
-                                >
-                                    Funcionário
-                                </Typography>
-                            </CardContent>
-                        </Card>
+                            Funcionário
+                        </Button>
                     </Grid>
                 </Grid>
             </Box>
