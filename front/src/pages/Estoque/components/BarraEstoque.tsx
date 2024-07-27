@@ -8,6 +8,8 @@ import { CategoriaService } from "../../../shared/services/api/Estoque/Categoria
 import AdicionarCategoria from "./AdicionarCategoria";
 import { MarcaService } from "../../../shared/services/api/Estoque/MarcaService";
 import AdicionarMarca from "./AdicionarMarca";
+import { ListarCategorias } from "./ListarCategorias";
+import { ListarMarcas } from "./ListarMarcas";
 
 export const BarraEstoque: React.VFC = () => {
     const navigate = useNavigate();
@@ -33,17 +35,6 @@ export const BarraEstoque: React.VFC = () => {
         } catch (error) {
             console.error(error);
             alert('Erro ao criar Venda');
-        }
-    };
-
-    const handleSubmitCategoria = async (formData: any) => {
-        try {
-            await CategoriaService.createCategoria(formData);
-            alert('Categoria criada com sucesso!');
-            handleCloseCategoria();
-        } catch (error) {
-            console.error(error);
-            alert('Erro ao criar categoria');
         }
     };
 
@@ -130,7 +121,7 @@ export const BarraEstoque: React.VFC = () => {
                     }}
                     onClick={handleOpenCategoria}
                 >
-                    Nova Categoria
+                    Categoria
                 </Button>
 
                 <Button
@@ -153,19 +144,19 @@ export const BarraEstoque: React.VFC = () => {
                     }}
                     onClick={handleOpenMarca}
                 >
-                    Nova Marca
+                    Marca
                 </Button>
             </Box>
 
 
-            {/* Modal para adicionar nova venda */}
+            {/* Modal para adicionar novo produto */}
             <AdicionarEstoque open={openEstoque} onClose={handleCloseEstoque} title="Novo produto" onSubmit={handleSubmit} />
 
-            {/* Modal para adicionar nova categoria */}
-            <AdicionarCategoria open={openCategoria} onClose={handleCloseCategoria} title="Nova categoria" onSubmit={handleSubmitCategoria} />
+            {/* Modal para categoria */}
+            <ListarCategorias open={openCategoria} onClose={handleCloseCategoria} title="Nova categoria" />
 
-            {/* Modal para adicionar nova Marca */}
-            <AdicionarMarca open={openMarca} onClose={handleCloseMarca} title="Nova Marca" onSubmit={handleSubmitMarca} />
+            {/* Modal para Marca */}
+            <ListarMarcas open={openMarca} onClose={handleCloseMarca} title=" Listagem Marca" />
 
         </Box>
     );
