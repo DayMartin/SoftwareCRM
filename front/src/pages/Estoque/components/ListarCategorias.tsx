@@ -114,7 +114,7 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
 
                 <TableContainer component={Paper} sx={{ m: 1, width: 'auto' }}>
                     <Table>
-                        <TableHead>
+                        <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
                             <TableRow>
                                 <TableCell>Id</TableCell>
                                 <TableCell>Nome</TableCell>
@@ -140,16 +140,16 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                                         <TableRow key={row.id}>
                                             <TableCell>{row.id}</TableCell>
                                             <TableCell>{row.nome}</TableCell>
-                                            <TableCell>
-                                                {/* <Button
+                                            {/* <TableCell>
+                                                <Button
                                                 variant="contained"
                                                 color="secondary"
                                                 onClick={() => handleEditar(row)}
                                                 sx={{ mr: 1, height:'24px' }}
                                             >
                                                 <EditIcon />
-                                            </Button> */}
-                                            </TableCell>
+                                            </Button>
+                                            </TableCell> */}
                                         </TableRow>
                                     ))
                                 )

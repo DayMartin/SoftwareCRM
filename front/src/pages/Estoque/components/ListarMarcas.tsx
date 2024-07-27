@@ -112,7 +112,7 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
 
                 <TableContainer component={Paper} sx={{ m: 1, width: 'auto' }}>
                     <Table>
-                        <TableHead>
+                        <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
                             <TableRow>
                                 <TableCell>Id</TableCell>
                                 <TableCell>Nome</TableCell>
@@ -124,14 +124,14 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                         <TableBody>
                             {isLoading ? (
                                 <TableRow>
-                                    <TableCell colSpan={1}>
+                                    <TableCell colSpan={2}>
                                         <LinearProgress variant='indeterminate' />
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 rows.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={1}>
+                                        <TableCell colSpan={2}>
                                             {Environment.LISTAGEM_VAZIA}
                                         </TableCell>
                                     </TableRow>
@@ -142,16 +142,16 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                                             <TableCell>{row.nome}</TableCell>
                                             <TableCell>{row.categoria_id}</TableCell>
 
-                                            <TableCell>
-                                                {/* <Button
+                                            {/* <TableCell>
+                                                <Button
                                                 variant="contained"
                                                 color="secondary"
                                                 onClick={() => handleEditar(row)}
                                                 sx={{ mr: 1, height:'24px' }}
                                             >
                                                 <EditIcon />
-                                            </Button> */}
-                                            </TableCell>
+                                            </Button>
+                                            </TableCell> */}
                                         </TableRow>
                                     ))
                                 )

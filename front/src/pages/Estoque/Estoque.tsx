@@ -159,7 +159,7 @@ export const Estoque: React.VFC = () => {
                 <DialogTitle>Histórico do Estoque</DialogTitle>
                 <DialogContent>
                     <Table>
-                        <TableHead>
+                        <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
                             <TableRow>
                                 <TableCell>ID</TableCell>
                                 <TableCell>Compra</TableCell>
