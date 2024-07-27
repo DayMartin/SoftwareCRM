@@ -6,6 +6,7 @@ export interface IEstoque {
   quantidade: number;
   fornecedor_id: number;
   categoria_id: number;
+  marca_id: number;
   valorUnitario: number;
 }
 
@@ -15,6 +16,7 @@ export interface IListagemEstoque {
   quantidade: number;
   fornecedor_id: number;
   categoria_id: number;
+  marca_id: number;
 
 }
 
@@ -24,6 +26,7 @@ export interface IDetalheEstoque {
   quantidade: number;
   fornecedor_id: number;
   categoria_id: number;
+  marca_id: number;
   data_criacao: string;
   valorUnitario: number;
 
@@ -155,32 +158,6 @@ const create = async (dados: IEstoque): Promise<void | Error> => {
   }
 };
 
-const createCategoria = async (dados: AddCategoria): Promise<void | Error> => {
-  try {
-    await Api.post<AddCategoria>('categoria/create', dados);
-
-  } catch (error) {
-    throw error;
-  }
-};
-
-const consultaCategoria = async (page = 1, filter = ''): Promise<[ViewCategoria] | Error> => {
-  try {
-    const urlRelativa = `${Environment.URL_BASE}/categoria/all`;
-
-    const { data } = await Api.get(urlRelativa);
-
-    if (data) {
-      return data;
-    }
-
-    return new Error('Erro ao listar os registros.');
-  } catch (error) {
-    console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
-  }
-};
-
 const updateById = async (id: string, dados: IDetalheEstoque): Promise<void | Error> => {
   try {
     await Api.put(`user/edit/${id}`, dados);
@@ -218,6 +195,5 @@ export const EstoqueService = {
   getByFornecedor,
   ativarById,
   getByHistoric,
-  createCategoria,
-  consultaCategoria
+
 };

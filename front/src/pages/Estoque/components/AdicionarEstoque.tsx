@@ -14,9 +14,13 @@ import {
 } from "@mui/material";
 import { IListagemCliente, UsersService } from "../../../shared/services";
 import {
-  EstoqueService,
+  CategoriaService,
   ViewCategoria,
-} from "../../../shared/services/api/Estoque/EstoqueService";
+} from "../../../shared/services/api/Estoque/CategoriaService";
+import {
+  MarcaService,
+  ViewMarca,
+} from "../../../shared/services/api/Estoque/MarcaService";
 
 interface AdicionarEstoqueProps {
   open: boolean;
@@ -36,6 +40,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     quantidade: 0,
     fornecedor_id: 0,
     categoria_id: 0,
+    marca_id: 0,
     valorUnitario: 0,
   });
   const [fornecedorSelecionado, setFornecedorSelecionado] = useState<
@@ -44,6 +49,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<
     ViewCategoria[]
   >([]);
+  const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -80,7 +86,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
 
   const ConsultarCategoria = async () => {
     try {
-      const consultar = await EstoqueService.consultaCategoria();
+      const consultar = await CategoriaService.consultaCategoria();
       if (consultar instanceof Error) {
         console.error("Erro ao consultar categorias:", consultar.message);
       } else {
@@ -91,9 +97,23 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     }
   };
 
+  const ConsultarMarca = async () => {
+    try {
+      const consultar = await MarcaService.consultaCategoria();
+      if (consultar instanceof Error) {
+        console.error("Erro ao consultar marca:", consultar.message);
+      } else {
+        setMarcaSelecionada(consultar);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar marca:", error);
+    }
+  };
+
   useEffect(() => {
     ConsultarFornecedor();
     ConsultarCategoria();
+    ConsultarMarca();
   }, []);
 
   const handleSelectChange = (event: SelectChangeEvent<number | "">) => {
@@ -111,6 +131,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
       fornecedor_id: 0,
       categoria_id: 0,
       valorUnitario: 0,
+      marca_id: 0,
     });
   };
 
@@ -174,6 +195,24 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                   {fornecedorSelecionado.map((fornecedor) => (
                     <MenuItem key={fornecedor.id} value={fornecedor.id}>
                       {fornecedor.nome}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="marca-label">Marca</InputLabel>
+                <Select
+                  labelId="marca-label"
+                  name="marca_id"
+                  value={formData.marca_id}
+                  onChange={handleSelectChange}
+                  displayEmpty
+                >
+                  {marcaSelecionada.map((marca) => (
+                    <MenuItem key={marca.id} value={marca.id}>
+                      {marca.nome}
                     </MenuItem>
                   ))}
                 </Select>

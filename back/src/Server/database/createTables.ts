@@ -10,6 +10,7 @@ export class CreateTables {
 		try {
 			await this.createUsuariosTable();
 			await this.createCategoriaTable();
+			await this.createMarcaTable();
 			await this.createEstoqueTable();
 			// await this.createServicosTable();
 			await this.createVendaTable();
@@ -223,6 +224,28 @@ export class CreateTables {
 		}
 	}
 
+	async createMarcaTable() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'marca'`;
+			// Verifique se a tabela 'Marca' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'Marca' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE marca (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						nome VARCHAR(100),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+					)
+				`);
+				console.log("Tabela 'Marca' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'Marca':", error);
+		}
+	}
+
 	async createEstoqueTable() {
 		try {
 			const consulta = `SHOW TABLES LIKE 'estoque'`;
@@ -238,10 +261,12 @@ export class CreateTables {
 						quantidade INT,
 						fornecedor_id INT,
 						categoria_id INT,
+						marca_id INT,
 						valorUnitario INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id),
-						FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+						FOREIGN KEY (categoria_id) REFERENCES categoria(id),
+						FOREIGN KEY (marca_id) REFERENCES marca(id)
 					)
 				`);
 				console.log("Tabela 'estoque' criada com sucesso.");

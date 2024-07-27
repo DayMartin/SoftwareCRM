@@ -5,6 +5,7 @@ import { vendaRouter } from "./venda";
 import { parcelasRouter } from "./parcelas";
 import { estoqueRouter } from './estoque';
 import { categoriaRouter } from './categoria';
+import { marcaRouter } from './marca';
 import { historicEstoqueRouter } from './historicEstoque';
 
 const router = Router();
@@ -16,5 +17,6 @@ router.use("/", parcelasRouter);
 router.use("/", estoqueRouter);
 router.use("/", categoriaRouter);
 router.use("/", historicEstoqueRouter);
+router.use("/", marcaRouter)
 
 export { router };

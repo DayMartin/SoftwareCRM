@@ -1,0 +1,33 @@
+
+### Marca
+
+### BUSCAR TODOS AS Marca
+GET http://localhost:3048/api/marca/all
+
+### CADASTRAR NOVO OS
+
+POST http://localhost:3048/api/marca/create
+Content-Type: application/json
+
+{
+  "nome": "Motorola"
+}
+
+### BUSCAR Marca POR ID
+
+POST http://localhost:3048/api/marca/get
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+
+### DELETAR MARCA POR ID
+
+DELETE http://localhost:3048/api/marca/delete
+Content-Type: application/json
+
+{
+  "id": 1
+}

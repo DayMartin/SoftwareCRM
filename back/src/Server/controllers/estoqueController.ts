@@ -24,11 +24,11 @@ const estoqueController = {
 
 	// Função para criar um novo Estoque
 	createEstoque: async (req:Request, res:Response) => {
-		const { nome, quantidade, fornecedor_id, categoria_id, valorUnitario} = req.body;
-		const query = "INSERT INTO estoque (nome, quantidade, fornecedor_id, categoria_id, valorUnitario) VALUES (?, ?, ?, ?, ?)";
+		const { nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitario} = req.body;
+		const query = "INSERT INTO estoque (nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitario) VALUES (?, ?, ?, ?, ?, ?)";
 
 		try {
-			await queryDatabase(query, [nome, quantidade, fornecedor_id, categoria_id, valorUnitario]);
+			await queryDatabase(query, [nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitario]);
 			return res.status(201).json({ message: "Estoque criado com sucesso" });
 		} catch (error) {
 			console.error(error);
