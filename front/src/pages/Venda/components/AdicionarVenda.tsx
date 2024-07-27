@@ -26,10 +26,13 @@ import { UsersService, IListagemCliente } from "../../../shared/services";
 import {
   EstoqueService,
   IDetalheEstoque,
+  ViewCategoria,
 } from "../../../shared/services/api/Estoque/EstoqueService";
 
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
+import { MarcaService, ViewMarca } from "../../../shared/services/api/Estoque/MarcaService";
+import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
 
 interface AdicionarVendasProps {
   open: boolean;
@@ -67,8 +70,18 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
       {
         quantidade: 0,
         id: 0,
+        nome_produto: '',
+        valorUnitario: 0,
       },
     ],
+  });
+  const [formData2, setFormData2] = useState({
+    nome: "",
+    quantidade: 0,
+    fornecedor_id: 0,
+    categoria_id: 0,
+    marca_id: 0,
+    valorUnitario: 0,
   });
   const [clientes, setClientes] = useState<IListagemCliente[]>([]);
   const [funcionarios, setFuncionario] = useState<IListagemCliente[]>([]);
@@ -76,6 +89,10 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
   const [produtoSelecionado, setProdutoSelecionado] = useState<number | "">("");
   const [quantidade, setQuantidade] = useState<number>(1);
   const [abaSelecionada, setAbaSelecionada] = useState<number>(0);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<
+  ViewCategoria[]
+>([]);
+const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
 
   const ConsultarClientes = async () => {
     try {
@@ -110,16 +127,61 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     }
   };
 
-  const ConsultarEstoque = async () => {
+  // const ConsultarEstoque = async () => {
+  //   try {
+  //     const consultarEstoque = await EstoqueService.getAll();
+  //     if (consultarEstoque instanceof Error) {
+  //       console.error("Erro ao consultar estoque:", consultarEstoque.message);
+  //     } else {
+  //       setProdutos(consultarEstoque.filter((item) => item.quantidade > 0));
+  //     }
+  //   } catch (error) {
+  //     console.error("Erro ao consultar estoque:", error);
+  //   }
+  // };
+
+  const ConsultarCategoria = async () => {
     try {
-      const consultarEstoque = await EstoqueService.getAll();
-      if (consultarEstoque instanceof Error) {
-        console.error("Erro ao consultar estoque:", consultarEstoque.message);
+      const consultar = await CategoriaService.consultaCategoria();
+      if (consultar instanceof Error) {
+        console.error("Erro ao consultar categorias:", consultar.message);
       } else {
-        setProdutos(consultarEstoque.filter((item) => item.quantidade > 0));
+        setCategoriaSelecionada(consultar);
       }
     } catch (error) {
-      console.error("Erro ao consultar estoque:", error);
+      console.error("Erro ao consultar categorias:", error);
+    }
+  };
+
+  const ConsultarMarca = async (id: number) => {
+    try {
+      const marcas = await MarcaService.consultaMarcaCategoria(id);
+      if (marcas instanceof Error) {
+        console.error("Erro ao consultar marcas:", marcas.message);
+        setMarcaSelecionada([]);
+      } else if (Array.isArray(marcas)) {
+        setMarcaSelecionada(marcas);
+      } else {
+        setMarcaSelecionada([marcas]);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar marcas:", error);
+      setMarcaSelecionada([]);
+    }
+  };
+
+  const ConsultarProduto = async (id: number) => {
+    try {
+      const produtos = await EstoqueService.getBymarca(id);
+      if (produtos instanceof Error) {
+        console.error("Erro ao consultar produtos:", produtos.message);
+        setProdutos([]);
+      } else {
+        setProdutos(produtos.filter((item) => item.quantidade > 0));
+      }
+    } catch (error) {
+      console.error("Erro ao consultar produtos:", error);
+      setProdutos([]);
     }
   };
 
@@ -145,26 +207,46 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
   useEffect(() => {
     ConsultarClientes();
     ConsultarFuncionarios();
-    ConsultarEstoque();
     const valorTotalDesconto = formData.valorTotal - formData.valorDesconto;
     setFormData((prevData) => ({
       ...prevData,
       valorTotalDesconto,
     }));
+
+    ConsultarCategoria();
+    if (formData2.categoria_id) {
+      ConsultarMarca(formData2.categoria_id);
+    }
+    if (formData2.marca_id) {
+      ConsultarProduto(formData2.marca_id);
+    }
     calcularParcelas();
-  }, [formData.QTparcelas, formData.valorTotal, formData.valorDesconto, formData.valorTotalDesconto]);
+  }, [formData.QTparcelas, formData.valorTotal, formData.valorDesconto, formData.valorTotalDesconto, formData2.categoria_id, formData2.marca_id]);
   
   const handleSelectChange = (event: SelectChangeEvent<number | "">) => {
     const { name, value } = event.target;
+
     if (name === "produto_id") {
       setProdutoSelecionado(value as number | "");
+    } else if (name === "categoria_id" || name === "marca_id") {
+      setFormData2((prevData) => ({
+        ...prevData,
+        [name]: value !== "" ? Number(value) : 0,
+      }));
+
+      // Se categoria ou marca mudar, pode ser necessário redefinir produtos
+      if (name === "categoria_id") {
+        setMarcaSelecionada([]);
+        setProdutos([]);
+      }
     } else {
       setFormData((prevData) => ({
         ...prevData,
-        [name]: value as number,
+        [name]: value !== "" ? Number(value) : 0,
       }));
     }
   };
+  
 
   const handleAddProduto = () => {
     const produto = produtos.find((p) => p.id === produtoSelecionado);
@@ -184,12 +266,14 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
       } else {
         setFormData((prevData) => ({
           ...prevData,
-          produtos: [...prevData.produtos, { id: produto.id, quantidade }],
+          produtos: [...prevData.produtos, { id: produto.id, quantidade, nome_produto: produto.nome, valorUnitario: produto.valorUnitario  }],
         }));
       }
       atualizarValorTotal(produto.valorUnitario * quantidade);
-      setQuantidade(1); // Resetar quantidade
-      setProdutoSelecionado(0); // Resetar produto selecionado
+      setQuantidade(1); 
+      setProdutoSelecionado(""); 
+      setMarcaSelecionada([]);
+      setCategoriaSelecionada([]);
     }
   };
 
@@ -265,7 +349,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
           borderRadius: 2,
           boxShadow: 24,
           width: "100%",
-          maxWidth: "50%",
+          maxWidth: "70%",
         }}
       >
         <Typography variant="h6" component="h2" gutterBottom>
@@ -324,7 +408,48 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
           {abaSelecionada === 1 && (
             <Box>
               <Grid container spacing={2} sx={{ alignItems: "center" }}>
-                <Grid item xs={12} sm={5}>
+              <Grid item xs={12} sm={3}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="categoria-label">Categoria</InputLabel>
+                <Select
+                  labelId="categoria-label"
+                  name="categoria_id"
+                  value={formData2.categoria_id}
+                  onChange={handleSelectChange}
+                  displayEmpty
+                >
+                  {categoriaSelecionada.map((categoria) => (
+                    <MenuItem key={categoria.id} value={categoria.id}>
+                      {categoria.nome}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="marca-label">Marca</InputLabel>
+                <Select
+                  labelId="marca-label"
+                  name="marca_id"
+                  value={formData2.marca_id || ""}
+                  onChange={handleSelectChange}
+                  displayEmpty
+                >
+                  {marcaSelecionada.length > 0 ? (
+                    marcaSelecionada.map((marca) => (
+                      <MenuItem key={marca.id} value={marca.id}>
+                        {marca.nome}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem disabled>Nenhuma marca disponível</MenuItem>
+                  )}
+                </Select>
+              </FormControl>
+
+            </Grid>
+                <Grid item xs={12} sm={3.5}>
                   <FormControl fullWidth margin="normal">
                     <InputLabel id="produto-label">Produto</InputLabel>
                     <Select
@@ -342,10 +467,10 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={5}>
+                <Grid item xs={12} sm={1.6}>
                   <TextField
                     type="number"
-                    label="Quantidade"
+                    label="Qt"
                     value={quantidade}
                     onChange={(e) => setQuantidade(Number(e.target.value))}
                     fullWidth
@@ -353,7 +478,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={0.5}>
                   <Button
                     variant="contained"
                     color="primary"
@@ -386,18 +511,18 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                         (p) => p.id === produto.id
                       );
                       const valorTotal =
-                        (detalheProduto?.valorUnitario || 0) *
+                        (produto.valorUnitario || 0) *
                         produto.quantidade;
                       return (
                         <TableRow key={index}>
                           <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
-                            {detalheProduto?.nome}
+                            {produto.nome_produto}
                           </TableCell>
                           <TableCell sx={{ p: 0.1 }}>
                             {produto.quantidade}
                           </TableCell>
                           <TableCell sx={{ p: 0.1 }}>
-                            R$ {detalheProduto?.valorUnitario.toFixed(2)}
+                            R$ {produto.valorUnitario.toFixed(2)}
                           </TableCell>
                           <TableCell sx={{ p: 0.1 }}>
                             R$ {valorTotal.toFixed(2)}

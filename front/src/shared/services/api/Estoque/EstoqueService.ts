@@ -120,9 +120,9 @@ const getByFornecedor = async (id: number): Promise<IDetalheEstoque[] | Error> =
   }
 };
 
-const getBycategoria = async (id: number): Promise<IDetalheEstoque[] | Error> => {
+const getBymarca = async (id: number): Promise<IDetalheEstoque[] | Error> => {
   try {
-    const { data } = await Api.get(`/estoque/AllCategoria/${id}`); 
+    const { data } = await Api.get(`/estoque/AllMarca/${id}`); 
 
     if (data) {
       return data;
@@ -192,7 +192,7 @@ export const EstoqueService = {
   getByID,
   updateById,
   deleteById,
-  getBycategoria,
+  getBymarca,
   getByFornecedor,
   ativarById,
   getByHistoric,
