@@ -6,6 +6,7 @@ import { Environment } from "../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
+import { BarraEstoque } from "./components/BarraEstoque";
 
 export const Estoque: React.VFC = () => {
     const [rows, setRows] = useState<IDetalheEstoque[]>([]);
@@ -80,6 +81,7 @@ export const Estoque: React.VFC = () => {
     return (
         <Box>
             <BarraInicial titulo={titulo} />
+            <BarraEstoque/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>

@@ -29,5 +29,5 @@ DELETE http://localhost:3048/api/categoria/delete
 Content-Type: application/json
 
 {
-  "id": 1
+  "id": 8
 }
