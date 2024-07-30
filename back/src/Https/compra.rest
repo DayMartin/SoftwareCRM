@@ -1,0 +1,67 @@
+################ COMPRA
+
+### BUSCAR TODOS AS COMPRA
+
+GET http://localhost:3048/api/compra/all
+
+### BUSCAR TOTAL DE CONSULTA POR MES
+
+GET http://localhost:3048/api/compra/totalmes
+
+### CADASTRAR NOVA COMPRA
+
+POST http://localhost:3048/api/compra/create
+Content-Type: application/json
+
+{
+
+  "funcionario_id": 2,
+  "fornecedor_id": 1,
+  "QTparcelas": 2,
+  "valorTotal": 48.00,
+  "valorDesconto": 2,
+  "valorTotalDesconto": 2,
+  "valorPago": 0,
+  "status":"Aguardando",
+  "parcelas": [
+    {
+	  "tipoPagamento": "credito",
+      "parcela": 1,
+      "valorParcela": 24.00,
+      "dataPagamento": "24/09/2024",
+      "status": "pendente"
+    },
+	{
+	  "tipoPagamento": "credito",
+      "parcela": 2,
+      "valorParcela": 24.00,
+      "dataPagamento": "24/10/2024",
+      "status": "pendente"
+    }
+  ],
+  "produtos": [
+    {
+      "quantidade": 1,
+      "id": 1
+    }
+  ]
+}
+
+
+### BUSCAR UMA COMPRA POR ID
+
+POST http://localhost:3048/api/os/get
+Content-Type: application/json
+
+{
+  "id": 7
+}
+
+### DELETAR UMA COMPRA POR ID
+
+DELETE http://localhost:3048/api/compra/delete
+Content-Type: application/json
+
+{
+  "id": 1
+}
