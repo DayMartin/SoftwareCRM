@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import queryDatabase from '../database/queryPromise'
 import { historicEstoqueService } from '../services/historicEstoqueService'
-
-// Função para buscar todos os usuários
+import { parcelasService } from '../services/parcelasService';
 
 interface MonthlyCount {
     month: string;
@@ -33,7 +32,8 @@ const vendaController = {
 		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto,  status, parcelas, produtos } = req.body;
 		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
-
+		const insertProdutoMovimento = "INSERT INTO produto_movimento (tipo, quantidade, estoque_id, venda_id) VALUES (?, ?, ?, ?)";
+		
 		try {
 			// Inserir na tabela 'os'
 			const osResult = await queryDatabase(insertVendaQuery, [cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status]);
@@ -52,6 +52,9 @@ const vendaController = {
 			for ( const produto of produtos ) { 
 				const saveHistoric = await historicEstoqueService.createHistoricEstoque("Saída", produto.quantidade, produto.id, venda_id)
 				console.log('produtohistoric', saveHistoric)
+				const tipo = "Saída"
+				await queryDatabase(insertProdutoMovimento, [tipo, produto.quantidade, produto.id, venda_id]);
+
 			}
 
 			return res.status(201).json({ message: `Venda criada com sucesso` });
@@ -61,7 +64,7 @@ const vendaController = {
 		}
 	},
 
-	// Função para buscar um usuário
+	// Função para buscar uma compra
 	getVenda: async (req:Request, res:Response) => {
 		const { id } = req.body;
 		const query = "SELECT * FROM venda WHERE id = ?";
@@ -82,11 +85,11 @@ const vendaController = {
 		}
 	},
 
-	// Função para deletar uma OS
+	// Função para deletar uma Compra
 	deleteVenda: async (req:Request, res:Response) => {
 		const { id } = req.body;
 		const queryVerificar = "SELECT * FROM venda WHERE id = ?";
-		const queryDeletar = "DELETE FROM venda WHERE id = ?";
+		const queryDeletar = "UPDATE venda SET status= ? WHERE id = ?";
 
 		try {
 			// Verificar se a Venda existe
@@ -94,10 +97,20 @@ const vendaController = {
 			if (rows === null || rows === undefined) {
 				return res.status(404).json({ error: "Venda não encontrada" });
 			}
+			const tipo = 'Venda'
+			const queryHistoric = await historicEstoqueService.deleteHistoricEstoque(tipo, id)
 
-			// Se a Venda existe, então deletá-la
-			await queryDatabase(queryDeletar, [id]);
-			return res.status(200).json({ message: "Venda deletada com sucesso" });
+			console.log('Chamando o serviço historic delete', queryHistoric)
+
+			const queryParcelas = await parcelasService.deleteParcelas(id, tipo)
+			console.log('Chamando o serviço queryParcelas delete', queryParcelas)
+
+			// Se a Venda existe, então cancela-la
+			const status = 'cancelado';
+			await queryDatabase(queryDeletar, [status, id]);
+
+			//NECESSARIO EXCLUIR CONTAS A PAGAR
+			return res.status(200).json({ message: "Venda cancelada com sucesso" });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao deletar a Venda" });

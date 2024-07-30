@@ -180,6 +180,21 @@ const getByHistoric = async (id: number): Promise<IVenda[] | Error> => {
   }
 };
 
+const getByProdutoMovimento = async (id: number): Promise<IDetalheHistoric[] | Error> => {
+  try {
+    const { data } = await Api.get(`/produto_movimento/venda/${id}`); 
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao consultar o registro.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
+  }
+};
+
 const create = async (dados: IVenda): Promise<void | Error> => {
   try {
     await Api.post<IVenda>('venda/create', dados);
@@ -216,6 +231,16 @@ const refazerReceberById = async (id: number, valorPago: number): Promise<void |
   }
 };
 
+const deleteVenda = async (id: number): Promise<void | Error> => {
+  try {
+    await Api.put(`venda/delete`, { id }); 
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao cancelar venda.');
+  }
+};
+
+
 export const VendasService = {
   getAll,
   create,
@@ -225,5 +250,7 @@ export const VendasService = {
   getByHistoricVenda,
   getByVenda,
   refazerReceberById,
-  getByHistoric
+  getByHistoric,
+  deleteVenda,
+  getByProdutoMovimento
 };

@@ -88,7 +88,7 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
 
   const BuscarProdutos = async (id: number) => {
     try {
-      const response = await VendasService.getByHistoricVenda(id);
+      const response = await VendasService.getByProdutoMovimento(id);
       if (response instanceof Error) {
         alert(response.message);
       } else {

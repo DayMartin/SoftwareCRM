@@ -5,9 +5,14 @@ import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/
 import { Environment } from "../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import VendaDialog from "./components/VisualizarVenda";
 import { BarraVenda } from "./components/BarraVenda";
+
+import CancelIcon from '@mui/icons-material/Cancel';
+
+
 
 export const Venda: React.VFC = () => {
     const [rows, setRows] = useState<IVendaDetalhe[]>([]);
@@ -57,7 +62,14 @@ export const Venda: React.VFC = () => {
         setSelectedVenda(venda);
         setOpen(true);
     };
-    
+
+    const cancelarVenda = async (id: number) => {
+        try {
+            await VendasService.deleteVenda(id)
+        } catch (error) {
+            alert('Erro ao cancelarVenda');
+        }
+    };
 
 
     // const handleSave = async (updatedClient: IListagemCliente) => {
@@ -73,8 +85,8 @@ export const Venda: React.VFC = () => {
     return (
         <Box>
             <BarraInicial titulo={titulo} />
-            <BarraVenda/>
-            
+            <BarraVenda />
+
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
                     <TableHead>
@@ -124,18 +136,20 @@ export const Venda: React.VFC = () => {
                                                 variant="contained"
                                                 color="primary"
                                                 onClick={() => handleVisualizar(row)}
-                                                sx={{ mr: 1, height:'24px' }}
+                                                sx={{ mr: 1, height: '24px' }}
                                             >
                                                 <VisibilityIcon />
                                             </Button>
-                                            {/* <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                onClick={() => handleEditar(row)}
-                                                sx={{ mr: 1, height:'24px' }}
-                                            >
-                                                <EditIcon />
-                                            </Button> */}
+                                            {row.status !== 'cancelado' && (
+                                                <Button
+                                                    variant="contained"
+                                                    color="error"
+                                                    onClick={() => cancelarVenda(row.id)}
+                                                    sx={{ mr: 1, height: '24px' }}
+                                                >
+                                                    <CancelIcon />
+                                                </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))
