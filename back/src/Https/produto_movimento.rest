@@ -1,0 +1,5 @@
+### BUSCAR HISTORICO DE ESTOQUE POR ID DE UMA VENDA
+
+GET http://localhost:3048/api/produto_movimento/venda/2
+Content-Type: application/json
+

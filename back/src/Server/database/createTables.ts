@@ -18,6 +18,7 @@ export class CreateTables {
 			await this.createParcelasVenda();
 			await this.createParcelasCompra();
 			await this.createHistoricEstoqueTable();
+			await this.createProdutoMovimentoTable();
 			await this.createLogs();
 		} catch (error) {
 			console.error("Erro ao criar as tabelas:", error);
@@ -122,15 +123,15 @@ export class CreateTables {
 						id INT AUTO_INCREMENT PRIMARY KEY,
 						funcionario_id INT,
 						fornecedor_id INT,
-						produto_id INT,
 						QTparcelas INT,
 						valorTotal DECIMAL(10, 2),
 						valorDesconto DECIMAL(10, 2),
+						valorTotalDesconto DECIMAL(10, 2),
+						valorPago DECIMAL(10, 2),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id),
-						FOREIGN KEY (funcionario_id) REFERENCES usuarios(id),
-						FOREIGN KEY (produto_id) REFERENCES estoque(id)
+						FOREIGN KEY (funcionario_id) REFERENCES usuarios(id)
 					)
 				`);
 				console.log("Tabela 'compra' criada com sucesso.");
@@ -306,6 +307,38 @@ export class CreateTables {
 			}
 		} catch (error) {
 			console.error("Erro ao criar a tabela 'estoqueHistoric':", error);
+		}
+	}
+
+	async createProdutoMovimentoTable() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'produto_movimento'`;
+			// Verifique se a tabela 'produto_movimento' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'produto_movimento' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE produto_movimento (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						tipo VARCHAR(50),
+						quantidade INT,
+						estoque_id INT,
+            			venda_id INT,
+						compra_id INT,
+						fornecedor_id INT,
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
+						FOREIGN KEY (venda_id) REFERENCES venda(id),
+						FOREIGN KEY (compra_id) REFERENCES compra(id),
+						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id)
+
+				)
+				`);
+				console.log("Tabela 'produto_movimento' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'produto_movimento':", error);
 		}
 	}
 
