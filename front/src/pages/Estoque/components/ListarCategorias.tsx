@@ -81,7 +81,7 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                     borderRadius: 2,
                     boxShadow: 24,
                     width: "100%",
-                    maxWidth: "70%",
+                    maxWidth: "40%",
                 }}
             >
                 <Typography variant="h6" component="h2" gutterBottom>
