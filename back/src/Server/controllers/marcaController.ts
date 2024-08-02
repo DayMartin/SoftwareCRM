@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import queryDatabase from '../database/queryPromise'
+import { Marca } from '../models/marca.interface';
+import { Produto } from '../models/produto.interface';
 
 // Função para buscar todos as Marca
 
@@ -78,18 +80,25 @@ const marcaController = {
 	deleteMarca: async (req: Request, res: Response) => {
 		const { id } = req.body;
 		const queryVerificar = "SELECT * FROM marca WHERE id = ?";
+		const consultarExistencias = "SELECT * FROM estoque WHERE marca_id = ?"
 		const queryDeletar = "DELETE FROM marca WHERE id = ?";
 
 		try {
 			// Verificar se o Marca existe
-			const [rows] = await queryDatabase(queryVerificar, [id]);
+			const rows: [Marca[]] = await queryDatabase(queryVerificar, [id]);
 			if (rows === null || rows === undefined) {
 				return res.status(404).json({ error: "Marca não encontrada" });
 			}
 
-			// Se a Marca existe, então deletá-la
-			await queryDatabase(queryDeletar, [id]);
-			return res.status(200).json({ message: "Marca deletada com sucesso" });
+			const linhas: Produto[] = await queryDatabase(consultarExistencias, [id]);
+			if (!linhas || linhas.length === 0) {
+			  await queryDatabase(queryDeletar, [id]);
+			  return res.status(200).json({ message: "Marca deletada com sucesso" });
+			} else {
+			  const nomesProdutos = linhas.map(linha => linha.nome).join(", ");
+			  return res.status(200).json({ message: `Não é possível excluir pois há os seguintes Produtos atreladas a esta Marca: ${nomesProdutos}` });
+			}
+
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao deletar a Marca" });
