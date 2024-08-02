@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import queryDatabase from '../database/queryPromise'
+import { Marca } from '../models/marca.interface';
+import { Categoria } from '../models/categoria.interface';
 
 // Função para buscar todos as Categoria
 
@@ -59,18 +61,22 @@ const categoriaController = {
 	deleteCategoria: async (req:Request, res:Response) => {
 		const { id } = req.body;
 		const queryVerificar = "SELECT * FROM categoria WHERE id = ?";
+		const consultarExistencias = "SELECT * FROM marca WHERE categoria_id = ?"
 		const queryDeletar = "DELETE FROM categoria WHERE id = ?";
 
 		try {
-			// Verificar se o Categoria existe
-			const [rows] = await queryDatabase(queryVerificar, [id]);
+			const rows: [Categoria[]] = await queryDatabase(queryVerificar, [id]);
 			if (rows === null || rows === undefined) {
 				return res.status(404).json({ error: "Categoria não encontrada" });
 			}
-
-			// Se a Categoria existe, então deletá-la
-			await queryDatabase(queryDeletar, [id]);
-			return res.status(200).json({ message: "Categoria deletada com sucesso" });
+			const linhas: Marca[] = await queryDatabase(consultarExistencias, [id]);
+			if (!linhas || linhas.length === 0) {
+			  await queryDatabase(queryDeletar, [id]);
+			  return res.status(200).json({ message: "Categoria deletada com sucesso" });
+			} else {
+			  const nomesMarcas = linhas.map(linha => linha.nome).join(", ");
+			  return res.status(200).json({ message: `Não é possível excluir pois há as seguintes marcas atreladas a esta categoria: ${nomesMarcas}` });
+			}
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao deletar a Categoria" });
