@@ -15,7 +15,7 @@ Content-Type: application/json
 
 {
   "cliente_id": 1,
-  "funcionario_id": 2,
+  "funcionario_id": 1,
   "QTparcelas": 2,
   "valorTotal": 48.00,
   "valorDesconto": 2,
@@ -40,7 +40,7 @@ Content-Type: application/json
   "produtos": [
     {
       "quantidade": 1,
-      "id": 1
+      "id": 2
     }
   ]
 }
