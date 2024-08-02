@@ -36,6 +36,6 @@ Content-Type: application/json
 
 ### DELETAR ESTOQUE POR ID
 
-DELETE http://localhost:3048/api/estoque/delete/1
+DELETE http://localhost:3048/api/estoque/delete/2
 Content-Type: application/json
 

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import queryDatabase from '../database/queryPromise'
+import { HistoricProduto } from '../models/historicProduto.interface';
 
 // Função para buscar todos os estoque
 
@@ -97,6 +98,10 @@ const estoqueController = {
 	deleteEstoque: async (req:Request, res:Response) => {
 		const { id } = req.params;
 		const queryVerificar = "SELECT * FROM estoque WHERE id = ?";
+		const consultarExistencias = "SELECT * FROM estoqueHistoric WHERE estoque_id = ?  "
+		const consultarExistenciasVenda = "SELECT * FROM estoqueHistoric WHERE estoque_id = ? AND venda_id = ? "
+		const consultarExistenciasCompra = "SELECT * FROM estoqueHistoric WHERE estoque_id = ? AND compra_id = ?"
+
 		const queryDeletar = "DELETE FROM estoque WHERE id = ?";
 
 		try {
@@ -106,9 +111,30 @@ const estoqueController = {
 				return res.status(404).json({ error: "Estoque não encontrado" });
 			}
 
-			// Se o Estoque existe, então deletá-lo
-			await queryDatabase(queryDeletar, [id]);
-			return res.status(200).json({ message: "Estoque deletado com sucesso" });
+			const produtos: HistoricProduto[] = await queryDatabase(consultarExistencias, [id]);
+			if (!produtos || produtos.length === 0) {
+			  await queryDatabase(queryDeletar, [id]);
+			  return res.status(200).json({ message: "Produto deletada com sucesso" });
+			} else {
+			  const vendaProdutos = produtos.map(produto => produto.venda_id).join(", ");
+			  const compraProdutos = produtos.map(produto => produto.compra_id).join(", ");
+
+			  const vendas: HistoricProduto[] = await queryDatabase(consultarExistenciasVenda, [id, vendaProdutos]);
+			  const compras: HistoricProduto[] = await queryDatabase(consultarExistenciasCompra, [id, compraProdutos]);
+
+			  const idVenda = vendas.map(venda => venda.venda_id).join(", ");
+			  const idCompra = compras.map(compra => compra.compra_id).join(", ");
+
+
+			  console.log('vendas', vendas)
+			  console.log('vendasMAP', idVenda)
+
+			  console.log('compras', compras)
+			  console.log('comprasMAP', idCompra)
+
+			  return res.status(200).json({ message: `Não é possível excluir pois há compras ou vendas atrelados a ele: ID Vendas: ${idVenda}, ID Compras: ${idCompra}` });
+			}
+
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao deletar o Estoque" });
