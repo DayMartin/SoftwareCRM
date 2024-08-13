@@ -12,6 +12,7 @@ import { ListagemUsers } from '../pages/Users/components/ListagemUsers';
 import { Cliente } from '../pages/Users/components/Cliente';
 import { Venda } from '../pages/Venda/Venda';
 import { Compra } from '../pages/Compra/Compra';
+import { AReceber } from '../pages/Venda/components/Receber/Receber';
 
 export const AppRoutes = () => {
   const { setDrawerOptions } = useDrawerContext();
@@ -74,6 +75,13 @@ export const AppRoutes = () => {
         path="/compra"
         element={
             <Compra />
+        }
+      />
+
+      <Route
+        path="/receber"
+        element={
+            <AReceber />
         }
       />
       {/* Rota padrão */}

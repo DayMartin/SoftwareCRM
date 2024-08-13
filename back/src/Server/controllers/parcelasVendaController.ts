@@ -25,7 +25,7 @@ const parcelasController = {
 
 	// Função para buscar uma parcela
 	getParcela: async (req: Request, res: Response) => {
-		const { id } = req.body;
+		const { id } = req.params;
 		const query = "SELECT * FROM parcelas_venda WHERE id = ?";
 
 		try {

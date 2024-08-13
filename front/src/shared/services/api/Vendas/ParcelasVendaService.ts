@@ -1,0 +1,100 @@
+import { Environment } from '../../../environment';
+import { Api } from '../axios-config';
+
+
+export interface IParcela {
+    id: number;
+    parcela: number;
+    valorParcela: number;
+    dataPagamento: string;
+    status: string;
+    venda_id: number;
+    tipoPagamento: string;
+  }
+
+  export interface IParcelaCreate {
+    parcela: number;
+    valorParcela: number;
+    dataPagamento: string;
+    status: string;
+    tipoPagamento: string;
+  }
+  
+
+export interface IApiResponse {
+  consulta: IParcela[]; 
+  pagination: {
+    totalOrdem: number;
+    pageCount: number;
+    next?: { page: number };
+    prev?: { page: number };
+  };
+  setor?: string;
+  status?: string | string[];
+  sala?: string | string[];
+  equipe?: string;
+  solicitante?: string;
+}
+
+// type TUsersComTotalCount = {
+//   data: IListagemUsers[];
+//   totalCount: number;
+// };
+
+const getAll = async (page = 1, filter = ''): Promise<IParcela | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/parcelas/all`;
+
+    const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const getByID = async (id: number): Promise<IParcela[] | Error> => {
+  try {
+    const { data } = await Api.get(`/parcelas/id/${id}`); 
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao consultar o registro.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
+  }
+};
+
+const receberById = async (id: number, idvenda: number, valorPago: number): Promise<void | Error> => {
+  try {
+    await Api.put(`parcelas/receber/${id}`, {valorPago, idvenda}); 
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao receber a parcela.');
+  }
+};
+
+const refazerReceberById = async (id: number, valorPago: number): Promise<void | Error> => {
+  try {
+    await Api.put(`parcelas/pendente/${id}`, {valorPago}); 
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao definir parcela como pendente.');
+  }
+};
+
+
+export const ParcelasService = {
+  getAll,
+  getByID,
+  receberById,
+  refazerReceberById,
+};
