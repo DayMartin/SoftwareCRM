@@ -24,11 +24,13 @@ import {
   VendasService,
   IParcela,
 } from "../../../shared/services/api/Vendas/VendasService";
+import { ParcelasService } from "../../../shared/services/api/Vendas/ParcelasVendaService";
 import { EstoqueService, IDetalheHistoric } from "../../../shared/services/api/Estoque/EstoqueService";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 
 interface VendaDialogProps {
   open: boolean;
@@ -99,7 +101,7 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
     }
   };
 
-  const buscarNomeProduto = async(id:number) => {
+  const buscarNomeProduto = async (id: number) => {
     try {
       await EstoqueService.getByID(id);
     } catch (error) {
@@ -107,18 +109,18 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
     }
   }
 
-  const handleReceber = async (id: number, idvenda:number, valorPago:number) => {
+  const handleReceber = async (id: number, idvenda: number, valorPago: number) => {
     try {
-      await VendasService.receberById(id, idvenda, valorPago);
+      await ParcelasService.receberById(id, idvenda, valorPago);
       await BuscarParcelas(idvenda)
     } catch (error) {
       alert('Erro ao receber');
     }
   };
 
-  const handleDesfazerReceber = async (id: number, idvenda:number, valorPago:number) => {
+  const handleDesfazerReceber = async (id: number, idvenda: number, valorPago: number) => {
     try {
-      await VendasService.refazerReceberById(id, valorPago);
+      await ParcelasService.refazerReceberById(id, valorPago);
       await BuscarParcelas(idvenda)
 
     } catch (error) {
@@ -198,7 +200,7 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
                               onClick={() => handleDesfazerReceber(parcela.id, parcela.venda_id, parcela.valorParcela)}
                               sx={{ height: "24px" }}
                             >
-                              <DeleteIcon />
+                              <DoNotDisturbOnIcon />
                             </Button>
                           )}
                         </TableCell>

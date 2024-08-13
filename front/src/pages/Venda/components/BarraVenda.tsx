@@ -50,10 +50,12 @@ export const BarraVenda: React.VFC = () => {
                     transform: 'translateY(-50%)',
                     backgroundColor: '#0d47a1',
                     color: 'white',
-                    borderRadius: '100%',
-                    width: 28,
-                    minWidth: 28,
+                    borderRadius: '6%',
+                    width: '10%',
+                    minWidth: '10%',
                     height: 28,
+                    fontSize: 10,
+                    fontWeight: 'bold',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -64,8 +66,38 @@ export const BarraVenda: React.VFC = () => {
                 }}
                 onClick={handleOpen}
             >
-                <AddIcon/>
+                Nova venda
             </Button>
+            <Box
+                sx={{
+                    display: 'flex', 
+                    alignItems: 'center',
+                    ml: 'auto',
+                }}
+            >
+                <Button
+                    sx={{
+                        backgroundColor: '#0d47a1',
+                        color: 'white',
+                        borderRadius: '6%',
+                        width: 'auto', 
+                        minWidth: 120,  
+                        height: 28,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        alignItems: 'center',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                        '&:hover': {
+                            backgroundColor: '#0b3d91',
+                        },
+                    }}
+                    onClick={() => navigate('/receber')}                >
+                    A Receber
+                </Button>
+            </Box>
+
 
             {/* Modal para adicionar nova venda */}
             <AdicionarVendas open={open} onClose={handleClose} title="Nova venda" onSubmit={handleSubmit} />

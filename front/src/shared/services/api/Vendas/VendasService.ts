@@ -213,24 +213,6 @@ const updateById = async (id: string, dados: IVenda): Promise<void | Error> => {
   }
 };
 
-const receberById = async (id: number, idvenda: number, valorPago: number): Promise<void | Error> => {
-  try {
-    await Api.put(`parcelas/receber/${id}`, {valorPago, idvenda}); 
-  } catch (error) {
-    console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao receber a parcela.');
-  }
-};
-
-const refazerReceberById = async (id: number, valorPago: number): Promise<void | Error> => {
-  try {
-    await Api.put(`parcelas/pendente/${id}`, {valorPago}); 
-  } catch (error) {
-    console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao definir parcela como pendente.');
-  }
-};
-
 const deleteVenda = async (id: number): Promise<void | Error> => {
   try {
     await Api.put(`venda/delete`, { id }); 
@@ -246,10 +228,8 @@ export const VendasService = {
   create,
   getByID,
   updateById,
-  receberById,
   getByHistoricVenda,
   getByVenda,
-  refazerReceberById,
   getByHistoric,
   deleteVenda,
   getByProdutoMovimento
