@@ -95,9 +95,9 @@ export const BarraEstoque: React.VFC = () => {
 
             <Box
                 sx={{
-                    display: 'flex', // Adiciona flex para alinhar os botões horizontalmente
+                    display: 'flex', 
                     alignItems: 'center',
-                    ml: 'auto',  // Move o grupo de botões para o lado direito
+                    ml: 'auto',  
                 }}
             >
                 <Button
@@ -105,8 +105,8 @@ export const BarraEstoque: React.VFC = () => {
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto',  // Ajusta a largura do botão conforme o conteúdo
-                        minWidth: 120,  // Ajusta a largura mínima do botão
+                        width: 'auto',  
+                        minWidth: 120,  
                         height: 28,
                         display: 'flex',
                         justifyContent: 'center',
@@ -117,7 +117,7 @@ export const BarraEstoque: React.VFC = () => {
                         '&:hover': {
                             backgroundColor: '#0b3d91',
                         },
-                        mr: 1,  // Margem à direita para espaçamento entre os botões
+                        mr: 1, 
                     }}
                     onClick={handleOpenCategoria}
                 >
@@ -129,8 +129,8 @@ export const BarraEstoque: React.VFC = () => {
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto',  // Ajusta a largura do botão conforme o conteúdo
-                        minWidth: 120,  // Ajusta a largura mínima do botão
+                        width: 'auto',  
+                        minWidth: 120,  
                         height: 28,
                         display: 'flex',
                         justifyContent: 'center',
