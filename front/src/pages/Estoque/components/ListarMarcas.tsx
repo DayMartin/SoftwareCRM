@@ -4,7 +4,7 @@ import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableC
 import { Environment } from "../../../shared/environment";
 import { MarcaService, ViewMarca } from "../../../shared/services/api/Estoque/MarcaService";
 import AdicionarMarca from "./AdicionarMarca";
-
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface AdicionarMarcasProps {
     open: boolean;
@@ -57,6 +57,23 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
             alert('Erro ao criar Marca');
         }
     };
+
+    const handleExcluir = async (id: number) => {
+        try {
+          const result = await MarcaService.deleteMarcaById(id);
+      
+          if (result instanceof Error) {
+            console.error(result.message); 
+            alert(result.message);
+            return;
+          }
+      
+          alert("Marca excluída com sucesso!");
+      
+        } catch (error) {
+          console.error("Erro inesperado:", error);
+        }
+      };
 
     useEffect(() => {
         consultar();
@@ -152,6 +169,16 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                                                 <EditIcon />
                                             </Button>
                                             </TableCell> */}
+                                            <TableCell>
+                                                <Button
+                                                variant="contained"
+                                                color="error"
+                                                onClick={() => handleExcluir(row.id)}
+                                                sx={{ mr: 1, height:'24px' }}
+                                            >
+                                                <DeleteIcon />
+                                            </Button>
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 )

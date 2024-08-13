@@ -55,9 +55,18 @@ const consultaMarcaCategoria = async ( id: number): Promise<[ViewMarca] | Error>
   }
 };
 
+const deleteMarcaById = async (id: number): Promise<void | Error> => {
+  try {
+    await Api.delete(`marca/delete/${id}`); 
+  } catch (error: any) {
+    const errorMessage = error?.response?.data?.message || 'Erro ao apagar o registro.';
+    return new Error(errorMessage);
+  }
+};
 
 export const MarcaService = {
   createMarca,
   consultaMarca,
+  deleteMarcaById,
   consultaMarcaCategoria
 };

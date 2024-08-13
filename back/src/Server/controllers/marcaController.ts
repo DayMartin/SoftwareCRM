@@ -78,7 +78,7 @@ const marcaController = {
 
 	// Função para deletar uma Marca
 	deleteMarca: async (req: Request, res: Response) => {
-		const { id } = req.body;
+		const { id } = req.params;
 		const queryVerificar = "SELECT * FROM marca WHERE id = ?";
 		const consultarExistencias = "SELECT * FROM estoque WHERE marca_id = ?"
 		const queryDeletar = "DELETE FROM marca WHERE id = ?";
@@ -96,7 +96,7 @@ const marcaController = {
 			  return res.status(200).json({ message: "Marca deletada com sucesso" });
 			} else {
 			  const nomesProdutos = linhas.map(linha => linha.nome).join(", ");
-			  return res.status(200).json({ message: `Não é possível excluir pois há os seguintes Produtos atreladas a esta Marca: ${nomesProdutos}` });
+			  return res.status(409).json({ message: `Não é possível excluir pois há os seguintes Produtos atreladas a esta Marca: ${nomesProdutos}` });
 			}
 
 		} catch (error) {
