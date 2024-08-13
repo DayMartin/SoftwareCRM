@@ -125,14 +125,7 @@ const estoqueController = {
 			  const idVenda = vendas.map(venda => venda.venda_id).join(", ");
 			  const idCompra = compras.map(compra => compra.compra_id).join(", ");
 
-
-			  console.log('vendas', vendas)
-			  console.log('vendasMAP', idVenda)
-
-			  console.log('compras', compras)
-			  console.log('comprasMAP', idCompra)
-
-			  return res.status(200).json({ message: `Não é possível excluir pois há compras ou vendas atrelados a ele: ID Vendas: ${idVenda}, ID Compras: ${idCompra}` });
+			  return res.status(409).json({ message: `Não é possível excluir pois há compras ou vendas atrelados a ele: ID Vendas: ${idVenda}, ID Compras: ${idCompra}` });
 			}
 
 		} catch (error) {

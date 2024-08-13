@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import { BarraEstoque } from "./components/BarraEstoque";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const Estoque: React.VFC = () => {
     const [rows, setRows] = useState<IDetalheEstoque[]>([]);
@@ -78,6 +79,23 @@ export const Estoque: React.VFC = () => {
         }
     };
 
+    const handleExcluir = async (id: number) => {
+        try {
+          const result = await EstoqueService.deleteEstoqueById(id);
+      
+          if (result instanceof Error) {
+            console.error(result.message); 
+            alert(result.message);
+            return;
+          }
+      
+          alert("Estoque excluído com sucesso!");
+      
+        } catch (error) {
+          console.error("Erro inesperado:", error);
+        }
+      };
+
     return (
         <Box>
             <BarraInicial titulo={titulo} />
@@ -146,6 +164,16 @@ export const Estoque: React.VFC = () => {
                                                 <EditIcon />
                                             </Button> */}
                                         </TableCell>
+                                        <TableCell>
+                                                <Button
+                                                variant="contained"
+                                                color="error"
+                                                onClick={() => handleExcluir(row.id)}
+                                                sx={{ mr: 1, height:'24px' }}
+                                            >
+                                                <DeleteIcon />
+                                            </Button>
+                                            </TableCell>
                                     </TableRow>
                                 ))
                             )

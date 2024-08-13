@@ -168,12 +168,12 @@ const updateById = async (id: string, dados: IDetalheEstoque): Promise<void | Er
   }
 };
 
-const deleteById = async (id: string): Promise<void | Error> => {
+const deleteEstoqueById = async (id: number): Promise<void | Error> => {
   try {
-    await Api.delete(`user/delete/${id}`); 
-  } catch (error) {
-    console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao apagar o registro.');
+    await Api.delete(`estoque/delete/${id}`); 
+  } catch (error: any) {
+    const errorMessage = error?.response?.data?.message || 'Erro ao apagar o registro.';
+    return new Error(errorMessage);
   }
 };
 
@@ -191,7 +191,7 @@ export const EstoqueService = {
   create,
   getByID,
   updateById,
-  deleteById,
+  deleteEstoqueById,
   getBymarca,
   getByFornecedor,
   ativarById,
