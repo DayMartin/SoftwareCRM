@@ -25,10 +25,10 @@ code {
 }
 
 .search-input {
-  padding: 11px;
+  padding-top: 4px;
   border: none;
   border-top-left-radius: 16px;
-  width: 70%; /* Ajuste conforme necessário */
+  width: 70%; 
   background-color: rgb(237,237,237);
 }
 
@@ -36,8 +36,8 @@ code {
   background-color: rgb(237,237,237);
   border: none;
   cursor: pointer;
-  padding: 5px 1px 6px;
-  border-radius: 0 5px 5px 0;
+  border-radius: 0 5px 0px 0;
+
 }
 
 /* Estilos para o ícone de busca */

@@ -1,10 +1,9 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 import { IListagemCliente, UsersService } from "../../../shared/services/api/Users/UsersService";
 import { BarraUsuarios } from "../../../shared/components";
 import { LayoutBaseDePagina } from "../../../shared/layouts";
-import { Environment } from "../../../shared/environment";
 import ClienteDialog from "../components/VisualizarUsers";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -19,35 +18,56 @@ export const Cliente: React.VFC = () => {
     const [selectedClient, setSelectedClient] = useState<IListagemCliente | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
+    const [page, setPage] = useState(0); 
+    const [rowsPerPage, setRowsPerPage] = useState(5); // Ajustado para 5 conforme o backend
+    const [filterId, setFilterId] = useState(''); 
+    const [filterName, setFilterName] = useState('');
+    const [totalRecords, setTotalRecords] = useState(0); // Adicionado para total de registros
     const titulo = "Cadastros";
 
     const consultar = async (tipo: string) => {
         setIsLoading(true);
         try {
-            const consulta = await UsersService.getClientes(tipo);
-           
+            const consulta = await UsersService.getClientesList(page + 1, filterId, filterName, tipo); 
 
             if (consulta instanceof Error) {
                 alert(consulta.message);
                 setRows([]);
-            } else if (Array.isArray(consulta)) {
-                setRows(consulta);
-            } else if (typeof consulta === 'object') {
-                setRows([consulta]);
+                setTotalRecords(0);
             } else {
-                setRows([]);
-                alert('Dados retornados não são válidos');
+                setRows(consulta.rows);
+                setTotalRecords(consulta.total);
             }
         } catch (error) {
             alert('Erro ao consultar clientes');
             setRows([]);
+            setTotalRecords(0);
         }
         setIsLoading(false);
     };
 
     useEffect(() => {
         consultar(tipoUsuario);
-    }, [tipoUsuario]);
+    }, [tipoUsuario, page, filterId, filterName]);
+
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0); 
+    };
+
+    const handleFilterIdChange = (id: string) => {
+        setFilterId(id);
+        setPage(0); 
+    };
+
+    const handleFilterNameChange = (name: string) => {
+        setFilterName(name);
+        setPage(0); 
+    };
 
     const handleVisualizar = (client: IListagemCliente) => {
         setSelectedClient(client);
@@ -96,10 +116,12 @@ export const Cliente: React.VFC = () => {
 
     return (
         <Box>
-            <BarraInicial titulo={titulo} />
-
-            <BarraUsuarios onTipoChange={setTipoUsuario} /> 
-            
+            <BarraInicial
+                titulo={titulo}
+                onFilterIdChange={handleFilterIdChange}
+                onFilterNameChange={handleFilterNameChange}
+            />
+            <BarraUsuarios onTipoChange={setTipoUsuario} />
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
                     <TableHead>
@@ -113,84 +135,62 @@ export const Cliente: React.VFC = () => {
                             <TableCell>Ações</TableCell>
                         </TableRow>
                     </TableHead>
-
                     <TableBody>
-                        {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={7}>
-                                    <LinearProgress variant='indeterminate' />
+                        {rows.map((row) => (
+                            <TableRow key={row.id}>
+                                <TableCell>{row.id}</TableCell>
+                                <TableCell>{row.nome}</TableCell>
+                                <TableCell>{row.cpfcnpj}</TableCell>
+                                <TableCell>{row.email}</TableCell>
+                                <TableCell>{row.telefone}</TableCell>
+                                <TableCell>
+                                    {row.status === 'ativo' ? (
+                                        <CheckCircleIcon color="success" />
+                                    ) : (
+                                        'Inativo'
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    <Button onClick={() => handleVisualizar(row)}>
+                                        <VisibilityIcon />
+                                    </Button>
+                                    <Button onClick={() => handleEditar(row)}>
+                                        <EditIcon />
+                                    </Button>
+                                    {row.status === 'ativo' ? (
+                                        <Button onClick={() => handleDesativar(row.id)}>
+                                            <DeleteIcon color="error" />
+                                        </Button>
+                                    ) : (
+                                        <Button onClick={() => handleAtivar(row.id)}>
+                                            <CheckCircleIcon color="success" />
+                                        </Button>
+                                    )}
                                 </TableCell>
                             </TableRow>
-                        ) : (
-                            rows.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={7}>
-                                        {Environment.LISTAGEM_VAZIA}
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                rows.map(row => (
-                                    <TableRow key={row.id}>
-                                        <TableCell>{row.id}</TableCell>
-                                        <TableCell>{row.nome}</TableCell>
-                                        <TableCell>{row.cpfcnpj}</TableCell>
-                                        <TableCell>{row.email}</TableCell>
-                                        <TableCell>{row.telefone}</TableCell>
-                                        <TableCell>{row.status}</TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={() => handleVisualizar(row)}
-                                                sx={{ mr: 1, height:'24px' }}
-                                            >
-                                                <VisibilityIcon />
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                onClick={() => handleEditar(row)}
-                                                sx={{ mr: 1, height:'24px' }}
-                                            >
-                                                <EditIcon />
-                                            </Button>
-                                            {row.status === 'ativo' ? (
-                                                <Button
-                                                    variant="contained"
-                                                    color="error"
-                                                    onClick={() => handleDesativar(row.id)}
-                                                    sx={{ mr: 1, height:'24px' }}
-
-                                                >
-                                                    <DeleteIcon />
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    variant="contained"
-                                                    color="success"
-                                                    onClick={() => handleAtivar(row.id)}
-                                                    sx={{ mr: 1, height:'24px' }}
-
-                                                >
-                                                    <CheckCircleIcon />
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )
-                        )}
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-
-            <ClienteDialog
-                open={open}
-                onClose={handleClose}
-                client={selectedClient}
-                onSave={handleSave}
-                isEditing={isEditing}
+            <TablePagination
+                rowsPerPageOptions={[5]}
+                component="div"
+                count={totalRecords} // Ajustado para o total de registros
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
             />
+            {selectedClient && (
+                <ClienteDialog
+                    open={open}
+                    client={selectedClient}
+                    isEditing={isEditing}
+                    onClose={handleClose}
+                    onSave={handleSave}
+                />
+            )}
+            {isLoading && <LinearProgress />}
         </Box>
     );
 };

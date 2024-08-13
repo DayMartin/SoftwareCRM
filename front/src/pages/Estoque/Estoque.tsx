@@ -98,7 +98,7 @@ export const Estoque: React.VFC = () => {
 
     return (
         <Box>
-            <BarraInicial titulo={titulo} />
+            {/* <BarraInicial titulo={titulo} /> */}
             <BarraEstoque/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>

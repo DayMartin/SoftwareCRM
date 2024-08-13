@@ -38,28 +38,13 @@ export interface IDetalheUsers {
 }
 
 export interface IApiResponse {
-  consulta: IListagemCliente[]; 
-  pagination: {
-    totalOrdem: number;
-    pageCount: number;
-    next?: { page: number };
-    prev?: { page: number };
-  };
-  setor?: string;
-  status?: string | string[];
-  sala?: string | string[];
-  equipe?: string;
-  solicitante?: string;
+  rows: IListagemCliente[]; 
+  total: number;
 }
 
-// type TUsersComTotalCount = {
-//   data: IListagemUsers[];
-//   totalCount: number;
-// };
-
-const getAll = async (page = 1, filter = ''): Promise<IDetalheUsers | Error> => {
+const getAll = async (page = 1, filterId = '', filterName = ''): Promise<IListagemCliente | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/user/all`;
+    const urlRelativa = `${Environment.URL_BASE}/user/all?page=${page}&filterId=${filterId}&filterName=${filterName}`;
 
     const { data } = await Api.get(urlRelativa);
 
@@ -73,6 +58,7 @@ const getAll = async (page = 1, filter = ''): Promise<IDetalheUsers | Error> => 
     return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
   }
 };
+
 
 const getClientes = async (tipo: string): Promise<IListagemCliente[] | Error> => {
   try {
@@ -91,6 +77,22 @@ const getClientes = async (tipo: string): Promise<IListagemCliente[] | Error> =>
   }
 };
 
+const getClientesList = async (page = 1, filterId = '', filterName = '', tipo: string): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/user/getAlltipo?page=${page}&id=${filterId}&nome=${filterName}&tipo=${tipo}`;
+
+    const { data } = await Api.get<IApiResponse>(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
 
 const getByEmail = async (email: string): Promise<IDetalheUsers | Error> => {
   try {
@@ -110,12 +112,11 @@ const getByEmail = async (email: string): Promise<IDetalheUsers | Error> => {
 const create = async (dados: IDetalheUsers): Promise<void | Error> => {
   try {
     await Api.post<IDetalheUsers>('user/create', dados);
-
   } catch (error) {
-    throw error;
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao criar o registro.');
   }
 };
-
 
 const updateById = async (id: string, dados: IListagemCliente): Promise<void | Error> => {
   try {
@@ -144,13 +145,13 @@ const ativarById = async (id: string): Promise<void | Error> => {
   }
 };
 
-
 export const UsersService = {
-  getAll,
+  getClientesList,
   create,
   updateById,
   deleteById,
   getByEmail,
+  ativarById,
   getClientes,
-  ativarById
+  getAll
 };

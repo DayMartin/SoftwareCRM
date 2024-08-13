@@ -96,7 +96,7 @@ export const Venda: React.VFC = () => {
 
     return (
         <Box>
-            <BarraInicial titulo={titulo} />
+            {/* <BarraInicial titulo={titulo} /> */}
             <BarraVenda />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
