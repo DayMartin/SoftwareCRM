@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
+import { Box, Menu, MenuItem, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
 import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
 import { Environment } from "../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
@@ -9,18 +9,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import VendaDialog from "./components/VisualizarVenda";
 import { BarraVenda } from "./components/BarraVenda";
-
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CancelIcon from '@mui/icons-material/Cancel';
-
-
-
+import EmailIcon from '@mui/icons-material/Email';
+import DehazeIcon from '@mui/icons-material/Dehaze';
 export const Venda: React.VFC = () => {
     const [rows, setRows] = useState<IVendaDetalhe[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
+
     const [selectedEstoque, setSelectedEstoque] = useState<IVenda | null>(null);
     const [selectedVenda, setSelectedVenda] = useState<IVendaDetalhe | null>(null);
-
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [currentRow, setCurrentRow] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
     const titulo = "Vendas";
@@ -62,6 +63,17 @@ export const Venda: React.VFC = () => {
         setSelectedVenda(venda);
         setOpen(true);
     };
+
+    const handleClick = (event: React.MouseEvent<HTMLElement>, row: any) => {
+        setAnchorEl(event.currentTarget);
+        setCurrentRow(row);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+        setCurrentRow(null);
+    };
+    const openMenu = Boolean(anchorEl);
 
     const cancelarVenda = async (id: number) => {
         try {
@@ -130,26 +142,35 @@ export const Venda: React.VFC = () => {
                                         <TableCell>{row.valorTotalDesconto}</TableCell>
                                         <TableCell>{row.valorPago}</TableCell>
                                         <TableCell>{row.data_criacao}</TableCell>
-
                                         <TableCell>
                                             <Button
                                                 variant="contained"
                                                 color="primary"
-                                                onClick={() => handleVisualizar(row)}
-                                                sx={{ mr: 1, height: '24px' }}
+                                                onClick={(event) => handleClick(event, row)}
+                                                sx={{ height: '24px' }}
                                             >
-                                                <VisibilityIcon />
+                                                <DehazeIcon/>
                                             </Button>
-                                            {row.status !== 'cancelado' && (
-                                                <Button
-                                                    variant="contained"
-                                                    color="error"
-                                                    onClick={() => cancelarVenda(row.id)}
-                                                    sx={{ mr: 1, height: '24px' }}
-                                                >
-                                                    <CancelIcon />
-                                                </Button>
-                                            )}
+                                            <Menu
+                                                anchorEl={anchorEl}
+                                                open={openMenu && currentRow === row}
+                                                onClose={handleCloseMenu}
+                                            >
+                                                <MenuItem onClick={() => { handleVisualizar(currentRow); handleCloseMenu(); }}>
+                                                    <VisibilityIcon sx={{ mr: 1 }} /> Visualizar
+                                                </MenuItem>
+                                                <MenuItem onClick={() => { /* Aqui você pode adicionar a lógica para enviar email */ handleCloseMenu(); }}>
+                                                    <EmailIcon sx={{ mr: 1 }} /> Enviar Email
+                                                </MenuItem>
+                                                <MenuItem onClick={() => { /* Aqui você pode adicionar a lógica para gerar PDF */ handleCloseMenu(); }}>
+                                                    <PictureAsPdfIcon sx={{ mr: 1 }} /> Gerar PDF
+                                                </MenuItem>
+                                                {currentRow?.status !== 'cancelado' && (
+                                                    <MenuItem onClick={() => { cancelarVenda(currentRow.id); handleCloseMenu(); }}>
+                                                        <CancelIcon sx={{ mr: 1 }} /> Cancelar
+                                                    </MenuItem>
+                                                )}
+                                            </Menu>
                                         </TableCell>
                                     </TableRow>
                                 ))
