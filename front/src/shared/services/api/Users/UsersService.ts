@@ -22,6 +22,7 @@ export interface IListagemCliente {
   email: string;
   status: string;
   data_criacao: string;
+  senha: string;
 }
 
 export interface IDetalheUsers {

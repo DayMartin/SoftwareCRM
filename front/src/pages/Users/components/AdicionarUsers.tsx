@@ -146,18 +146,20 @@ const AdicionarUsers: React.FC<AdicionarUsersProps> = ({ open, onClose, title, o
                                 margin="normal"
                             />
                         </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <TextField
-                                name="senha"
-                                label="Senha"
-                                type="password"
-                                value={formData.senha}
-                                onChange={handleChange}
-                                fullWidth
-                                margin="normal"
-                                disabled
-                            />
-                        </Grid>
+                        {formData.tipo === "funcionario" && (
+                            <Grid item xs={12} sm={4}>
+                                <TextField
+                                    id="senha"
+                                    label="Senha"
+                                    name="senha"
+                                    type="password"
+                                    value={formData.senha || ""}
+                                    fullWidth
+                                    margin="normal"
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                        )}
                     </Grid>
 
                     <Button

@@ -34,7 +34,7 @@ const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, on
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{isEditing ? "Editar Cliente" : "Detalhes do Cliente"}</DialogTitle>
+            <DialogTitle>{isEditing ? "Editar Usuário" : "Detalhes do Usuário"}</DialogTitle>
             <DialogContent>
                 {editClient ? (
                     <Grid container spacing={2}>
@@ -140,6 +140,21 @@ const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, on
                                 onChange={handleChange}
                             />
                         </Grid>
+                        {editClient.tipo === "funcionario" && (
+                            <Grid item xs={12} sm={4}>
+                                <TextField
+                                    id="senha"
+                                    label="Senha"
+                                    name="senha"
+                                    type="password"
+                                    value={editClient.senha || ""}
+                                    fullWidth
+                                    margin="normal"
+                                    disabled={!isEditing}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                        )}
                     </Grid>
                 ) : (
                     <Typography variant="body1">Nenhum cliente selecionado.</Typography>
