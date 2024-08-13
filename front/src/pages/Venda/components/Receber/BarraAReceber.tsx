@@ -2,6 +2,8 @@ import { Box, Button } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
+import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 
 export const BarraAReceber: React.VFC = () => {
@@ -59,8 +61,8 @@ export const BarraAReceber: React.VFC = () => {
                         color: 'white',
                         borderRadius: '6%',
                         width: 'auto', 
-                        margin: '5px', 
                         minWidth: 120,  
+                        margin: '5px',
                         height: 28,
                         display: 'flex',
                         justifyContent: 'center',
@@ -72,8 +74,8 @@ export const BarraAReceber: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/venda')}                >
-                    Pendente
+                    onClick={() => navigate('/receber')}                >
+                    <LocalPrintshopIcon/>
                 </Button>
 
                 <Button
@@ -83,8 +85,8 @@ export const BarraAReceber: React.VFC = () => {
                         borderRadius: '6%',
                         width: 'auto', 
                         minWidth: 120,  
+                        margin: '5px',
                         height: 28,
-                        margin: '5px', 
                         display: 'flex',
                         justifyContent: 'center',
                         fontSize: 10,
@@ -95,8 +97,8 @@ export const BarraAReceber: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/venda')}                >
-                    Pago
+                    onClick={() => navigate('/receber')}                >
+                    <FilterAltIcon/>
                 </Button>
             </Box>
 
