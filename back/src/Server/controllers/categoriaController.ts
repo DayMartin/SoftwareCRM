@@ -59,7 +59,7 @@ const categoriaController = {
 
 	// Função para deletar uma Categoria
 	deleteCategoria: async (req:Request, res:Response) => {
-		const { id } = req.body;
+		const { id } = req.params;
 		const queryVerificar = "SELECT * FROM categoria WHERE id = ?";
 		const consultarExistencias = "SELECT * FROM marca WHERE categoria_id = ?"
 		const queryDeletar = "DELETE FROM categoria WHERE id = ?";
@@ -75,7 +75,7 @@ const categoriaController = {
 			  return res.status(200).json({ message: "Categoria deletada com sucesso" });
 			} else {
 			  const nomesMarcas = linhas.map(linha => linha.nome).join(", ");
-			  return res.status(200).json({ message: `Não é possível excluir pois há as seguintes marcas atreladas a esta categoria: ${nomesMarcas}` });
+			  return res.status(409).json({ message: `Não é possível excluir pois há as seguintes marcas atreladas a esta categoria: ${nomesMarcas}` });
 			}
 		} catch (error) {
 			console.error(error);

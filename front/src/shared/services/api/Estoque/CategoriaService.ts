@@ -36,8 +36,18 @@ const consultaCategoria = async (page = 1, filter = ''): Promise<[ViewCategoria]
   }
 };
 
+const deleteCategoriaById = async (id: number): Promise<void | Error> => {
+  try {
+    await Api.delete(`categoria/delete/${id}`); 
+  } catch (error: any) {
+    const errorMessage = error?.response?.data?.message || 'Erro ao apagar o registro.';
+    return new Error(errorMessage);
+  }
+};
+
 
 export const CategoriaService = {
   createCategoria,
-  consultaCategoria
+  consultaCategoria,
+  deleteCategoriaById
 };

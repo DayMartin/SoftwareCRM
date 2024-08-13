@@ -4,6 +4,7 @@ import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableC
 import { Environment } from "../../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { CategoriaService, ViewCategoria } from "../../../shared/services/api/Estoque/CategoriaService";
 import AdicionarCategoria from "./AdicionarCategoria";
 
@@ -60,6 +61,23 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
         }
     };
 
+    const handleExcluir = async (id: number) => {
+        try {
+          const result = await CategoriaService.deleteCategoriaById(id);
+      
+          if (result instanceof Error) {
+            console.error(result.message); 
+            alert(result.message);
+            return;
+          }
+      
+          alert("Categoria excluída com sucesso!");
+      
+        } catch (error) {
+          console.error("Erro inesperado:", error);
+        }
+      };
+      
     useEffect(() => {
         consultar();
     }, []);
@@ -150,6 +168,16 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                                                 <EditIcon />
                                             </Button>
                                             </TableCell> */}
+                                            <TableCell>
+                                                <Button
+                                                variant="contained"
+                                                color="error"
+                                                onClick={() => handleExcluir(row.id)}
+                                                sx={{ mr: 1, height:'24px' }}
+                                            >
+                                                <DeleteIcon />
+                                            </Button>
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 )
