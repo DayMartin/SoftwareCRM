@@ -213,9 +213,9 @@ const updateById = async (id: string, dados: IVenda): Promise<void | Error> => {
   }
 };
 
-const receberById = async (id: number, valorPago: number): Promise<void | Error> => {
+const receberById = async (id: number, idvenda: number, valorPago: number): Promise<void | Error> => {
   try {
-    await Api.put(`parcelas/receber/${id}`, {valorPago}); 
+    await Api.put(`parcelas/receber/${id}`, {valorPago, idvenda}); 
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao receber a parcela.');

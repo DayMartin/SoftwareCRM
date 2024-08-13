@@ -109,7 +109,7 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
 
   const handleReceber = async (id: number, idvenda:number, valorPago:number) => {
     try {
-      await VendasService.receberById(id, valorPago);
+      await VendasService.receberById(id, idvenda, valorPago);
       await BuscarParcelas(idvenda)
     } catch (error) {
       alert('Erro ao receber');

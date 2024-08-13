@@ -12,9 +12,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import HomeIcon from "@mui/icons-material/Home";
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 
 import { Dashboard, Home } from "../../../pages";
 import { BarraInicial } from "../barra-inicial/BarraInicial";
@@ -159,9 +160,9 @@ export default function MenuLateral() {
                     {index === 0 ? (
                       <PeopleOutlineIcon style={{ color: "white" }} />
                     ) : index === 1 ? (
-                      <LocalHospitalIcon style={{ color: "white" }} />
+                      <PointOfSaleIcon style={{ color: "white" }} />
                     ) : index === 2 ? (
-                      <MonetizationOnIcon style={{ color: "white" }} />
+                      <LocalMallIcon style={{ color: "white" }} />
                     ) : (
                       <InventoryIcon style={{ color: "white" }} />
                     )}

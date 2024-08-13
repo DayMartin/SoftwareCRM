@@ -71,7 +71,7 @@ const parcelasController = {
 
 	receberParcela: async (req: Request, res: Response) => {
 		const { id } = req.params;
-		const { valorPago } = req.body;
+		const { valorPago, idvenda } = req.body;
 	
 		if (valorPago === undefined || isNaN(Number(valorPago))) {
 			return res.status(400).json({ error: "valorPago é obrigatório e deve ser um número válido." });
@@ -81,9 +81,12 @@ const parcelasController = {
 		console.log('valor', valorPagoNumero);
 	
 		const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
-		const queryPagar = 'UPDATE parcelas_venda SET status= ? WHERE id = ?';
+		const atualizarStatus = 'UPDATE parcelas_venda SET status= ? WHERE id = ?';
 		const atualizarVenda = 'UPDATE venda SET valorPago = ? WHERE id = ?';
 		const consultaValor = "SELECT valorPago FROM venda WHERE id = ?";
+		const consultarTotal = "SELECT valorTotalDesconto FROM venda WHERE id = ?";
+		const atualizarVendaStatus = 'UPDATE venda SET status = ? WHERE id = ?';
+
 	
 		try {
 			const [parcela] = await queryDatabase(queryVerificar, [id]);
@@ -99,8 +102,21 @@ const parcelasController = {
 			const novoValorPago = Number(venda.valorPago) + valorPagoNumero;
 			console.log('novoValorPago', novoValorPago);
 	
-			await queryDatabase(queryPagar, ['pago', id]);
 			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
+			await queryDatabase(atualizarStatus, ['pago', id]);
+
+			const consultarNovoPago = await queryDatabase(consultaValor, [parcela.venda_id]);
+			const consultarValorTotal = await queryDatabase(consultarTotal, [parcela.venda_id]);
+
+			const valorPago = parseFloat(consultarNovoPago[0].valorPago);
+			const valorTotal = parseFloat(consultarValorTotal[0].valorTotalDesconto);
+
+			console.log('consultarNovoPago', valorPago)
+			console.log('consultarValorTotal', valorTotal)
+
+			if (valorPago == valorTotal) {
+				await queryDatabase(atualizarVendaStatus, ['pago', idvenda]);
+			}
 	
 			return res.status(200).json({ message: "Parcela recebida com sucesso" });
 	
@@ -119,6 +135,7 @@ const parcelasController = {
 		const queryPagar = "UPDATE parcelas_venda SET status= ? WHERE id = ?";
 		const atualizarVenda = "UPDATE venda SET valorPago = ? WHERE id = ?";
 		const consultaValor = "SELECT valorPago FROM venda WHERE id = ?";
+		const atualizarVendaStatus = 'UPDATE venda SET status = ? WHERE id = ?';
 
 		try {
 			const [parcela] = await queryDatabase(queryVerificar, [id]);
@@ -129,7 +146,7 @@ const parcelasController = {
 			}
 
 			// Consultar o valor atual de 'valorPago' na tabela 'venda'
-			const [venda] = await queryDatabase(consultaValor, [id]);
+			const [venda] = await queryDatabase(consultaValor, [parcela.venda_id]);
 			if (!venda) {
 				return res.status(404).json({ error: "Venda não encontrada" });
 			}
@@ -139,7 +156,8 @@ const parcelasController = {
 
 			// Atualizar o valor de 'valorPago' na tabela 'venda'
 			await queryDatabase(queryPagar, ["pendente", id]);
-			await queryDatabase(atualizarVenda, [novoValorPago, id]);
+			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
+			await queryDatabase(atualizarVendaStatus, ["pendente", parcela.venda_id]);
 
 			return res
 				.status(200)

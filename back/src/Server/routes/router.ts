@@ -3,7 +3,7 @@ import { usersRouter } from "./users";
 import { servicoRouter } from "./servicos";
 import { vendaRouter } from "./venda";
 import { compraRouter } from './compra';
-import { parcelasRouter } from "./parcelas";
+import { parcelasRouter } from "./parcelasVenda";
 import { estoqueRouter } from './estoque';
 import { categoriaRouter } from './categoria';
 import { marcaRouter } from './marca';
