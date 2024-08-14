@@ -1,20 +1,19 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, Modal } from '@mui/material';
+import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, Modal, TablePagination } from '@mui/material';
 import { Environment } from "../../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CategoriaService, ViewCategoria } from "../../../shared/services/api/Estoque/CategoriaService";
 import AdicionarCategoria from "./AdicionarCategoria";
-
+import { Busca } from "../../../shared/components/barra-inicial/Busca";
 
 interface AdicionarCategoriasProps {
     open: boolean;
     onClose: () => void;
     title: string;
 }
-
 
 export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
     open,
@@ -24,24 +23,36 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
     const [rows, setRows] = useState<ViewCategoria[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [openCategoria, setOpenCategoria] = React.useState(false);
-
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [filterId, setFilterId] = useState('');
+    const [totalRecords, setTotalRecords] = useState(0);
     const handleOpenCategoria = () => setOpenCategoria(true);
     const handleCloseCategoria = () => setOpenCategoria(false);
-
+    const titulo = "Categoria";
+    
     const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await CategoriaService.consultaCategoria();
+            const consulta = await CategoriaService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
                 alert(consulta.message);
                 setRows([]);
+                setTotalRecords(0);
+
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
+                setTotalRecords(consulta.total);
+
             } else if (typeof consulta === 'object') {
-                setRows([consulta]);
+                setRows(consulta.rows);
+                setTotalRecords(consulta.total);
+
             } else {
                 setRows([]);
                 alert('Dados retornados não são válidos');
+                setTotalRecords(0);
+
             }
         } catch (error) {
             alert('Erro ao consultar clientes');
@@ -49,6 +60,25 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
         }
         setIsLoading(false);
     };
+
+    useEffect(() => {
+        consultar();
+    }, [page, filterId]);
+
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const handleFilterIdChange = (id: string) => {
+        setFilterId(id);
+        setPage(0);
+    };
+
 
     const handleSubmitCategoria = async (formData: any) => {
         try {
@@ -63,24 +93,20 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
 
     const handleExcluir = async (id: number) => {
         try {
-          const result = await CategoriaService.deleteCategoriaById(id);
-      
-          if (result instanceof Error) {
-            console.error(result.message); 
-            alert(result.message);
-            return;
-          }
-      
-          alert("Categoria excluída com sucesso!");
-      
+            const result = await CategoriaService.deleteCategoriaById(id);
+
+            if (result instanceof Error) {
+                console.error(result.message);
+                alert(result.message);
+                return;
+            }
+
+            alert("Categoria excluída com sucesso!");
+
         } catch (error) {
-          console.error("Erro inesperado:", error);
+            console.error("Erro inesperado:", error);
         }
-      };
-      
-    useEffect(() => {
-        consultar();
-    }, []);
+    };
 
     return (
         <Modal
@@ -102,6 +128,10 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                     maxWidth: "40%",
                 }}
             >
+                <Busca
+                    titulo={titulo}
+                    onFilterIdChange={handleFilterIdChange}
+                />
                 <Typography variant="h6" component="h2" gutterBottom>
                     {title}
                 </Typography>
@@ -110,8 +140,8 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto',  
-                        minWidth: 120, 
+                        width: 'auto',
+                        minWidth: 120,
                         height: 28,
                         display: 'flex',
                         justifyContent: 'center',
@@ -122,7 +152,7 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                         '&:hover': {
                             backgroundColor: '#0b3d91',
                         },
-                        mr: 1,  
+                        mr: 1,
                     }}
                     onClick={handleOpenCategoria}
                 >
@@ -170,13 +200,13 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                                             </TableCell> */}
                                             <TableCell>
                                                 <Button
-                                                variant="contained"
-                                                color="error"
-                                                onClick={() => handleExcluir(row.id)}
-                                                sx={{ mr: 1, height:'24px' }}
-                                            >
-                                                <DeleteIcon />
-                                            </Button>
+                                                    variant="contained"
+                                                    color="error"
+                                                    onClick={() => handleExcluir(row.id)}
+                                                    sx={{ mr: 1, height: '24px' }}
+                                                >
+                                                    <DeleteIcon />
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -185,6 +215,15 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TablePagination
+                rowsPerPageOptions={[5]}
+                component="div"
+                count={totalRecords}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+            />
                 <AdicionarCategoria open={openCategoria} onClose={handleCloseCategoria} title="Nova categoria" onSubmit={handleSubmitCategoria} />
 
             </Box>

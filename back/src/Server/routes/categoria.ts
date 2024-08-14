@@ -4,6 +4,7 @@ import {categoriaController} from "../controllers/categoriaController";
 const router = Router();
 
 router.route("/categoria/all").get((req: Request, res: Response) => categoriaController.getCategorias(req, res));
+router.route("/categoria/allList").get((req: Request, res: Response) => categoriaController.getCategoriasList(req, res));
 router.route("/categoria/get").post((req: Request, res: Response) => categoriaController.getCategoria(req, res));
 router.route("/categoria/create").post((req: Request, res: Response) => categoriaController.createCategoria(req, res));
 router.route("/categoria/delete/:id").delete((req: Request, res: Response) => categoriaController.deleteCategoria(req, res));
