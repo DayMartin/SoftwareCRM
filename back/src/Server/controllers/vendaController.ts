@@ -11,12 +11,23 @@ interface MonthlyCount {
 
 const vendaController = {
 
-	getVendas: async (_:Request, res:Response) => {
-		const query = "SELECT * FROM venda";
+	getVendas: async (req:Request, res:Response) => {
+		const { page = 1, limit = 5, id } = req.query;
+		let query = "SELECT * FROM venda WHERE 1=1";
+        const params: any[] = [];
+
+
+        if (id) {
+            query += " AND id = ?";
+            params.push(id);
+        }
+
+        query += " LIMIT ? OFFSET ?";
+        params.push(parseInt(limit as string));
+        params.push((parseInt(page as string) - 1) * parseInt(limit as string));
 
 		try {
-			const rows = await queryDatabase(query);
-			// Verificar se tem venda cadastrada
+			const rows = await queryDatabase(query, params);
 			if (rows === null || rows === undefined) {
 				return res.status(404).json({ error: "Nenhum Venda cadastrado" });
 			}

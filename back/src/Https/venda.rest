@@ -2,8 +2,7 @@
 
 ### BUSCAR TODOS AS OS
 
-GET http://localhost:3048/api/venda/all
-
+GET http://localhost:3048/api/venda/all?page=1&id=
 ### BUSCAR TOTAL DE CONSULTA POR MES
 
 GET http://localhost:3048/api/venda/totalmes
