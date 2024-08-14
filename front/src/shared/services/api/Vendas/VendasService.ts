@@ -84,30 +84,32 @@ export interface IParcela {
 
 
 export interface IApiResponse {
-  consulta: IListagemVenda[]; 
-  pagination: {
-    totalOrdem: number;
-    pageCount: number;
-    next?: { page: number };
-    prev?: { page: number };
-  };
-  setor?: string;
-  status?: string | string[];
-  sala?: string | string[];
-  equipe?: string;
-  solicitante?: string;
+  rows: IVendaDetalhe[]; 
+  total: number;
 }
-
-// type TUsersComTotalCount = {
-//   data: IListagemUsers[];
-//   totalCount: number;
-// };
 
 const getAll = async (page = 1, filter = ''): Promise<IVendaDetalhe | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/venda/all`;
 
     const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/venda/all?page=${page}&id=${filter}`;
+
+    const { data } = await Api.get<IApiResponse>(urlRelativa);
 
     if (data) {
       return data;
@@ -232,5 +234,6 @@ export const VendasService = {
   getByVenda,
   getByHistoric,
   deleteVenda,
-  getByProdutoMovimento
+  getByProdutoMovimento,
+  getAllList
 };

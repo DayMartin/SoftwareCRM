@@ -15,13 +15,11 @@ const settings = ["Profile", "Account", "Dashboard", "Logout"];
 interface BarraInicialProps {
   titulo: string;
   onFilterIdChange: (id: string) => void;
-  onFilterNameChange: (name: string) => void;
 }
 
 export const BarraInicial: React.VFC<BarraInicialProps> = ({
   titulo,
   onFilterIdChange,
-  onFilterNameChange,
 }) => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -46,7 +44,6 @@ export const BarraInicial: React.VFC<BarraInicialProps> = ({
     const timer = setTimeout(() => {
       const [id, name] = newValue.split(' ');
       onFilterIdChange(id);
-      onFilterNameChange(name);
     }, 700); 
 
     setDebounceTimer(timer);

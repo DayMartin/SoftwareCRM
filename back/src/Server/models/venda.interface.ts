@@ -7,3 +7,14 @@ export interface Venda{
 	valorPago: number;
 	status: string
 }
+
+export interface VendaConsulta{
+	id: number,
+	cliente_id: number;
+	funcionario_id: number;
+	QTparcelas: number;
+	valorTotal: number;
+	valorDesconto: number;
+	valorPago: number;
+	status: string
+}

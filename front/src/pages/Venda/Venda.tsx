@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Menu, MenuItem, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
+import { Box, Menu, MenuItem, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
 import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
 import { Environment } from "../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,6 +13,8 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EmailIcon from '@mui/icons-material/Email';
 import DehazeIcon from '@mui/icons-material/Dehaze';
+
+
 export const Venda: React.VFC = () => {
     const [rows, setRows] = useState<IVendaDetalhe[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -24,22 +26,35 @@ export const Venda: React.VFC = () => {
     const [currentRow, setCurrentRow] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [filterId, setFilterId] = useState('');
+    const [totalRecords, setTotalRecords] = useState(0);
+
     const titulo = "Vendas";
 
     const consultar = async (tipo: string) => {
         setIsLoading(true);
         try {
-            const consulta = await VendasService.getAll();
+            const consulta = await VendasService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
                 alert(consulta.message);
                 setRows([]);
+                setTotalRecords(0);
+
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
+                setTotalRecords(consulta.total);
+
             } else if (typeof consulta === 'object') {
-                setRows([consulta]);
+                setRows(consulta.rows);
+                setTotalRecords(consulta.total);
+
             } else {
                 setRows([]);
                 alert('Dados retornados não são válidos');
+                setTotalRecords(0);
+
             }
         } catch (error) {
             alert('Erro ao consultar clientes');
@@ -50,7 +65,21 @@ export const Venda: React.VFC = () => {
 
     useEffect(() => {
         consultar(tipoUsuario);
-    }, [tipoUsuario]);
+    }, [tipoUsuario, page, filterId,]);
+
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0); 
+    };
+
+    const handleFilterIdChange = (id: string) => {
+        setFilterId(id);
+        setPage(0); 
+    };
 
 
     const handleClose = () => {
@@ -96,7 +125,10 @@ export const Venda: React.VFC = () => {
 
     return (
         <Box>
-            {/* <BarraInicial titulo={titulo} /> */}
+            <BarraInicial
+                titulo={titulo}
+                onFilterIdChange={handleFilterIdChange}
+            />
             <BarraVenda />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
@@ -149,7 +181,7 @@ export const Venda: React.VFC = () => {
                                                 onClick={(event) => handleClick(event, row)}
                                                 sx={{ height: '24px' }}
                                             >
-                                                <DehazeIcon/>
+                                                <DehazeIcon />
                                             </Button>
                                             <Menu
                                                 anchorEl={anchorEl}
@@ -179,6 +211,15 @@ export const Venda: React.VFC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5]}
+                component="div"
+                count={totalRecords}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+            />
             <VendaDialog
                 open={open}
                 onClose={handleClose}

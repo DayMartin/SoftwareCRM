@@ -2,49 +2,61 @@ import { Request, Response } from 'express';
 import queryDatabase from '../database/queryPromise'
 import { historicEstoqueService } from '../services/historicEstoqueService'
 import { parcelasService } from '../services/parcelasService';
+import { VendaConsulta } from '../models/venda.interface';
 
 interface MonthlyCount {
-    month: string;
-    year: string;
-    count: number;
+	month: string;
+	year: string;
+	count: number;
 }
 
 const vendaController = {
 
-	getVendas: async (req:Request, res:Response) => {
+	getVendas: async (req: Request, res: Response) => {
 		const { page = 1, limit = 5, id } = req.query;
 		let query = "SELECT * FROM venda WHERE 1=1";
-        const params: any[] = [];
+		let countQuery = "SELECT COUNT(*) AS total FROM venda WHERE 1=1";
+		const params: any[] = [];
 
+		if (id) {
+			query += " AND id = ?";
+			countQuery += " AND id = ?";
+			params.push(id);
+		}
 
-        if (id) {
-            query += " AND id = ?";
-            params.push(id);
-        }
-
-        query += " LIMIT ? OFFSET ?";
-        params.push(parseInt(limit as string));
-        params.push((parseInt(page as string) - 1) * parseInt(limit as string));
-
+		// Consulta de contagem total
 		try {
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
 			const rows = await queryDatabase(query, params);
-			if (rows === null || rows === undefined) {
-				return res.status(404).json({ error: "Nenhum Venda cadastrado" });
+
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
 			}
-			return res.status(200).json(rows);
+
+			return res.status(200).json({
+				rows,
+				total, // Retornando a contagem total
+			});
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ error: "Erro ao buscar Venda's" });
+			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
 
 	// Função para criar uma nova venda
-	createVenda: async (req:Request, res:Response) => {
-		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto,  status, parcelas, produtos } = req.body;
+	createVenda: async (req: Request, res: Response) => {
+		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status, parcelas, produtos } = req.body;
 		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
 		const insertProdutoMovimento = "INSERT INTO produto_movimento (tipo, quantidade, estoque_id, venda_id) VALUES (?, ?, ?, ?)";
-		
+
 		try {
 			// Inserir na tabela 'os'
 			const osResult = await queryDatabase(insertVendaQuery, [cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status]);
@@ -60,7 +72,7 @@ const vendaController = {
 			console.log(produtos)
 
 			// Inserir estoque e histórico
-			for ( const produto of produtos ) { 
+			for (const produto of produtos) {
 				const saveHistoric = await historicEstoqueService.createHistoricEstoque("Saída", produto.quantidade, produto.id, venda_id)
 				console.log('produtohistoric', saveHistoric)
 				const tipo = "Saída"
@@ -76,7 +88,7 @@ const vendaController = {
 	},
 
 	// Função para buscar uma compra
-	getVenda: async (req:Request, res:Response) => {
+	getVenda: async (req: Request, res: Response) => {
 		const { id } = req.body;
 		const query = "SELECT * FROM venda WHERE id = ?";
 
@@ -97,7 +109,7 @@ const vendaController = {
 	},
 
 	// Função para deletar uma Compra
-	deleteVenda: async (req:Request, res:Response) => {
+	deleteVenda: async (req: Request, res: Response) => {
 		const { id } = req.body;
 		const queryVerificar = "SELECT * FROM venda WHERE id = ?";
 		const queryDeletar = "UPDATE venda SET status= ? WHERE id = ?";
@@ -131,20 +143,20 @@ const vendaController = {
 	// Função para buscar quantidade de consultas por mês
 	// consultaMes: async (_: Request, res: Response) => {
 	// 	const query = "SELECT * FROM os";
-	
+
 	// 	try {
 	// 		const rows: any[] = await queryDatabase(query);
-			
+
 	// 		// Verificar se há OSs cadastradas
 	// 		if (!rows || rows.length === 0) {
 	// 			return res.status(404).json({ error: "Nenhuma OS cadastrada" });
 	// 		}
-			
+
 	// 		// Calcular a contagem de documentos por mês
 	// 		const monthlyCount: { [key: string]: MonthlyCount } = rows.reduce((acc, row) => {
 	// 			const [ rowYear, rowMonth] = row.dataServico.split('/');
 	// 			const key = `${rowYear}/${rowMonth}`;
-	
+
 	// 			if (!acc[key]) {
 	// 				acc[key] = {
 	// 					month: rowMonth,
@@ -152,15 +164,15 @@ const vendaController = {
 	// 					count: 0
 	// 				};
 	// 			}
-	
+
 	// 			acc[key].count++;
-	
+
 	// 			return acc;
 	// 		}, {});
-	
+
 	// 		// Converter o objeto em uma matriz de resultados
 	// 		const monthlyCountArray = Object.values(monthlyCount);
-	
+
 	// 		// Se houver OSs cadastradas, retornar os dados da contagem mensal
 	// 		return res.status(200).json(monthlyCountArray);
 	// 	} catch (error) {
@@ -168,9 +180,9 @@ const vendaController = {
 	// 		return res.status(500).json({ error: "Erro ao buscar OS's" });
 	// 	}
 	// },
-	
-	
-    // Função para buscar consultas agendadas hoje
+
+
+	// Função para buscar consultas agendadas hoje
 }
 
 export { vendaController };
