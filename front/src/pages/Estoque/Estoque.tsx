@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, TablePagination } from '@mui/material';
 import { EstoqueService, IDetalheEstoque, IDetalheHistoric } from "../../shared/services/api/Estoque/EstoqueService";
 import { Environment } from "../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
@@ -16,23 +16,34 @@ export const Estoque: React.VFC = () => {
     const [selectedEstoque, setSelectedEstoque] = useState<IDetalheEstoque | null>(null);
     const [historicoEstoque, setHistoricoEstoque] = useState<IDetalheHistoric[] | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [filterId, setFilterId] = useState('');
+    const [totalRecords, setTotalRecords] = useState(0);
     const titulo = "Estoque";
 
-    const consultar = async (tipo: string) => {
+    const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await EstoqueService.getAll();
+            const consulta = await EstoqueService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
                 alert(consulta.message);
                 setRows([]);
+                setTotalRecords(0);
+
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
+                setTotalRecords(consulta.total);
+
             } else if (typeof consulta === 'object') {
-                setRows([consulta]);
+                setRows(consulta.rows);
+                setTotalRecords(consulta.total);
+
             } else {
                 setRows([]);
                 alert('Dados retornados não são válidos');
+                setTotalRecords(0);
+
             }
         } catch (error) {
             alert('Erro ao consultar clientes');
@@ -42,8 +53,22 @@ export const Estoque: React.VFC = () => {
     };
 
     useEffect(() => {
-        consultar(tipoUsuario);
-    }, [tipoUsuario]);
+        consultar();
+    }, [page, filterId]);
+
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0); 
+    };
+
+    const handleFilterIdChange = (id: string) => {
+        setFilterId(id);
+        setPage(0); 
+    };
 
     const handleVisualizar = async (estoque: IDetalheEstoque) => {
         setSelectedEstoque(estoque);
@@ -98,7 +123,10 @@ export const Estoque: React.VFC = () => {
 
     return (
         <Box>
-            {/* <BarraInicial titulo={titulo} /> */}
+            <BarraInicial
+                titulo={titulo}
+                onFilterIdChange={handleFilterIdChange}
+            />
             <BarraEstoque/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
@@ -181,7 +209,15 @@ export const Estoque: React.VFC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-
+            <TablePagination
+                rowsPerPageOptions={[5]}
+                component="div"
+                count={totalRecords}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+            />
             {/* Modal para Exibir Histórico --- ENVIAR PARA UM COMPONENT SEPERADO*/}
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
                 <DialogTitle>Histórico do Estoque</DialogTitle>

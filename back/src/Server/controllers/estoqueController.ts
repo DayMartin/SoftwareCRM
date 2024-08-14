@@ -6,20 +6,42 @@ import { HistoricProduto } from '../models/historicProduto.interface';
 
 const estoqueController = {
 
-	getEstoques: async (_:Request, res:Response) => {
-		const query = "SELECT * FROM estoque";
 
+	getEstoques: async (req: Request, res: Response) => {
+		const { page = 1, limit = 5, id } = req.query;
+		let query = "SELECT * FROM estoque WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM estoque WHERE 1=1";
+		const params: any[] = [];
+
+		if (id) {
+			query += " AND id = ?";
+			countQuery += " AND id = ?";
+			params.push(id);
+		}
+
+		// Consulta de contagem total
 		try {
-			const rows = await queryDatabase(query);
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
 
-			// Verificar se tem estoque cadastrado
-			if (rows.length === 0) {
-				return res.status(404).json({ error: "Nenhum estoque cadastrado" });
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
+			const rows = await queryDatabase(query, params);
+
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
 			}
-			return res.status(200).json(rows);
+
+			return res.status(200).json({
+				rows,
+				total,
+			});
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ error: "Erro ao buscar Estoques" });
+			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
 

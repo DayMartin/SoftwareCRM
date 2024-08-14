@@ -68,16 +68,34 @@ export interface IApiResponse {
   solicitante?: string;
 }
 
-// type TUsersComTotalCount = {
-//   data: IListagemUsers[];
-//   totalCount: number;
-// };
 
-const getAll = async (page = 1, filter = ''): Promise<[IDetalheEstoque] | Error> => {
+export interface IApiResponse {
+  rows: IDetalheEstoque[]; 
+  total: number;
+}
+
+const getAll = async (): Promise<[IDetalheEstoque] | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/estoque/all`;
 
     const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/estoque/all?page=${page}&id=${filter}`;
+
+    const { data } = await Api.get<IApiResponse>(urlRelativa);
 
     if (data) {
       return data;
@@ -196,5 +214,6 @@ export const EstoqueService = {
   getByFornecedor,
   ativarById,
   getByHistoric,
+  getAllList
 
 };
