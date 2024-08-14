@@ -201,7 +201,7 @@ export const BarraEstoque: React.VFC = () => {
             <AdicionarEstoque open={openEstoque} onClose={handleCloseEstoque} title="Novo produto" onSubmit={handleSubmit} />
 
             {/* Modal para categoria */}
-            <ListarCategorias open={openCategoria} onClose={handleCloseCategoria} title="Nova categoria" />
+            <ListarCategorias open={openCategoria} onClose={handleCloseCategoria} title="" />
 
             {/* Modal para Marca */}
             <ListarMarcas open={openMarca} onClose={handleCloseMarca} title=" Listagem Marca" />
