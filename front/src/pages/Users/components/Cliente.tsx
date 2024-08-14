@@ -119,7 +119,6 @@ export const Cliente: React.VFC = () => {
             <BarraInicial
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
-                onFilterNameChange={handleFilterNameChange}
             />
             <BarraUsuarios onTipoChange={setTipoUsuario} />
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>

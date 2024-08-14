@@ -2,7 +2,7 @@
 
 ### BUSCAR TODOS OS USUARIOS
 
-GET http://localhost:3048/api/user/all
+GET http://localhost:3048/api/user/all?page=1&id=
 
 ### CADASTRAR NOVO USUARIO
 
