@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, TablePagination } from '@mui/material';
 import { Environment } from "../../../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -17,24 +17,35 @@ import CancelIcon from '@mui/icons-material/Cancel';
 export const AReceber: React.VFC = () => {
     const [rows, setRows] = useState<IParcela[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [filterId, setFilterId] = useState('');
+    const [totalRecords, setTotalRecords] = useState(0);
     const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
     const titulo = "A Receber";
 
-    const consultar = async (tipo: string) => {
+    const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await ParcelasService.getAll();
+            const consulta = await ParcelasService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
                 alert(consulta.message);
                 setRows([]);
+                setTotalRecords(0);
+
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
+                setTotalRecords(consulta.total);
+
             } else if (typeof consulta === 'object') {
-                setRows([consulta]);
+                setRows(consulta.rows);
+                setTotalRecords(consulta.total);
+
             } else {
                 setRows([]);
                 alert('Dados retornados não são válidos');
+                setTotalRecords(0);
+
             }
         } catch (error) {
             alert('Erro ao consultar clientes');
@@ -44,9 +55,8 @@ export const AReceber: React.VFC = () => {
     };
 
     useEffect(() => {
-        consultar(tipoUsuario);
-    }, [tipoUsuario]);
-
+        consultar();
+    }, [page, filterId]);
 
     const handleReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
@@ -65,10 +75,27 @@ export const AReceber: React.VFC = () => {
         }
     };
 
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const handleFilterIdChange = (id: string) => {
+        setFilterId(id);
+        setPage(0);
+    };
+
 
     return (
         <Box>
-            {/* <BarraInicial titulo={titulo} /> */}
+            <BarraInicial
+                titulo={titulo}
+                onFilterIdChange={handleFilterIdChange}
+            />
             <BarraAReceber />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
@@ -140,6 +167,15 @@ export const AReceber: React.VFC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5]}
+                component="div"
+                count={totalRecords}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+            />
         </Box>
     );
 };

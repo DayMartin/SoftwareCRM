@@ -20,21 +20,10 @@ export interface IParcela {
     tipoPagamento: string;
   }
   
-
-export interface IApiResponse {
-  consulta: IParcela[]; 
-  pagination: {
-    totalOrdem: number;
-    pageCount: number;
-    next?: { page: number };
-    prev?: { page: number };
-  };
-  setor?: string;
-  status?: string | string[];
-  sala?: string | string[];
-  equipe?: string;
-  solicitante?: string;
-}
+  export interface IApiResponse {
+    rows: IParcela[]; 
+    total: number;
+  }
 
 // type TUsersComTotalCount = {
 //   data: IListagemUsers[];
@@ -46,6 +35,23 @@ const getAll = async (page = 1, filter = ''): Promise<IParcela | Error> => {
     const urlRelativa = `${Environment.URL_BASE}/parcelas/all`;
 
     const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/parcelas/all?page=${page}&id=${filter}`;
+
+    const { data } = await Api.get<IApiResponse>(urlRelativa);
 
     if (data) {
       return data;
@@ -97,4 +103,5 @@ export const ParcelasService = {
   getByID,
   receberById,
   refazerReceberById,
+  getAllList
 };
