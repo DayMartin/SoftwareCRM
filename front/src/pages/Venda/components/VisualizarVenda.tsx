@@ -31,6 +31,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
+import PaymentsIcon from '@mui/icons-material/Payments';
 
 interface VendaDialogProps {
   open: boolean;
@@ -190,7 +191,7 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
                               onClick={() => handleReceber(parcela.id, parcela.venda_id, parcela.valorParcela)}
                               sx={{ height: "24px" }}
                             >
-                              <CheckCircleIcon />
+                              <PaymentsIcon />
 
                             </Button>
                           ) : (

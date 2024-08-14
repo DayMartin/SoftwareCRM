@@ -11,8 +11,7 @@ import { ParcelasService, IParcela, IParcelaCreate } from "../../../../shared/se
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import CancelIcon from '@mui/icons-material/Cancel';
-
-
+import PaymentsIcon from '@mui/icons-material/Payments';
 
 export const AReceber: React.VFC = () => {
     const [rows, setRows] = useState<IParcela[]>([]);
@@ -146,7 +145,7 @@ export const AReceber: React.VFC = () => {
                                                     onClick={() => handleReceber(row.id, row.venda_id, row.valorParcela)}
                                                     sx={{ height: "24px" }}
                                                 >
-                                                    <CheckCircleIcon />
+                                                    <PaymentsIcon />
 
                                                 </Button>
                                             ) : (

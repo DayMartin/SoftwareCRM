@@ -6,6 +6,7 @@ import { BarraUsuarios } from "../../../shared/components";
 import { LayoutBaseDePagina } from "../../../shared/layouts";
 import ClienteDialog from "../components/VisualizarUsers";
 import EditIcon from '@mui/icons-material/Edit';
+import PaidIcon from '@mui/icons-material/Paid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -155,6 +156,9 @@ export const Cliente: React.VFC = () => {
                                     </Button>
                                     <Button onClick={() => handleEditar(row)}>
                                         <EditIcon />
+                                    </Button>
+                                    <Button onClick={() => handleEditar(row)}>
+                                        <PaidIcon />
                                     </Button>
                                     {row.status === 'ativo' ? (
                                         <Button onClick={() => handleDesativar(row.id)}>
