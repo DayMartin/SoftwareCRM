@@ -134,6 +134,7 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                                 <TableCell>Id</TableCell>
                                 <TableCell>Nome</TableCell>
                                 <TableCell>Categoria</TableCell>
+                                <TableCell>Ações</TableCell>
 
                             </TableRow>
                         </TableHead>

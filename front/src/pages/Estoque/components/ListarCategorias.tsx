@@ -166,6 +166,8 @@ export const ListarCategorias: React.FC<AdicionarCategoriasProps> = ({
                             <TableRow>
                                 <TableCell>Id</TableCell>
                                 <TableCell>Nome</TableCell>
+                                <TableCell>Ações</TableCell>
+
                             </TableRow>
                         </TableHead>
 
