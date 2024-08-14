@@ -54,22 +54,6 @@ export interface ViewCategoria {
 
 
 export interface IApiResponse {
-  consulta: IDetalheEstoque[]; 
-  pagination: {
-    totalOrdem: number;
-    pageCount: number;
-    next?: { page: number };
-    prev?: { page: number };
-  };
-  setor?: string;
-  status?: string | string[];
-  sala?: string | string[];
-  equipe?: string;
-  solicitante?: string;
-}
-
-
-export interface IApiResponse {
   rows: IDetalheEstoque[]; 
   total: number;
 }
