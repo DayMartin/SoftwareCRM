@@ -122,6 +122,23 @@ const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> 
   }
 };
 
+const getAllListCliente = async (page = 1, filter = '', cliente_id: number): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/venda/allCliente?page=${page}&id=${filter}&cliente_id=${cliente_id}`;
+
+    const { data } = await Api.post<IApiResponse>(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
 const getByID = async (id: number): Promise<IVenda[] | Error> => {
   try {
     const { data } = await Api.get(`/estoque/${id}`); 
@@ -235,5 +252,6 @@ export const VendasService = {
   getByHistoric,
   deleteVenda,
   getByProdutoMovimento,
-  getAllList
+  getAllList,
+  getAllListCliente
 };

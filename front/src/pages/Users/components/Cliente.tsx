@@ -11,6 +11,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { BarraInicial } from "../../../shared/components/barra-inicial/BarraInicial";
+import ClienteCompras from "./ClienteCompras";
 
 export const Cliente: React.VFC = () => {
     const [rows, setRows] = useState<IListagemCliente[]>([]);
@@ -19,17 +20,21 @@ export const Cliente: React.VFC = () => {
     const [selectedClient, setSelectedClient] = useState<IListagemCliente | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
-    const [page, setPage] = useState(0); 
+    const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5); // Ajustado para 5 conforme o backend
-    const [filterId, setFilterId] = useState(''); 
+    const [filterId, setFilterId] = useState('');
     const [filterName, setFilterName] = useState('');
     const [totalRecords, setTotalRecords] = useState(0); // Adicionado para total de registros
+    const [openModalVendas, setOpenModalVendas] = useState(false);
+    const [selectedClientForVendas, setSelectedClientForVendas] = useState<number | null>(null);
+    const [selectedClientForVendasName, setSelectedClientForVendasName] = useState<IListagemCliente | null>(null);
+
     const titulo = "Cadastros";
 
     const consultar = async (tipo: string) => {
         setIsLoading(true);
         try {
-            const consulta = await UsersService.getClientesList(page + 1, filterId, filterName, tipo); 
+            const consulta = await UsersService.getClientesList(page + 1, filterId, filterName, tipo);
 
             if (consulta instanceof Error) {
                 alert(consulta.message);
@@ -57,18 +62,28 @@ export const Cliente: React.VFC = () => {
 
     const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); 
+        setPage(0);
     };
 
     const handleFilterIdChange = (id: string) => {
         setFilterId(id);
-        setPage(0); 
+        setPage(0);
     };
 
-    const handleFilterNameChange = (name: string) => {
-        setFilterName(name);
-        setPage(0); 
+
+    const handleOpenModalVendas = (client: IListagemCliente) => {
+        const idN = Number(client.id)
+        setSelectedClientForVendas(idN);
+        setSelectedClientForVendasName(client);
+        setOpenModalVendas(true);
     };
+    
+
+    const handleCloseModalVendas = () => {
+        setOpenModalVendas(false);
+        setSelectedClientForVendas(null);
+    };
+
 
     const handleVisualizar = (client: IListagemCliente) => {
         setSelectedClient(client);
@@ -157,7 +172,7 @@ export const Cliente: React.VFC = () => {
                                     <Button onClick={() => handleEditar(row)}>
                                         <EditIcon />
                                     </Button>
-                                    <Button onClick={() => handleEditar(row)}>
+                                    <Button onClick={() => handleOpenModalVendas(row)}>
                                         <PaidIcon />
                                     </Button>
                                     {row.status === 'ativo' ? (
@@ -193,6 +208,16 @@ export const Cliente: React.VFC = () => {
                     onSave={handleSave}
                 />
             )}
+            {openModalVendas && (
+                <ClienteCompras
+                    open={openModalVendas}
+                    onClose={handleCloseModalVendas}
+                    clienteId={selectedClientForVendas}
+                    title={`Compras do Cliente: ${selectedClientForVendasName?.nome || ''}`}
+                />
+            )}
+
+
             {isLoading && <LinearProgress />}
         </Box>
     );
