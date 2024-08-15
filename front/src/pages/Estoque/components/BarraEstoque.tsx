@@ -97,18 +97,19 @@ export const BarraEstoque: React.VFC = () => {
 
             <Box
                 sx={{
-                    display: 'flex', 
+                    display: 'flex',
                     alignItems: 'center',
-                    ml: 'auto',  
+                    ml: 'auto',
                 }}
             >
+
                 <Button
                     sx={{
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto',  
-                        minWidth: 120,  
+                        width: 'auto',
+                        minWidth: 120,
                         height: 28,
                         display: 'flex',
                         justifyContent: 'center',
@@ -119,7 +120,7 @@ export const BarraEstoque: React.VFC = () => {
                         '&:hover': {
                             backgroundColor: '#0b3d91',
                         },
-                        mr: 1, 
+                        mr: 1,
                     }}
                     onClick={handleOpenCategoria}
                 >
@@ -131,8 +132,8 @@ export const BarraEstoque: React.VFC = () => {
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto',  
-                        minWidth: 120,  
+                        width: 'auto',
+                        minWidth: 120,
                         height: 28,
                         display: 'flex',
                         justifyContent: 'center',
@@ -148,14 +149,37 @@ export const BarraEstoque: React.VFC = () => {
                 >
                     Marca
                 </Button>
-
                 <Button
                     sx={{
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto', 
-                        minWidth: 120,  
+                        width: 'auto',
+                        minWidth: 120,
+                        height: 28,
+                        margin: 1,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        alignItems: 'center',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                        '&:hover': {
+                            backgroundColor: '#0b3d91',
+                        },
+                        mr: 1,
+                    }}
+                    onClick={handleOpenCategoria}
+                >
+                    Centro de defeitos
+                </Button>
+                <Button
+                    sx={{
+                        backgroundColor: '#0d47a1',
+                        color: 'white',
+                        borderRadius: '6%',
+                        width: 'auto',
+                        minWidth: 120,
                         margin: '5px',
                         height: 28,
                         display: 'flex',
@@ -169,7 +193,7 @@ export const BarraEstoque: React.VFC = () => {
                         },
                     }}
                     onClick={() => navigate('/receber')}                >
-                    <LocalPrintshopIcon/>
+                    <LocalPrintshopIcon />
                 </Button>
 
                 <Button
@@ -177,8 +201,8 @@ export const BarraEstoque: React.VFC = () => {
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto', 
-                        minWidth: 120,  
+                        width: 'auto',
+                        minWidth: 120,
                         margin: '5px',
                         height: 28,
                         display: 'flex',
@@ -192,7 +216,7 @@ export const BarraEstoque: React.VFC = () => {
                         },
                     }}
                     onClick={() => navigate('/receber')}                >
-                    <FilterAltIcon/>
+                    <FilterAltIcon />
                 </Button>
             </Box>
 

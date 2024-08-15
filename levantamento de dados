@@ -1,3 +1,10 @@
+
+Acrescentar centro de defeitos { remove o produto do estoque e coloca nessa tabela , só vem para o centro de defeitos
+se o motivo da troca for defeitos }
+Acrescentar centro de trocas { acrescentar motivo da troca, listar as trocas }
+Acrescentar historico de compra em cada compra { para mostrar se houve troca }
+Acrescentar orçamento { válido somente por 5 dias }
+Acrescentar compras { para cada compra incluir os detalhes de cada produto{chassi}}
 Tipo de usuários:
     * Paciente
     * Médico
