@@ -204,7 +204,7 @@ export const BarraEstoque: React.VFC = () => {
             <ListarCategorias open={openCategoria} onClose={handleCloseCategoria} title="" />
 
             {/* Modal para Marca */}
-            <ListarMarcas open={openMarca} onClose={handleCloseMarca} title=" Listagem Marca" />
+            <ListarMarcas open={openMarca} onClose={handleCloseMarca} title="" />
 
         </Box>
     );

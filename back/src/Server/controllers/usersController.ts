@@ -118,7 +118,7 @@ const usersController = {
     },
 
     // Função para buscar usuários por tipo
-    getUserTipo: async (req: Request, res: Response) => {
+    getUserTipoList: async (req: Request, res: Response) => {
         const { page = 1, limit = 5, id = '', tipo } = req.query;
         
         let query = "SELECT * FROM usuarios WHERE 1=1";
@@ -171,7 +171,26 @@ const usersController = {
             return res.status(500).json({ error: "Erro ao buscar usuários" });
         }
     },
-    
+    // Função para buscar usuários por tipo
+	getUserTipo: async (req: Request, res: Response) => {
+		const { tipo } = req.body;
+		const query = "SELECT * FROM usuarios WHERE tipo = ?";
+
+		try {
+			const rows = await queryDatabase(query, tipo);
+
+			// Verificar se algum usuário foi encontrado
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Usuário não encontrado" });
+			}
+
+			// Se os usuários foram encontrados, retornar os dados
+			return res.status(200).json(rows);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar usuários" });
+		}
+	},
     
     // Função para desativar um Usuario
     desativarUser: async (req: Request, res: Response) => {

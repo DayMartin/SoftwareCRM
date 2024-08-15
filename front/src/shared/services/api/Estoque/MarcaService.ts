@@ -12,6 +12,11 @@ export interface ViewMarca {
   categoria_id: number;
 }
 
+export interface IApiResponse {
+  rows: ViewMarca[]; 
+  total: number;
+}
+
 const createMarca = async (dados: AddMarca): Promise<void | Error> => {
   try {
     await Api.post<AddMarca>('marca/create', dados);
@@ -26,6 +31,23 @@ const consultaMarca = async (page = 1, filter = ''): Promise<[ViewMarca] | Error
     const urlRelativa = `${Environment.URL_BASE}/marca/all`;
 
     const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/marca/allList?page=${page}&id=${filter}`;
+
+    const { data } = await Api.post<IApiResponse>(urlRelativa);
 
     if (data) {
       return data;
@@ -68,5 +90,6 @@ export const MarcaService = {
   createMarca,
   consultaMarca,
   deleteMarcaById,
-  consultaMarcaCategoria
+  consultaMarcaCategoria,
+  getAllList
 };

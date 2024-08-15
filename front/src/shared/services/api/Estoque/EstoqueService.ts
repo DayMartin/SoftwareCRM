@@ -52,11 +52,16 @@ export interface ViewCategoria {
   nome: string;
 }
 
-
 export interface IApiResponse {
   rows: IDetalheEstoque[]; 
   total: number;
 }
+
+export interface IApiResponseHistoric {
+  rows: IDetalheHistoric[]; 
+  total: number;
+}
+
 
 const getAll = async (): Promise<[IDetalheEstoque] | Error> => {
   try {
@@ -77,9 +82,9 @@ const getAll = async (): Promise<[IDetalheEstoque] | Error> => {
 
 const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/estoque/all?page=${page}&id=${filter}`;
+    const urlRelativa = `${Environment.URL_BASE}/estoque/allList?page=${page}&id=${filter}`;
 
-    const { data } = await Api.get<IApiResponse>(urlRelativa);
+    const { data } = await Api.post<IApiResponse>(urlRelativa);
 
     if (data) {
       return data;
@@ -152,6 +157,21 @@ const getByHistoric = async (id: number): Promise<IDetalheHistoric[] | Error> =>
   }
 };
 
+const getByHistoricList = async (page = 1, filter = '', estoque_id: number): Promise<IApiResponseHistoric | Error> => {
+  try {
+    const { data } = await Api.post<IApiResponseHistoric>(`/historic/AllEstoqueList?page=${page}&id=${filter}&estoque_id=${estoque_id}`); 
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao consultar o registro.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
+  }
+};
+
 const create = async (dados: IEstoque): Promise<void | Error> => {
   try {
     await Api.post<IEstoque>('estoque/create', dados);
@@ -198,6 +218,7 @@ export const EstoqueService = {
   getByFornecedor,
   ativarById,
   getByHistoric,
-  getAllList
+  getAllList,
+  getByHistoricList
 
 };

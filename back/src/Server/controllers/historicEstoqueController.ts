@@ -5,7 +5,7 @@ import queryDatabase from '../database/queryPromise'
 
 const historicEstoqueController = {
 
-	getHistoricEstoques: async (_:Request, res:Response) => {
+	getHistoricEstoques: async (_: Request, res: Response) => {
 		const query = "SELECT * FROM estoqueHistoric";
 
 		try {
@@ -23,10 +23,10 @@ const historicEstoqueController = {
 	},
 
 	// Função para criar um novo Histórico de Estoque
-	createHistoricEstoque: async (req:Request, res:Response) => {
+	createHistoricEstoque: async (req: Request, res: Response) => {
 		const { tipo, quantidade, estoque_id } = req.body;
 		const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id) VALUES (?, ?, ?)";
-		
+
 		// Query para atualizar dados em estoque
 		const updateEstoque = "UPDATE estoque SET quantidade = ? WHERE id = ?";
 
@@ -37,30 +37,30 @@ const historicEstoqueController = {
 		const extracaoId = estoqueData.id
 		// console.log("EXTRAÇÃO DO ID", extracaoId);
 		try {
-			if ( tipo === "Entrada" ){
+			if (tipo === "Entrada") {
 
-			const soma = extracaoQuantidade + quantidade
-			// console.log("VALOR DA SOMA", soma);
+				const soma = extracaoQuantidade + quantidade
+				// console.log("VALOR DA SOMA", soma);
 
-			// Atualiza a quantidade do estoque
-			await queryDatabase(updateEstoque, [soma, extracaoId]);
+				// Atualiza a quantidade do estoque
+				await queryDatabase(updateEstoque, [soma, extracaoId]);
 
-			// // Insere o histórico do estoque
-			await queryDatabase(query, [tipo, quantidade, estoque_id]);
+				// // Insere o histórico do estoque
+				await queryDatabase(query, [tipo, quantidade, estoque_id]);
 
-			return res.status(201).json({ message: "Entrada cadastrada com sucesso" });
+				return res.status(201).json({ message: "Entrada cadastrada com sucesso" });
 			}
-			if ( tipo === "Saída"){
-			// console.log("EXTRAÇÃO DA QUANTIDADE", extracaoId);
-			const subtracao = extracaoQuantidade - quantidade
-			// console.log("VALOR DA SUBTRAÇÃO", subtracao);
+			if (tipo === "Saída") {
+				// console.log("EXTRAÇÃO DA QUANTIDADE", extracaoId);
+				const subtracao = extracaoQuantidade - quantidade
+				// console.log("VALOR DA SUBTRAÇÃO", subtracao);
 
-			// Atualiza a quantidade do estoque
-			await queryDatabase(updateEstoque, [subtracao, extracaoId]);
+				// Atualiza a quantidade do estoque
+				await queryDatabase(updateEstoque, [subtracao, extracaoId]);
 
-			// // Insere o histórico do estoque
-			await queryDatabase(query, [tipo, quantidade, estoque_id]);
-			return res.status(201).json({ message: "Saída cadastrada com sucesso" });
+				// // Insere o histórico do estoque
+				await queryDatabase(query, [tipo, quantidade, estoque_id]);
+				return res.status(201).json({ message: "Saída cadastrada com sucesso" });
 			}
 
 		} catch (error) {
@@ -70,7 +70,7 @@ const historicEstoqueController = {
 	},
 
 	// Função para buscar um Histórico de Estoque por ID
-	getHistoricEstoque: async (req:Request, res:Response) => {
+	getHistoricEstoque: async (req: Request, res: Response) => {
 		const { id } = req.body;
 		const query = "SELECT * FROM estoqueHistoric WHERE id = ?";
 
@@ -89,7 +89,7 @@ const historicEstoqueController = {
 	},
 
 	// Função para buscar um Histórico de Estoque por ID do estoque
-	getEstoque: async (req:Request, res:Response) => {
+	getEstoque: async (req: Request, res: Response) => {
 		const { estoque_id } = req.params;
 		const query = "SELECT * FROM estoqueHistoric WHERE estoque_id = ?";
 
@@ -107,27 +107,71 @@ const historicEstoqueController = {
 		}
 	},
 
-		// Função para buscar um Histórico de Estoque por ID do estoque
-		getVenda: async (req:Request, res:Response) => {
-			const { venda_id } = req.params;
-			const query = "SELECT * FROM estoqueHistoric WHERE venda_id = ?";
-	
-			try {
-				const rows = await queryDatabase(query, [venda_id]);
-	
-				// Verificar se o Estoque foi encontrado
-				if (rows === null || rows === undefined) {
-					return res.status(404).json({ error: "Histórico não encontrado" });
-				}
-				return res.status(200).json(rows);
-			} catch (error) {
-				console.error(error);
-				return res.status(500).json({ error: "Erro ao buscar Histórico" });
+	getEstoquesList: async (req: Request, res: Response) => {
+		const { page = 1, limit = 5, id, estoque_id } = req.query;
+		let query = "SELECT * FROM estoqueHistoric WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM estoqueHistoric WHERE 1=1";
+		const params: any[] = [];
+
+		if (id) {
+			query += " AND id = ?";
+			countQuery += " AND id = ?";
+			params.push(id);
+		}
+
+		if (estoque_id) {
+			query += " AND estoque_id = ?";
+			countQuery += " AND estoque_id = ?";
+			params.push(estoque_id);
+		}
+
+		// Consulta de contagem total
+		try {
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
+			const rows = await queryDatabase(query, params);
+
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
 			}
-		},
+
+			return res.status(200).json({
+				rows,
+				total,
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+
+	// Função para buscar um Histórico de Estoque por ID do estoque
+	getVenda: async (req: Request, res: Response) => {
+		const { venda_id } = req.params;
+		const query = "SELECT * FROM estoqueHistoric WHERE venda_id = ?";
+
+		try {
+			const rows = await queryDatabase(query, [venda_id]);
+
+			// Verificar se o Estoque foi encontrado
+			if (rows === null || rows === undefined) {
+				return res.status(404).json({ error: "Histórico não encontrado" });
+			}
+			return res.status(200).json(rows);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar Histórico" });
+		}
+	},
 
 	// Função para deletar um Estoque
-	deleteHistoricEstoque: async (req:Request, res:Response) => {
+	deleteHistoricEstoque: async (req: Request, res: Response) => {
 		const { id } = req.body;
 		const queryVerificar = "SELECT * FROM estoqueHistoric WHERE id = ?";
 		const queryDeletar = "DELETE FROM estoqueHistoric WHERE id = ?";

@@ -1,10 +1,11 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, Modal } from '@mui/material';
+import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, Modal, TablePagination } from '@mui/material';
 import { Environment } from "../../../shared/environment";
 import { MarcaService, ViewMarca } from "../../../shared/services/api/Estoque/MarcaService";
 import AdicionarMarca from "./AdicionarMarca";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Busca } from "../../../shared/components/barra-inicial/Busca";
 
 interface AdicionarMarcasProps {
     open: boolean;
@@ -21,30 +22,60 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
     const [rows, setRows] = useState<ViewMarca[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [openMarca, setOpenMarca] = React.useState(false);
-
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [filterId, setFilterId] = useState('');
+    const [totalRecords, setTotalRecords] = useState(0);
     const handleOpenMarca = () => setOpenMarca(true);
     const handleCloseMarca = () => setOpenMarca(false);
+    const titulo = "Marca";
 
     const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await MarcaService.consultaMarca();
+            const consulta = await MarcaService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
                 alert(consulta.message);
                 setRows([]);
+                setTotalRecords(0);
+
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
+                setTotalRecords(consulta.total);
+
             } else if (typeof consulta === 'object') {
-                setRows([consulta]);
+                setRows(consulta.rows);
+                setTotalRecords(consulta.total);
+
             } else {
                 setRows([]);
                 alert('Dados retornados não são válidos');
+                setTotalRecords(0);
+
             }
         } catch (error) {
             alert('Erro ao consultar clientes');
             setRows([]);
         }
         setIsLoading(false);
+    };
+
+    useEffect(() => {
+        consultar();
+    }, [page, filterId]);
+
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const handleFilterIdChange = (id: string) => {
+        setFilterId(id);
+        setPage(0);
     };
 
     const handleSubmitMarca = async (formData: any) => {
@@ -60,24 +91,21 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
 
     const handleExcluir = async (id: number) => {
         try {
-          const result = await MarcaService.deleteMarcaById(id);
-      
-          if (result instanceof Error) {
-            console.error(result.message); 
-            alert(result.message);
-            return;
-          }
-      
-          alert("Marca excluída com sucesso!");
-      
-        } catch (error) {
-          console.error("Erro inesperado:", error);
-        }
-      };
+            const result = await MarcaService.deleteMarcaById(id);
 
-    useEffect(() => {
-        consultar();
-    }, []);
+            if (result instanceof Error) {
+                console.error(result.message);
+                alert(result.message);
+                return;
+            }
+
+            alert("Marca excluída com sucesso!");
+
+        } catch (error) {
+            console.error("Erro inesperado:", error);
+        }
+    };
+
 
     return (
         <Modal
@@ -99,6 +127,10 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                     maxWidth: "40%",
                 }}
             >
+                <Busca
+                    titulo={titulo}
+                    onFilterIdChange={handleFilterIdChange}
+                />
                 <Typography variant="h6" component="h2" gutterBottom>
                     {title}
                 </Typography>
@@ -107,8 +139,8 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                         backgroundColor: '#0d47a1',
                         color: 'white',
                         borderRadius: '6%',
-                        width: 'auto',  
-                        minWidth: 120, 
+                        width: 'auto',
+                        minWidth: 120,
                         height: 28,
                         display: 'flex',
                         justifyContent: 'center',
@@ -119,7 +151,7 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                         '&:hover': {
                             backgroundColor: '#0b3d91',
                         },
-                        mr: 1,  
+                        mr: 1,
                     }}
                     onClick={handleOpenMarca}
                 >
@@ -172,13 +204,13 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                                             </TableCell> */}
                                             <TableCell>
                                                 <Button
-                                                variant="contained"
-                                                color="error"
-                                                onClick={() => handleExcluir(row.id)}
-                                                sx={{ mr: 1, height:'24px' }}
-                                            >
-                                                <DeleteIcon />
-                                            </Button>
+                                                    variant="contained"
+                                                    color="error"
+                                                    onClick={() => handleExcluir(row.id)}
+                                                    sx={{ mr: 1, height: '24px' }}
+                                                >
+                                                    <DeleteIcon />
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -187,6 +219,15 @@ export const ListarMarcas: React.FC<AdicionarMarcasProps> = ({
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5]}
+                    component="div"
+                    count={totalRecords}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handlePageChange}
+                    onRowsPerPageChange={handleRowsPerPageChange}
+                />
                 <AdicionarMarca open={openMarca} onClose={handleCloseMarca} title="Nova Marca" onSubmit={handleSubmitMarca} />
 
             </Box>

@@ -1,25 +1,33 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, TablePagination } from '@mui/material';
-import { EstoqueService, IDetalheEstoque, IDetalheHistoric } from "../../shared/services/api/Estoque/EstoqueService";
+import { EstoqueService, IApiResponseHistoric, IDetalheEstoque, IDetalheHistoric } from "../../shared/services/api/Estoque/EstoqueService";
 import { Environment } from "../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import { BarraEstoque } from "./components/BarraEstoque";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Busca } from "../../shared/components/barra-inicial/Busca";
 
 export const Estoque: React.VFC = () => {
     const [rows, setRows] = useState<IDetalheEstoque[]>([]);
+    const [rowsHistoric, setRowsHistoric] = useState<IDetalheHistoric[]>([]);
+
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [selectedEstoque, setSelectedEstoque] = useState<IDetalheEstoque | null>(null);
-    const [historicoEstoque, setHistoricoEstoque] = useState<IDetalheHistoric[] | null>(null);
+    const [historicoEstoque, setHistoricoEstoque] = useState<IApiResponseHistoric[] | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
+
+    const [pageHistoric, setPageHistoric] = useState(0);
+    const [rowsPerPageHistoric, setRowsPerPageHistoric] = useState(5);
+    const [filterIdHistoric, setFilterIdHistoric] = useState('');
+    const [totalRecordsHistoric, setTotalRecordsHistoric] = useState(0);
     const titulo = "Estoque";
 
     const consultar = async () => {
@@ -62,12 +70,12 @@ export const Estoque: React.VFC = () => {
 
     const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); 
+        setPage(0);
     };
 
     const handleFilterIdChange = (id: string) => {
         setFilterId(id);
-        setPage(0); 
+        setPage(0);
     };
 
     const handleVisualizar = async (estoque: IDetalheEstoque) => {
@@ -75,15 +83,38 @@ export const Estoque: React.VFC = () => {
         setIsEditing(false);
         setOpen(true);
         try {
-            const historico = await EstoqueService.getByHistoric(estoque.id);
+            const historico = await EstoqueService.getByHistoricList(pageHistoric + 1, filterIdHistoric, estoque.id);
             if (historico instanceof Error) {
                 alert(historico.message);
+                setRowsHistoric([]);
+                setTotalRecordsHistoric(0);
+            } else if (historico && typeof historico === 'object' && Array.isArray(historico.rows)) {
+                setRowsHistoric(historico.rows);
+                setTotalRecordsHistoric(historico.total);
             } else {
-                setHistoricoEstoque(historico);
+                setRowsHistoric([]);
+                alert('Dados retornados não são válidos');
+                setTotalRecordsHistoric(0);
             }
         } catch (error) {
             alert('Erro ao consultar histórico');
+            setRowsHistoric([]);
+            setTotalRecordsHistoric(0);
         }
+    };
+
+    const handlePageChangeHistoric = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPageHistoric(newPage);
+    };
+
+    const handleRowsPerPageChangeHistoric = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPageHistoric(parseInt(event.target.value, 10));
+        setPageHistoric(0);
+    };
+
+    const handleFilterIdChangeHistoric = (id: string) => {
+        setFilterIdHistoric(id);
+        setPageHistoric(0);
     };
 
     const handleClose = () => {
@@ -106,20 +137,20 @@ export const Estoque: React.VFC = () => {
 
     const handleExcluir = async (id: number) => {
         try {
-          const result = await EstoqueService.deleteEstoqueById(id);
-      
-          if (result instanceof Error) {
-            console.error(result.message); 
-            alert(result.message);
-            return;
-          }
-      
-          alert("Estoque excluído com sucesso!");
-      
+            const result = await EstoqueService.deleteEstoqueById(id);
+
+            if (result instanceof Error) {
+                console.error(result.message);
+                alert(result.message);
+                return;
+            }
+
+            alert("Estoque excluído com sucesso!");
+
         } catch (error) {
-          console.error("Erro inesperado:", error);
+            console.error("Erro inesperado:", error);
         }
-      };
+    };
 
     return (
         <Box>
@@ -127,7 +158,7 @@ export const Estoque: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraEstoque/>
+            <BarraEstoque />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
@@ -193,15 +224,15 @@ export const Estoque: React.VFC = () => {
                                             </Button> */}
                                         </TableCell>
                                         <TableCell>
-                                                <Button
+                                            <Button
                                                 variant="contained"
                                                 color="error"
                                                 onClick={() => handleExcluir(row.id)}
-                                                sx={{ mr: 1, height:'24px' }}
+                                                sx={{ mr: 1, height: '24px' }}
                                             >
                                                 <DeleteIcon />
                                             </Button>
-                                            </TableCell>
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             )
@@ -221,6 +252,10 @@ export const Estoque: React.VFC = () => {
             {/* Modal para Exibir Histórico --- ENVIAR PARA UM COMPONENT SEPERADO*/}
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
                 <DialogTitle>Histórico do Estoque</DialogTitle>
+                {/* <Busca
+                    titulo={titulo}
+                    onFilterIdChange={handleFilterIdChangeHistoric}
+                /> */}
                 <DialogContent>
                     <Table>
                         <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
@@ -235,8 +270,8 @@ export const Estoque: React.VFC = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {historicoEstoque && historicoEstoque.length > 0 ? (
-                                historicoEstoque.map(historico => (
+                            {rowsHistoric.length > 0 ? (
+                                rowsHistoric.map(historico => (
                                     <TableRow key={historico.id}>
                                         <TableCell>{historico.id}</TableCell>
                                         <TableCell>{historico.compra_id || 'Não se aplica'}</TableCell>
@@ -258,9 +293,19 @@ export const Estoque: React.VFC = () => {
                                     </TableCell>
                                 </TableRow>
                             )}
+
                         </TableBody>
                     </Table>
                 </DialogContent>
+                <TablePagination
+                    rowsPerPageOptions={[5]}
+                    component="div"
+                    count={totalRecordsHistoric}
+                    rowsPerPage={rowsPerPageHistoric}
+                    page={pageHistoric}
+                    onPageChange={handlePageChangeHistoric}
+                    onRowsPerPageChange={handleRowsPerPageChangeHistoric}
+                />
                 <Button onClick={handleClose} color="primary">
                     Fechar
                 </Button>

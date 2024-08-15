@@ -6,8 +6,25 @@ import { HistoricProduto } from '../models/historicProduto.interface';
 
 const estoqueController = {
 
+	getEstoques: async (_:Request, res:Response) => {
+		const query = "SELECT * FROM estoque";
 
-	getEstoques: async (req: Request, res: Response) => {
+		try {
+			const rows = await queryDatabase(query);
+
+			// Verificar se tem estoque cadastrada
+			if (rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum estoque cadastrada" });
+			}
+			return res.status(200).json(rows);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar estoque" });
+		}
+	},
+
+
+	getEstoquesList: async (req: Request, res: Response) => {
 		const { page = 1, limit = 5, id } = req.query;
 		let query = "SELECT * FROM estoque WHERE 1=1";
 		let countQuery = "SELECT COUNT(*) AS total FROM estoque WHERE 1=1";

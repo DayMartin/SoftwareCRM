@@ -79,7 +79,7 @@ const getClientes = async (tipo: string): Promise<IListagemCliente[] | Error> =>
 
 const getClientesList = async (page = 1, filterId = '', filterName = '', tipo: string): Promise<IApiResponse | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/user/getAlltipo?page=${page}&id=${filterId}&nome=${filterName}&tipo=${tipo}`;
+    const urlRelativa = `${Environment.URL_BASE}/user/getAlltipoList?page=${page}&id=${filterId}&nome=${filterName}&tipo=${tipo}`;
 
     const { data } = await Api.get<IApiResponse>(urlRelativa);
 
