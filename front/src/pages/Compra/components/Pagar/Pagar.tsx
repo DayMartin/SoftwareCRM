@@ -6,14 +6,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { BarraInicial } from "../../../../shared/components/barra-inicial/BarraInicial";
-import { BarraAReceber } from "./BarraAReceber";
-import { ParcelasService, IParcela, IParcelaCreate } from "../../../../shared/services/api/Vendas/ParcelasVendaService";
+import { BarraAPagar } from "./BarraAPagar"; 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import { ParcelasService, IParcela } from "../../../../shared/services/api/Compra/ParcelasCompraService";
 
-export const AReceber: React.VFC = () => {
+export const APagar: React.VFC = () => {
     const [rows, setRows] = useState<IParcela[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
@@ -21,7 +21,7 @@ export const AReceber: React.VFC = () => {
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
     const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
-    const titulo = "A Receber";
+    const titulo = "A Pagar";
 
     const consultar = async () => {
         setIsLoading(true);
@@ -95,7 +95,7 @@ export const AReceber: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraAReceber />
+            <BarraAPagar />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
@@ -134,7 +134,7 @@ export const AReceber: React.VFC = () => {
                                         <TableCell>{row.valorParcela}</TableCell>
                                         <TableCell>{row.status}</TableCell>
                                         <TableCell>{row.dataPagamento}</TableCell>
-                                        <TableCell>{row.venda_id}</TableCell>
+                                        <TableCell>{row.compra_id}</TableCell>
                                         <TableCell>{row.tipoPagamento}</TableCell>
 
                                         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
@@ -142,7 +142,7 @@ export const AReceber: React.VFC = () => {
                                                 <Button
                                                     variant="contained"
                                                     color="success"
-                                                    onClick={() => handleReceber(row.id, row.venda_id, row.valorParcela)}
+                                                    onClick={() => handleReceber(row.id, row.compra_id, row.valorParcela)}
                                                     sx={{ height: "24px" }}
                                                 >
                                                     <PaymentsIcon />
@@ -152,7 +152,7 @@ export const AReceber: React.VFC = () => {
                                                 <Button
                                                     variant="contained"
                                                     color="error"
-                                                    onClick={() => handleDesfazerReceber(row.id, row.venda_id, row.valorParcela)}
+                                                    onClick={() => handleDesfazerReceber(row.id, row.compra_id, row.valorParcela)}
                                                     sx={{ height: "24px" }}
                                                 >
                                                     <DoNotDisturbOnIcon />

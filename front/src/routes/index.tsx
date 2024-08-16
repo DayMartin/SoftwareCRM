@@ -13,6 +13,7 @@ import { Cliente } from '../pages/Users/components/Cliente';
 import { Venda } from '../pages/Venda/Venda';
 import { Compra } from '../pages/Compra/Compra';
 import { AReceber } from '../pages/Venda/components/Receber/Receber';
+import { APagar } from "../pages/Compra/components/Pagar/Pagar"
 
 export const AppRoutes = () => {
   const { setDrawerOptions } = useDrawerContext();
@@ -33,16 +34,16 @@ export const AppRoutes = () => {
         path: "/usersListagem",
         label: 'Listagem de Usuarios',
       }, */
-      
+
     ]);
   }, [setDrawerOptions]);
 
-    // Simula a obtenção das roles do usuário ao carregar a página
-    useEffect(() => {
-      // Obtém as roles do usuário do localStorage ou de alguma fonte de dados
+  // Simula a obtenção das roles do usuário ao carregar a página
+  useEffect(() => {
+    // Obtém as roles do usuário do localStorage ou de alguma fonte de dados
 
-    }, []);
-  
+  }, []);
+
 
   return (
     <Routes>
@@ -50,38 +51,45 @@ export const AppRoutes = () => {
       <Route
         path="/listagemContas"
         element={
-            <ListagemUsers />
+          <ListagemUsers />
         }
       />
       <Route
         path="/user"
         element={
-            <ListagemUsers />
+          <ListagemUsers />
         }
       />
-       <Route
+      <Route
         path="/estoque"
         element={
-            <Estoque />
+          <Estoque />
         }
       />
-        <Route
+      <Route
         path="/venda"
         element={
-            <Venda />
+          <Venda />
         }
       />
-        <Route
+      <Route
         path="/compra"
         element={
-            <Compra />
+          <Compra />
         }
       />
 
       <Route
         path="/receber"
         element={
-            <AReceber />
+          <AReceber />
+        }
+      />
+
+      <Route
+        path="/pagar"
+        element={
+          <APagar />
         }
       />
       {/* Rota padrão */}

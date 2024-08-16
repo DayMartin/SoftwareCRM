@@ -114,8 +114,8 @@ export const BarraCompra: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/receber')}                >
-                    A Receber
+                    onClick={() => navigate('/pagar')}                >
+                    A Pagar
                 </Button>
                 <Button
                     sx={{
@@ -137,7 +137,7 @@ export const BarraCompra: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/receber')}                >
+                    onClick={() => navigate('/pagar')}                >
                     Orçamento
                 </Button>
                 <Button
@@ -159,7 +159,7 @@ export const BarraCompra: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/receber')}                >
+                    onClick={() => navigate('/pagar')}                >
                     Centro de trocas
                 </Button>
                 <Button
@@ -181,7 +181,7 @@ export const BarraCompra: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/receber')}                >
+                    onClick={() => navigate('/pagar')}                >
                     <LocalPrintshopIcon />
                 </Button>
 
@@ -204,7 +204,7 @@ export const BarraCompra: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/receber')}                >
+                    onClick={() => navigate('/pagar')}                >
                     <FilterAltIcon />
                 </Button>
             </Box>

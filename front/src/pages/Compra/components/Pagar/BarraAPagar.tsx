@@ -6,7 +6,7 @@ import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 
-export const BarraAReceber: React.VFC = () => {
+export const BarraAPagar: React.VFC = () => {
     const navigate = useNavigate();
 
     return (
@@ -51,8 +51,8 @@ export const BarraAReceber: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/venda')}                >
-                    Vendas
+                    onClick={() => navigate('/compra')}                >
+                    Compras
                 </Button>
 
                 <Button
@@ -74,7 +74,7 @@ export const BarraAReceber: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/receber')}                >
+                    onClick={() => navigate('/pagar')}                >
                     <LocalPrintshopIcon/>
                 </Button>
 
@@ -97,7 +97,7 @@ export const BarraAReceber: React.VFC = () => {
                             backgroundColor: '#0b3d91',
                         },
                     }}
-                    onClick={() => navigate('/receber')}                >
+                    onClick={() => navigate('/pagar')}                >
                     <FilterAltIcon/>
                 </Button>
             </Box>
