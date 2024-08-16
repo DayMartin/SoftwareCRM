@@ -4,5 +4,6 @@ import { produtoMovimentoController } from "../controllers/ProdutoMovimentoContr
 const router = Router();
 
 router.route("/produto_movimento/venda/:venda_id").get((req, res) => produtoMovimentoController.getVenda(req, res));
+router.route("/produto_movimento/compra/:compra_id").get((req, res) => produtoMovimentoController.getCompra(req, res));
 
 export { router as produtoMovimentoRouter };

@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import queryDatabase from "../database/queryPromise";
 // Função para buscar todos os usuários
 
-const parcelasVendaController = {
+const parcelasCompraController = {
 	getParcelas: async (req: Request, res: Response) => {
 		const { page = 1, limit = 5, id } = req.query;
-		let query = "SELECT * FROM parcelas_venda WHERE 1=1";
-		let countQuery = "SELECT COUNT(*) AS total FROM parcelas_venda WHERE 1=1";
+		let query = "SELECT * FROM parcelas_compra WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM parcelas_compra WHERE 1=1";
 		const params: any[] = [];
 
 		if (id) {
@@ -44,7 +44,7 @@ const parcelasVendaController = {
 	// Função para buscar uma parcela
 	getParcela: async (req: Request, res: Response) => {
 		const { id } = req.params;
-		const query = "SELECT * FROM parcelas_venda WHERE id = ?";
+		const query = "SELECT * FROM parcelas_compra WHERE id = ?";
 
 		try {
 			const [rows] = await queryDatabase(query, [id]);
@@ -65,12 +65,12 @@ const parcelasVendaController = {
 	},
 
 	// Função para buscar uma parcela por id_os
-	getParcelaVenda: async (req: Request, res: Response) => {
-		const { venda_id } = req.params;
-		const query = "SELECT * FROM parcelas_venda WHERE venda_id = ?";
+	getParcelaCompra: async (req: Request, res: Response) => {
+		const { compra_id } = req.params;
+		const query = "SELECT * FROM parcelas_compra WHERE compra_id = ?";
 
 		try {
-			const rows = await queryDatabase(query, [venda_id]);
+			const rows = await queryDatabase(query, [compra_id]);
 
 			// Verificar se a parcelas foi encontrada
 			if (rows === null || rows === undefined) {
@@ -89,7 +89,7 @@ const parcelasVendaController = {
 
 	receberParcela: async (req: Request, res: Response) => {
 		const { id } = req.params;
-		const { valorPago, idvenda } = req.body;
+		const { valorPago, idcompra } = req.body;
 	
 		if (valorPago === undefined || isNaN(Number(valorPago))) {
 			return res.status(400).json({ error: "valorPago é obrigatório e deve ser um número válido." });
@@ -98,12 +98,12 @@ const parcelasVendaController = {
 		const valorPagoNumero = Number(valorPago);
 		console.log('valor', valorPagoNumero);
 	
-		const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
-		const atualizarStatus = 'UPDATE parcelas_venda SET status= ? WHERE id = ?';
-		const atualizarVenda = 'UPDATE venda SET valorPago = ? WHERE id = ?';
-		const consultaValor = "SELECT valorPago FROM venda WHERE id = ?";
-		const consultarTotal = "SELECT valorTotalDesconto FROM venda WHERE id = ?";
-		const atualizarVendaStatus = 'UPDATE venda SET status = ? WHERE id = ?';
+		const queryVerificar = "SELECT * FROM parcelas_compra WHERE id = ?";
+		const atualizarStatus = 'UPDATE parcelas_compra SET status= ? WHERE id = ?';
+		const atualizarCompra = 'UPDATE compra SET valorPago = ? WHERE id = ?';
+		const consultaValor = "SELECT valorPago FROM compra WHERE id = ?";
+		const consultarTotal = "SELECT valorTotalDesconto FROM compra WHERE id = ?";
+		const atualizarCompraStatus = 'UPDATE compra SET status = ? WHERE id = ?';
 
 	
 		try {
@@ -112,19 +112,19 @@ const parcelasVendaController = {
 				return res.status(404).json({ error: "Parcela não encontrada" });
 			}
 	
-			const [venda] = await queryDatabase(consultaValor, [parcela.venda_id]);
-			if (!venda) {
-				return res.status(404).json({ error: "Venda não encontrada" });
+			const [compra] = await queryDatabase(consultaValor, [parcela.compra_id]);
+			if (!compra) {
+				return res.status(404).json({ error: "Compra não encontrada" });
 			}
 	
-			const novoValorPago = Number(venda.valorPago) + valorPagoNumero;
+			const novoValorPago = Number(compra.valorPago) + valorPagoNumero;
 			console.log('novoValorPago', novoValorPago);
 	
-			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
+			await queryDatabase(atualizarCompra, [novoValorPago, parcela.compra_id]);
 			await queryDatabase(atualizarStatus, ['pago', id]);
 
-			const consultarNovoPago = await queryDatabase(consultaValor, [parcela.venda_id]);
-			const consultarValorTotal = await queryDatabase(consultarTotal, [parcela.venda_id]);
+			const consultarNovoPago = await queryDatabase(consultaValor, [parcela.compra_id]);
+			const consultarValorTotal = await queryDatabase(consultarTotal, [parcela.compra_id]);
 
 			const valorPago = parseFloat(consultarNovoPago[0].valorPago);
 			const valorTotal = parseFloat(consultarValorTotal[0].valorTotalDesconto);
@@ -133,7 +133,7 @@ const parcelasVendaController = {
 			console.log('consultarValorTotal', valorTotal)
 
 			if (valorPago == valorTotal) {
-				await queryDatabase(atualizarVendaStatus, ['pago', idvenda]);
+				await queryDatabase(atualizarCompraStatus, ['pago', idcompra]);
 			}
 	
 			return res.status(200).json({ message: "Parcela recebida com sucesso" });
@@ -149,11 +149,11 @@ const parcelasVendaController = {
 		const { id } = req.params;
 		const { valorPago } = req.body;
 
-		const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
-		const queryPagar = "UPDATE parcelas_venda SET status= ? WHERE id = ?";
-		const atualizarVenda = "UPDATE venda SET valorPago = ? WHERE id = ?";
-		const consultaValor = "SELECT valorPago FROM venda WHERE id = ?";
-		const atualizarVendaStatus = 'UPDATE venda SET status = ? WHERE id = ?';
+		const queryVerificar = "SELECT * FROM parcelas_compra WHERE id = ?";
+		const queryPagar = "UPDATE parcelas_compra SET status= ? WHERE id = ?";
+		const atualizarCompra = "UPDATE compra SET valorPago = ? WHERE id = ?";
+		const consultaValor = "SELECT valorPago FROM compra WHERE id = ?";
+		const atualizarCompraStatus = 'UPDATE compra SET status = ? WHERE id = ?';
 
 		try {
 			const [parcela] = await queryDatabase(queryVerificar, [id]);
@@ -163,19 +163,19 @@ const parcelasVendaController = {
 					.json({ error: "Parcela não encontrada" });
 			}
 
-			// Consultar o valor atual de 'valorPago' na tabela 'venda'
-			const [venda] = await queryDatabase(consultaValor, [parcela.venda_id]);
-			if (!venda) {
-				return res.status(404).json({ error: "Venda não encontrada" });
+			// Consultar o valor atual de 'valorPago' na tabela 'compra'
+			const [compra] = await queryDatabase(consultaValor, [parcela.compra_id]);
+			if (!compra) {
+				return res.status(404).json({ error: "compra não encontrada" });
 			}
 
 			// Calcular o novo valor de 'valorPago'
-			const novoValorPago = venda.valorPago - valorPago;
+			const novoValorPago = compra.valorPago - valorPago;
 
-			// Atualizar o valor de 'valorPago' na tabela 'venda'
+			// Atualizar o valor de 'valorPago' na tabela 'compra'
 			await queryDatabase(queryPagar, ["pendente", id]);
-			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
-			await queryDatabase(atualizarVendaStatus, ["pendente", parcela.venda_id]);
+			await queryDatabase(atualizarCompra, [novoValorPago, parcela.compra_id]);
+			await queryDatabase(atualizarCompraStatus, ["pendente", parcela.compra_id]);
 
 			return res
 				.status(200)
@@ -189,8 +189,8 @@ const parcelasVendaController = {
 	// Função para deletar uma Parcela
 	deleteParcela: async (req: Request, res: Response) => {
 		const { id } = req.body;
-		const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
-		const queryDeletar = "DELETE FROM parcelas_venda WHERE id = ?";
+		const queryVerificar = "SELECT * FROM parcelas_compra WHERE id = ?";
+		const queryDeletar = "DELETE FROM parcelas_compra WHERE id = ?";
 
 		try {
 			// Verificar se a Parcela existe
@@ -215,7 +215,7 @@ const parcelasVendaController = {
 	// Função para trazer todas as parcelas do dia
 	PagamentoDia: async (req: Request, res: Response) => {
 		const { diapagamento } = req.body;
-		const query = "SELECT * FROM parcelas_venda WHERE dataPagamento = ?";
+		const query = "SELECT * FROM parcelas_compra WHERE dataPagamento = ?";
 
 		try {
 			const [rows] = await queryDatabase(query, [diapagamento]);
@@ -242,7 +242,7 @@ const parcelasVendaController = {
 		// Extrair o mês do formato 'MM/YYYY'
 		const [month, year] = mes.split("/");
 
-		const query = "SELECT * FROM parcelas_venda";
+		const query = "SELECT * FROM parcelas_compra";
 
 		try {
 			const result = await queryDatabase(query);
@@ -277,7 +277,7 @@ const parcelasVendaController = {
 
 	// Função para trazer o valor total recebido por mês
 	PagamentoTotalMes: async (req: Request, res: Response) => {
-		const query = "SELECT * FROM parcelas_venda";
+		const query = "SELECT * FROM parcelas_compra";
 
 		try {
 			const result = await queryDatabase(query);
@@ -324,7 +324,7 @@ const parcelasVendaController = {
 	// Função para buscar parcela por status
 	PagamentoStatus: async (req: Request, res: Response) => {
 		const { status } = req.body;
-		const query = "SELECT * FROM parcelas_venda WHERE status = ? ";
+		const query = "SELECT * FROM parcelas_compra WHERE status = ? ";
 
 		try {
 			const rows = await queryDatabase(query, [status]);
@@ -345,4 +345,4 @@ const parcelasVendaController = {
 	},
 };
 
-export { parcelasVendaController };
+export { parcelasCompraController };

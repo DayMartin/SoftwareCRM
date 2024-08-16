@@ -113,6 +113,9 @@ export default function MenuLateral() {
     if (selectedItem === "Venda") {
       navigate("/venda");
     }
+    if (selectedItem === "Compra") {
+      navigate("/compra");
+    }
   }, [selectedItem, navigate]);
 
   // const handleDrawerOpen = () => {
@@ -133,7 +136,7 @@ export default function MenuLateral() {
       <Drawer variant="permanent" open={open} sx={{ backgroundColor: "black" }}>
         <Divider />
         <List>
-          {["Contas", "Venda", "Financeiro", "Estoque"].map(
+          {["Contas", "Venda", "Compra", "Estoque"].map(
             (text, index) => (
               <ListItem key={text} disablePadding sx={{ display: "block" }}>
                 <ListItemButton

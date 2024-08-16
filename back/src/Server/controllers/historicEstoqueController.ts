@@ -125,6 +125,8 @@ const historicEstoqueController = {
 			params.push(estoque_id);
 		}
 
+		query += " ORDER BY data_criacao DESC";
+
 		// Consulta de contagem total
 		try {
 			const totalResult = await queryDatabase(countQuery, params);
@@ -169,6 +171,25 @@ const historicEstoqueController = {
 			return res.status(500).json({ error: "Erro ao buscar Histórico" });
 		}
 	},
+
+	getCompra: async (req: Request, res: Response) => {
+		const { compra_id } = req.params;
+		const query = "SELECT * FROM estoqueHistoric WHERE compra_id = ?";
+
+		try {
+			const rows = await queryDatabase(query, [compra_id]);
+
+			// Verificar se o Estoque foi encontrado
+			if (rows === null || rows === undefined) {
+				return res.status(404).json({ error: "Histórico não encontrado" });
+			}
+			return res.status(200).json(rows);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar Histórico" });
+		}
+	},
+
 
 	// Função para deletar um Estoque
 	deleteHistoricEstoque: async (req: Request, res: Response) => {
