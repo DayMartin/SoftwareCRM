@@ -38,7 +38,7 @@ export const Venda: React.VFC = () => {
         try {
             const consulta = await VendasService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
-                alert(consulta.message);
+                // alert(consulta.message);
                 setRows([]);
                 setTotalRecords(0);
 
@@ -52,12 +52,12 @@ export const Venda: React.VFC = () => {
 
             } else {
                 setRows([]);
-                alert('Dados retornados não são válidos');
+                // alert('Dados retornados não são válidos');
                 setTotalRecords(0);
 
             }
         } catch (error) {
-            alert('Erro ao consultar clientes');
+            // alert('Erro ao consultar clientes');
             setRows([]);
         }
         setIsLoading(false);

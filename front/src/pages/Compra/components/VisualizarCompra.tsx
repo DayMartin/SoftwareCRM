@@ -77,12 +77,12 @@ const CompraDialog: React.FC<CompraDialogProps> = ({
     try {
       const response = await CompraService.getByCompra(id);
       if (response instanceof Error) {
-        alert(response.message);
+        // alert(response.message);
       } else {
         setParcelas(response || []);
       }
     } catch (error) {
-      alert("Erro ao buscar parcelas");
+      // alert("Erro ao buscar parcelas");
     }
   };
 
@@ -90,12 +90,12 @@ const CompraDialog: React.FC<CompraDialogProps> = ({
     try {
       const response = await CompraService.getByProdutoMovimento(id);
       if (response instanceof Error) {
-        alert(response.message);
+        // alert(response.message);
       } else {
         setProdutos(response || []);
       }
     } catch (error) {
-      alert("Erro ao buscar produtos");
+      // alert("Erro ao buscar produtos");
     }
   };
 
@@ -103,7 +103,7 @@ const CompraDialog: React.FC<CompraDialogProps> = ({
     try {
       await EstoqueService.getByID(id);
     } catch (error) {
-      alert('Erro ao consulta');
+      // alert('Erro ao consulta');
     }
   }
 
@@ -112,7 +112,7 @@ const CompraDialog: React.FC<CompraDialogProps> = ({
       await ParcelasService.receberById(id, idcompra, valorPago);
       await BuscarParcelas(idcompra)
     } catch (error) {
-      alert('Erro ao receber');
+      // alert('Erro ao receber');
     }
   };
 
@@ -122,7 +122,7 @@ const CompraDialog: React.FC<CompraDialogProps> = ({
       await BuscarParcelas(idcompra)
 
     } catch (error) {
-      alert('Erro ao desfazer o receber');
+      // alert('Erro ao desfazer o receber');
     }
   };
 

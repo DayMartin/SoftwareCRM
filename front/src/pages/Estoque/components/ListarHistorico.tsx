@@ -27,7 +27,7 @@ export const HistoricoModal: React.VFC<HistoricoModalProps> = ({
         try {
             const historico = await EstoqueService.getByHistoricList(page + 1, filterId, id);
             if (historico instanceof Error) {
-                alert(historico.message);
+                // alert(historico.message);
                 setRowsHistoric([]);
                 setTotalRecords(0);
             } else if (historico && typeof historico === 'object' && Array.isArray(historico.rows)) {
@@ -35,11 +35,11 @@ export const HistoricoModal: React.VFC<HistoricoModalProps> = ({
                 setTotalRecords(historico.total);
             } else {
                 setRowsHistoric([]);
-                alert('Dados retornados não são válidos');
+                // alert('Dados retornados não são válidos');
                 setTotalRecords(0);
             }
         } catch (error) {
-            alert('Erro ao consultar histórico');
+            // alert('Erro ao consultar histórico');
             setRowsHistoric([]);
             setTotalRecords(0);
         }

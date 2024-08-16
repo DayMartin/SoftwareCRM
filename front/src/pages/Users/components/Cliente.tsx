@@ -37,7 +37,7 @@ export const Cliente: React.VFC = () => {
             const consulta = await UsersService.getClientesList(page + 1, filterId, filterName, tipo);
 
             if (consulta instanceof Error) {
-                alert(consulta.message);
+                // alert(consulta.message);
                 setRows([]);
                 setTotalRecords(0);
             } else {
@@ -45,7 +45,7 @@ export const Cliente: React.VFC = () => {
                 setTotalRecords(consulta.total);
             }
         } catch (error) {
-            alert('Erro ao consultar clientes');
+            // alert('Erro ao consultar clientes');
             setRows([]);
             setTotalRecords(0);
         }

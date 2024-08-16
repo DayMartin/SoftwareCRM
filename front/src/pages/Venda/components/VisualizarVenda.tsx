@@ -80,12 +80,12 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
     try {
       const response = await VendasService.getByVenda(id);
       if (response instanceof Error) {
-        alert(response.message);
+        // alert(response.message);
       } else {
         setParcelas(response || []);
       }
     } catch (error) {
-      alert("Erro ao buscar parcelas");
+      // alert("Erro ao buscar parcelas");
     }
   };
 
@@ -93,12 +93,12 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
     try {
       const response = await VendasService.getByProdutoMovimento(id);
       if (response instanceof Error) {
-        alert(response.message);
+        // alert(response.message);
       } else {
         setProdutos(response || []);
       }
     } catch (error) {
-      alert("Erro ao buscar produtos");
+      // alert("Erro ao buscar produtos");
     }
   };
 
@@ -106,7 +106,7 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
     try {
       await EstoqueService.getByID(id);
     } catch (error) {
-      alert('Erro ao consulta');
+      // alert('Erro ao consulta');
     }
   }
 

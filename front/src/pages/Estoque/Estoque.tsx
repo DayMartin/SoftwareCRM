@@ -27,7 +27,7 @@ export const Estoque: React.VFC = () => {
         try {
             const consulta = await EstoqueService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
-                alert(consulta.message);
+                // alert(consulta.message);
                 setRows([]);
                 setTotalRecords(0);
 
@@ -41,12 +41,12 @@ export const Estoque: React.VFC = () => {
 
             } else {
                 setRows([]);
-                alert('Dados retornados não são válidos');
+                // alert('Dados retornados não são válidos');
                 setTotalRecords(0);
 
             }
         } catch (error) {
-            alert('Erro ao consultar estoque');
+            // alert('Erro ao consultar estoque');
             setRows([]);
         }
         setIsLoading(false);
