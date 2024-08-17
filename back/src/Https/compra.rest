@@ -16,33 +16,36 @@ Content-Type: application/json
 {
 
   "funcionario_id": 2,
-  "fornecedor_id": 1,
-  "QTparcelas": 2,
+  "fornecedor_id": 9,
+  "QTparcelas": 1,
   "valorTotal": 48.00,
-  "valorDesconto": 2,
-  "valorTotalDesconto": 2,
+  "valorDesconto": 0,
+  "valorTotalDesconto": 48.00,
   "valorPago": 0,
-  "status":"Aguardando",
+  "status":"pendente",
   "parcelas": [
     {
 	  "tipoPagamento": "credito",
       "parcela": 1,
-      "valorParcela": 24.00,
+      "valorParcela": 48.00,
       "dataPagamento": "24/09/2024",
-      "status": "pendente"
-    },
-	{
-	  "tipoPagamento": "credito",
-      "parcela": 2,
-      "valorParcela": 24.00,
-      "dataPagamento": "24/10/2024",
       "status": "pendente"
     }
   ],
   "produtos": [
     {
       "quantidade": 1,
-      "id": 1
+      "id": 3
+    }
+  ],
+  "ItemProduto": [
+    {
+      "codBarras": 646,
+      "produtos.id": 3
+    },
+    {
+      "codBarras": 2356,
+      "produtos.id": 3
     }
   ]
 }

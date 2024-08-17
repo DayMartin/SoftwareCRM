@@ -74,6 +74,12 @@ const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
         valorUnitario: 0,
       },
     ],
+    ItemProduto: [
+      {
+        codBarra: '',
+        estoque_id: 0,
+      }
+    ]
   });
   const [formData2, setFormData2] = useState({
     nome: "",
@@ -93,6 +99,8 @@ const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
   ViewCategoria[]
 >([]);
 const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
+const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  const [codigoBarras, setCodigoBarras] = useState<{ [key: number]: string[] }>({});
 
   const ConsultarFornecedor = async () => {
     try {
@@ -327,10 +335,78 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
         },
       ],
       produtos: [],
+      ItemProduto: []
     });
   };
 
   const valorTotalFinal = formData.valorTotal - formData.valorDesconto;
+
+  const handleToggleRow = (id: number) => {
+    setExpandedRows(prev => 
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    );
+  };
+
+  const handleCodigoBarrasChange = (id: number, index: number, value: string) => {
+    setCodigoBarras(prev => ({
+      ...prev,
+      [id]: [
+        ...(prev[id] || []).slice(0, index),
+        value,
+        ...(prev[id] || []).slice(index + 1),
+      ],
+    }));
+  };
+
+  const handleAddCodigoBarras = (id: number) => {
+    setCodigoBarras(prev => ({
+      ...prev,
+      [id]: [...(prev[id] || []), ""],
+    }));
+  };
+
+  const updateFormDataWithItemProduto = () => {
+    const updatedItemProduto = formData.produtos.flatMap(produto => 
+      (codigoBarras[produto.id] || [])
+        .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
+        .map(codBarra => ({
+          codBarra,
+          estoque_id: produto.id
+        }))
+    );
+  
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      itemProduto: updatedItemProduto
+    }));
+  
+    console.log('FormData atualizado:', updatedItemProduto);
+  };
+  
+  
+  useEffect(() => {
+    // Calcula o itemProduto apenas com códigos de barras não vazios
+    const updatedItemProduto = formData.produtos.flatMap(produto => 
+      (codigoBarras[produto.id] || [])
+        .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
+        .map(codBarra => ({
+          codBarra,
+          estoque_id: produto.id
+        }))
+    );
+  
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      ItemProduto: updatedItemProduto
+    }));
+  
+    console.log('FormData atualizado:', updatedItemProduto);
+    console.log('FormData:', formData);
+
+  
+  }, [codigoBarras, formData.produtos]);
+  
+  
 
   return (
     <Modal
@@ -503,6 +579,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                       <TableCell sx={{ p: 0.1 }}>Valor Unitário</TableCell>
                       <TableCell sx={{ p: 0.1 }}>Valor Total</TableCell>
                       <TableCell sx={{ p: 0.1 }}>Ação</TableCell>
+                      <TableCell sx={{ p: 0.1 }}>Código de Barras</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{ backgroundColor: "#fafafa" }}>
@@ -513,29 +590,66 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                       const valorTotal =
                         (produto.valorUnitario || 0) *
                         produto.quantidade;
+                      const isExpanded = expandedRows.includes(produto.id);
                       return (
-                        <TableRow key={index}>
-                          <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
-                            {produto.nome_produto}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            {produto.quantidade}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            R$ {produto.valorUnitario.toFixed(2)}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            R$ {valorTotal.toFixed(2)}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            <IconButton
-                              color="error"
-                              onClick={() => handleRemoveProduto(produto.id)}
-                            >
-                              <RemoveIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
+                        <React.Fragment key={index}>
+                          <TableRow>
+                            <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
+                              {produto.nome_produto}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              {produto.quantidade}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              R$ {produto.valorUnitario.toFixed(2)}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              R$ {valorTotal.toFixed(2)}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              <IconButton
+                                color="error"
+                                onClick={() => handleRemoveProduto(produto.id)}
+                              >
+                                <RemoveIcon />
+                              </IconButton>
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              <Button
+                                onClick={() => handleToggleRow(produto.id)}
+                              >
+                                {isExpanded ? "Fechar" : "Abrir"}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                          {isExpanded && (
+                            <TableRow>
+                              <TableCell colSpan={6}>
+                                <Box>
+                                  {Array.from({ length: produto.quantidade }).map((_, i) => (
+                                    <Box key={i} sx={{ mb: 1 }}>
+                                      <TextField
+                                        label={`Código de Barras ${i + 1}`}
+                                        value={codigoBarras[produto.id]?.[i] || ""}
+                                        onChange={(e) =>
+                                          handleCodigoBarrasChange(produto.id, i, e.target.value)
+                                        }
+                                        fullWidth
+                                        margin="normal"
+                                      />
+                                    </Box>
+                                  ))}
+                                  <Button
+                                    variant="outlined"
+                                    onClick={() => handleAddCodigoBarras(produto.id)}
+                                  >
+                                    Adicionar Código de Barras
+                                  </Button>
+                                </Box>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </TableBody>
@@ -683,7 +797,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                 color="primary"
                 onClick={() => {
                   onSubmit(formData);
-                  resetForm();
+                  // resetForm();
                   onClose();
                 }}
                 fullWidth
@@ -696,7 +810,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                 variant="outlined"
                 color="secondary"
                 onClick={() => {
-                  resetForm();
+                  // resetForm();
                   onClose();
                 }}
                 fullWidth

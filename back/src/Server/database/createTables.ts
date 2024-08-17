@@ -20,6 +20,7 @@ export class CreateTables {
 			await this.createHistoricEstoqueTable();
 			await this.createProdutoMovimentoTable();
 			await this.createLogs();
+			await this.createItemProdutoTable();
 		} catch (error) {
 			console.error("Erro ao criar as tabelas:", error);
 		}
@@ -363,6 +364,30 @@ export class CreateTables {
 			}
 		} catch (error) {
 			console.error("Erro ao criar a tabela 'logs':", error);
+		}
+	}
+
+	async createItemProdutoTable() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'item_produto'`;
+			// Verifique se a tabela 'item_produto' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'item_produto' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE item_produto (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						codBarras VARCHAR(100),
+						estoque_id INT,
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (estoque_id) REFERENCES estoque(id)
+					)
+				`);
+				console.log("Tabela 'item_produto' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'item_produto':", error);
 		}
 	}
 }

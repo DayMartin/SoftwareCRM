@@ -53,11 +53,11 @@ const compraController = {
 
 	// Função para criar uma nova Compra
 	createCompra: async (req: Request, res: Response) => {
-		const { fornecedor_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status, parcelas, produtos } = req.body;
+		const { fornecedor_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status, parcelas, produtos, ItemProduto } = req.body;
 		const insertCompraQuery = "INSERT INTO compra (fornecedor_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		const insertFinanceiroQuery = "INSERT INTO parcelas_compra (compra_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
 		const insertProdutoMovimento = "INSERT INTO produto_movimento (tipo, quantidade, estoque_id, compra_id) VALUES (?, ?, ?, ?)";
-
+		const insertItemProduto = 'INSERT INTO item_produto (codBarras, estoque_id) VALUE (?,?)'
 		try {
 			// Inserir na tabela 'compra'
 			const compraResult = await queryDatabase(insertCompraQuery, [fornecedor_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status]);
@@ -79,7 +79,12 @@ const compraController = {
 				const tipo = "Entrada"
 				await queryDatabase(insertProdutoMovimento, [tipo, produto.quantidade, produto.id, compra_id]);
 
+				// inserir item_produto
+				for (const Item of ItemProduto){
+					await queryDatabase(insertItemProduto, [Item.codBarras, produto.id ])
+				}
 			}
+
 
 			return res.status(201).json({ message: `Compra criada com sucesso` });
 		} catch (error) {

@@ -42,6 +42,11 @@ export interface IParcela {
     quantidade: number;
     id: number;
   }
+
+  export interface ItemProduto {
+    codBarras: string;
+    estoque_id: number;
+  }
   
   // Interface para uma compra
   export interface ICompra {
@@ -54,6 +59,7 @@ export interface IParcela {
     status: string;
     parcelas: IParcelaCreate[];
     produtos: IProduto[];
+    ItemProduto: ItemProduto[];
   }
 
   export interface ICompraDetalhe {
@@ -205,6 +211,7 @@ const getByProdutoMovimento = async (id: number): Promise<IDetalheHistoric[] | E
 const create = async (dados: ICompra): Promise<void | Error> => {
   try {
     await Api.post<ICompra>('compra/create', dados);
+    console.log('dados', dados)
 
   } catch (error) {
     throw error;
