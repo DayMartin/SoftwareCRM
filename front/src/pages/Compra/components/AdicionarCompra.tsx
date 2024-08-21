@@ -426,6 +426,8 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
           boxShadow: 24,
           width: "100%",
           maxWidth: "70%",
+          height: "96%",
+          maxHeight: "100%",
         }}
       >
         <Typography variant="h6" component="h2" gutterBottom>
@@ -567,7 +569,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
               </Grid>
               <TableContainer
                 component={Paper}
-                sx={{ mt: 2, maxHeight: "150px", overflowY: "auto" }}
+                sx={{ mt: 2, maxHeight: "250px", overflowY: "auto" }}
               >
                 <Table>
                   <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
@@ -627,7 +629,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
                               <TableCell colSpan={6}>
                                 <Box>
                                   {Array.from({ length: produto.quantidade }).map((_, i) => (
-                                    <Box key={i} sx={{ mb: 1 }}>
+                                    <Box key={i} sx={{ mb: 0.6 }}>
                                       <TextField
                                         label={`Código de Barras ${i + 1}`}
                                         value={codigoBarras[produto.id]?.[i] || ""}
@@ -635,7 +637,6 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
                                           handleCodigoBarrasChange(produto.id, i, e.target.value)
                                         }
                                         fullWidth
-                                        margin="normal"
                                       />
                                     </Box>
                                   ))}
@@ -689,7 +690,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
               </Grid>
               <TableContainer
                 component={Paper}
-                sx={{ mt: 1, maxHeight: "300px", overflowY: "auto" }}
+                sx={{ mt: 1, maxHeight: "200px", overflowY: "auto" }}
               >
                 <Table>
                   <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
