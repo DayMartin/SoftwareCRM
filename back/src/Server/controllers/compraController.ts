@@ -81,7 +81,9 @@ const compraController = {
 
 				// inserir item_produto
 				for (const Item of ItemProduto){
-					await queryDatabase(insertItemProduto, [Item.codBarras, produto.id ])
+					console.log('ItemProduto', ItemProduto)
+					console.log('ItemProduto', Item.codBarra)
+					await queryDatabase(insertItemProduto, [Item.codBarra, produto.id ])
 				}
 			}
 
