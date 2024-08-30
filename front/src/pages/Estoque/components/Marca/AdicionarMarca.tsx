@@ -12,8 +12,8 @@ import {
   SelectChangeEvent,
   Grid,
 } from "@mui/material";
-import { ViewCategoria } from "../../../shared/services/api/Estoque/EstoqueService";
-import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
+import { ViewCategoria } from "../../../../shared/services/api/Estoque/EstoqueService";
+import { CategoriaService } from "../../../../shared/services/api/Estoque/CategoriaService"; 
 
 interface AdicionarMarcaProps {
   open: boolean;

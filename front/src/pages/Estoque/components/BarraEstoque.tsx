@@ -5,11 +5,11 @@ import AddIcon from '@mui/icons-material/Add';
 import AdicionarEstoque from "./AdicionarEstoque";
 import { EstoqueService } from "../../../shared/services/api/Estoque/EstoqueService";
 import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
-import AdicionarCategoria from "./AdicionarCategoria";
+import AdicionarCategoria from "./Categoria/AdicionarCategoria";
 import { MarcaService } from "../../../shared/services/api/Estoque/MarcaService";
-import AdicionarMarca from "./AdicionarMarca";
-import { ListarCategorias } from "./ListarCategorias";
-import { ListarMarcas } from "./ListarMarcas";
+import AdicionarMarca from "./Marca/AdicionarMarca";
+import { ListarCategorias } from "./Categoria/ListarCategorias";
+import { ListarMarcas } from "./Marca/ListarMarcas";
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
@@ -111,52 +111,6 @@ export const BarraEstoque: React.VFC = () => {
                         width: 'auto',
                         minWidth: 120,
                         height: 28,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        fontSize: 10,
-                        fontWeight: 'bold',
-                        alignItems: 'center',
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                        '&:hover': {
-                            backgroundColor: '#0b3d91',
-                        },
-                        mr: 1,
-                    }}
-                    onClick={handleOpenCategoria}
-                >
-                    Categoria
-                </Button>
-
-                <Button
-                    sx={{
-                        backgroundColor: '#0d47a1',
-                        color: 'white',
-                        borderRadius: '6%',
-                        width: 'auto',
-                        minWidth: 120,
-                        height: 28,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        fontSize: 10,
-                        fontWeight: 'bold',
-                        alignItems: 'center',
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                        '&:hover': {
-                            backgroundColor: '#0b3d91',
-                        },
-                    }}
-                    onClick={handleOpenMarca}
-                >
-                    Marca
-                </Button>
-                <Button
-                    sx={{
-                        backgroundColor: '#0d47a1',
-                        color: 'white',
-                        borderRadius: '6%',
-                        width: 'auto',
-                        minWidth: 120,
-                        height: 28,
                         margin: 1,
                         display: 'flex',
                         justifyContent: 'center',
@@ -171,7 +125,7 @@ export const BarraEstoque: React.VFC = () => {
                     }}
                     onClick={handleOpenCategoria}
                 >
-                    Centro de defeitos
+                    Solicitação de compra
                 </Button>
                 <Button
                     sx={{
@@ -223,12 +177,6 @@ export const BarraEstoque: React.VFC = () => {
 
             {/* Modal para adicionar novo produto */}
             <AdicionarEstoque open={openEstoque} onClose={handleCloseEstoque} title="Novo produto" onSubmit={handleSubmit} />
-
-            {/* Modal para categoria */}
-            <ListarCategorias open={openCategoria} onClose={handleCloseCategoria} title="" />
-
-            {/* Modal para Marca */}
-            <ListarMarcas open={openMarca} onClose={handleCloseMarca} title="" />
 
         </Box>
     );

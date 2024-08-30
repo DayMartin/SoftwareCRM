@@ -21,7 +21,7 @@ export const AReceber: React.VFC = () => {
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
     const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
-    const titulo = "A Receber";
+    const titulo = "Contas a Receber";
 
     const consultar = async () => {
         setIsLoading(true);

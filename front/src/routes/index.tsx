@@ -14,6 +14,8 @@ import { Venda } from '../pages/Venda/Venda';
 import { Compra } from '../pages/Compra/Compra';
 import { AReceber } from '../pages/Venda/components/Receber/Receber';
 import { APagar } from "../pages/Compra/components/Pagar/Pagar"
+import { ListarCategorias } from '../pages/Estoque/components/Categoria/ListarCategorias';
+import { ListarMarcas } from '../pages/Estoque/components/Marca/ListarMarcas';
 
 export const AppRoutes = () => {
   const { setDrawerOptions } = useDrawerContext();
@@ -64,6 +66,19 @@ export const AppRoutes = () => {
         path="/estoque"
         element={
           <Estoque />
+        }
+      />
+
+      <Route
+        path="/categoria"
+        element={
+          <ListarCategorias />
+        }
+      />
+      <Route
+        path="/marca"
+        element={
+          <ListarMarcas />
         }
       />
       <Route
