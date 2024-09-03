@@ -30,9 +30,18 @@ const historicEstoqueService = {
 				await queryDatabase(updateEstoque, [subtracao, extracaoId]);
 				const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id, venda_id) VALUES (?, ?, ?, ?)";
 
-				await queryDatabase(query, [tipo, quantidade, estoque_id, tipo_id]);
+				await queryDatabase(query, [tipo, quantidade, estoque_id, tipo_id,]);
 				return "Saída cadastrada com sucesso";
-			} else {
+			} else if (tipo === "Defeito") {
+				const subtracao = extracaoQuantidade - quantidade;
+				await queryDatabase(updateEstoque, [subtracao, extracaoId]);
+				const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id, defeito_id, fornecedor_id) VALUES (?, ?, ?, ?, ?)";
+
+				await queryDatabase(query, [tipo, quantidade, estoque_id, tipo_id, fornecedor_id ]);
+				return "Defeito cadastrado com sucesso";
+			} 
+			
+			else {
 				throw new Error('Tipo de operação inválido');
 			}
 		} catch (error) {

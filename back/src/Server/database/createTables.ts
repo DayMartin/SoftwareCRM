@@ -17,15 +17,15 @@ export class CreateTables {
 			await this.createCompraTable();
 			await this.createParcelasVenda();
 			await this.createParcelasCompra();
-			await this.createHistoricEstoqueTable();
 			await this.createProdutoMovimentoTable();
 			await this.createLogs();
 			await this.createItemProdutoTable();
-			//await this.createFornecedorTable();
-			//await this.createClienteTable();
-			//await this.createCentroTroca();
-			//await this.createTrocaFornecedor();
-
+			await this.createFornecedorTable();
+			await this.createClienteTable();
+			await this.createCentroTroca();
+			await this.createTrocaFornecedor();
+			await this.createHistoricEstoqueTable();
+			await this.createHistoricVendaTable()
 		} catch (error) {
 			console.error("Erro ao criar as tabelas:", error);
 		}
@@ -338,38 +338,6 @@ export class CreateTables {
 		}
 	}
 
-	async createHistoricEstoqueTable() {
-		try {
-			const consulta = `SHOW TABLES LIKE 'estoqueHistoric'`;
-			// Verifique se a tabela 'estoqueHistoric' existe
-			const rows = await queryDatabase(consulta);
-
-			// Se a tabela 'estoqueHistoric' não existir, crie-a
-			if (rows.length === 0) {
-				await queryDatabase(`
-					CREATE TABLE estoqueHistoric (
-						id INT AUTO_INCREMENT PRIMARY KEY,
-						tipo VARCHAR(50),
-						quantidade INT,
-						estoque_id INT,
-            			venda_id INT,
-						compra_id INT,
-						fornecedor_id INT,
-						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
-						FOREIGN KEY (venda_id) REFERENCES venda(id),
-						FOREIGN KEY (compra_id) REFERENCES compra(id),
-						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id)
-
-				)
-				`);
-				console.log("Tabela 'estoqueHistoric' criada com sucesso.");
-			}
-		} catch (error) {
-			console.error("Erro ao criar a tabela 'estoqueHistoric':", error);
-		}
-	}
-
 	async createProdutoMovimentoTable() {
 		try {
 			const consulta = `SHOW TABLES LIKE 'produto_movimento'`;
@@ -446,7 +414,7 @@ export class CreateTables {
 						FOREIGN KEY (compra_id) REFERENCES compra(id)
 					)
 				`);
-				console.log("Tabela 'item_produto' criada com sucesso.");
+				console.log("Tabela 'item_produto ' criada com sucesso.");
 			}
 		} catch (error) {
 			console.error("Erro ao criar a tabela 'item_produto':", error);
@@ -507,6 +475,64 @@ export class CreateTables {
 			}
 		} catch (error) {
 			console.error("Erro ao criar a tabela 'troca_fornecedor':", error);
+		}
+	}
+
+	async createHistoricVendaTable() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'historicVenda'`;
+			// Verifique se a tabela 'historicVenda' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'historicVenda' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE historicVenda (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+            			venda_id INT,
+						acao VARCHAR(100),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (venda_id) REFERENCES venda(id)
+				)
+				`);
+				console.log("Tabela 'historicVenda' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'historicVenda':", error);
+		}
+	}
+
+	async createHistoricEstoqueTable() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'estoqueHistoric'`;
+			// Verifique se a tabela 'estoqueHistoric' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'estoqueHistoric' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE estoqueHistoric (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						tipo VARCHAR(50),
+						quantidade INT,
+						estoque_id INT,
+            			venda_id INT,
+						compra_id INT,
+						defeito_id INT,
+						fornecedor_id INT,
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
+						FOREIGN KEY (venda_id) REFERENCES venda(id),
+						FOREIGN KEY (compra_id) REFERENCES compra(id),
+						FOREIGN KEY (defeito_id) REFERENCES troca_fornecedor(id),
+						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id)
+
+				)
+				`);
+				console.log("Tabela 'estoqueHistoric' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'estoqueHistoric':", error);
 		}
 	}
 }

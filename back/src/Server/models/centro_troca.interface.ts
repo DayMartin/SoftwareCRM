@@ -3,6 +3,7 @@ export interface CentroTroca {
     venda_id: number;
     item_antigo_codBarra: string;
     item_novo_codBarra: string;
+    estoque_id: number;
     data_criacao: string;
     motivo: string;
     descricaoTroca: string;

@@ -18,3 +18,9 @@ export interface VendaConsulta{
 	valorPago: number;
 	status: string
 }
+
+export interface HistoricVenda {
+	id: number;
+	id_venda: number;
+	acao: string;
+}

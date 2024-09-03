@@ -1,0 +1,28 @@
+status de item_produto
+    vendido
+    disponivel
+    devolvidoFornecedor
+
+status Usuários
+    ativo
+    inativo
+
+status compra
+    pendente
+    pago
+    cancelado
+
+status venda
+    pendente
+    pago
+    cancelado
+
+motivo Troca
+    defeito
+    insatisfeito
+    presente
+
+troca_fornecedor
+    solicitado
+    concluido
+    rejeitado

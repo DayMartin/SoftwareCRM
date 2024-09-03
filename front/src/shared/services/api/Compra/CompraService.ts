@@ -45,7 +45,7 @@ export interface IParcela {
 
   export interface ItemProduto {
     codBarras: string;
-    estoque_id: number;
+    estoque_id: number
   }
   
   // Interface para uma compra

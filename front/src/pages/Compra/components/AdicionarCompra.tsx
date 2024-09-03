@@ -77,7 +77,7 @@ const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
     ItemProduto: [
       {
         codBarra: '',
-        estoque_id: 0,
+        estoque_id: 0
       }
     ]
   });
@@ -391,7 +391,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
         .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
         .map(codBarra => ({
           codBarra,
-          estoque_id: produto.id
+          estoque_id: produto.id,
         }))
     );
   

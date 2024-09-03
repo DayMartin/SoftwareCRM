@@ -57,7 +57,7 @@ const compraController = {
 		const insertCompraQuery = "INSERT INTO compra (fornecedor_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		const insertFinanceiroQuery = "INSERT INTO parcelas_compra (compra_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
 		const insertProdutoMovimento = "INSERT INTO produto_movimento (tipo, quantidade, estoque_id, compra_id) VALUES (?, ?, ?, ?)";
-		const insertItemProduto = 'INSERT INTO item_produto (codBarras, estoque_id) VALUE (?,?)'
+		const insertItemProduto = 'INSERT INTO item_produto (codBarras, estoque_id, compra_id, status) VALUE (?,?,?,?)'
 		try {
 			// Inserir na tabela 'compra'
 			const compraResult = await queryDatabase(insertCompraQuery, [fornecedor_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status]);
@@ -83,7 +83,8 @@ const compraController = {
 				for (const Item of ItemProduto){
 					console.log('ItemProduto', ItemProduto)
 					console.log('ItemProduto', Item.codBarra)
-					await queryDatabase(insertItemProduto, [Item.codBarra, produto.id ])
+					const status = 'disponivel'
+					await queryDatabase(insertItemProduto, [Item.codBarra, produto.id, compra_id, status])
 				}
 			}
 
