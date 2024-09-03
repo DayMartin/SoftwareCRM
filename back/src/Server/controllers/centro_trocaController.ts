@@ -1,63 +1,70 @@
 import { Request, Response } from 'express';
 // import db from '../database/conn'
 import queryDatabase from '../database/queryPromise'
-import { CentroTroca } from '../models/centro_troca.interface'; 
+import { CentroTroca } from '../models/centro_troca.interface';
 import { historicEstoqueService } from '../services/historicEstoqueService';
 
 
 const centroTrocaController = {
     // Função para buscar todos os CentroTroca
     getTrocas: async (req: Request, res: Response) => {
-        const { page = 1, limit = 10, id, nome } = req.query;
+        const { page = 1, limit = 5, id } = req.query;
 
         // Construir a consulta SQL com filtros e paginação
         let query = "SELECT * FROM centro_troca WHERE 1=1";
+        let countQuery = "SELECT COUNT(*) AS total FROM centro_troca WHERE 1=1";
+
         const params: any[] = [];
 
         if (id) {
             query += " AND id = ?";
+            countQuery += " AND id = ?";
+
             params.push(id);
         }
 
-        if (nome) {
-            query += " AND nome LIKE ?";
-            params.push(`%${nome}%`);
-        }
-
-        query += " LIMIT ? OFFSET ?";
-        params.push(parseInt(limit as string));
-        params.push((parseInt(page as string) - 1) * parseInt(limit as string));
-
+        // Consulta de contagem total
         try {
-            const rows: CentroTroca = await queryDatabase(query, params);
+            const totalResult = await queryDatabase(countQuery, params);
+            const total = totalResult[0].total;
 
-            if (!rows || rows === undefined) {
-                return res.status(404).json({ error: "Nenhum centro_troca encontrado" });
+            // Consulta de paginação
+            query += " LIMIT ? OFFSET ?";
+            params.push(parseInt(limit as string));
+            params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
+            const rows = await queryDatabase(query, params);
+
+            if (!rows || rows.length === 0) {
+                return res.status(404).json({ error: "Nenhum registro encontrado" });
             }
 
-            return res.status(200).json(rows);
+            return res.status(200).json({
+                rows,
+                total, // Retornando a contagem total
+            });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: "Erro ao buscar centro_troca" });
+            return res.status(500).json({ error: "Erro ao buscar registros" });
         }
     },
 
     // Função para criar um novo Troca
     createTroca: async (req: Request, res: Response) => {
-        const {  venda_id, compra_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca, fornecedor_id } = req.body;
+        const { venda_id, compra_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca, fornecedor_id } = req.body;
         const query = "INSERT INTO centro_troca ( venda_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca) VALUES ( ?, ?, ?, ?, ?, ?)";
         const mutationHistoricVenda = "INSERT INTO historicVenda ( venda_id, acao) VALUES (?,?)";
         const mutationItem_Produto_Old = 'UPDATE financeiro.item_produto SET status= ? WHERE codBarras = ?';
         const mutationItem_Produto_novo = 'UPDATE financeiro.item_produto SET status= ? WHERE codBarras = ?';
         const mutationTroca_fornecedor = "INSERT INTO troca_fornecedor ( codBarra_item, id_compra, fornecedor_id, status, descricaoDefeito) VALUES (?,?,?,?,?)";
         try {
-            await queryDatabase(query, [ venda_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca]);
-            
+            await queryDatabase(query, [venda_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca]);
+
             const acao = `realizado troca de: ${item_antigo_codBarra} para: ${item_novo_codBarra} do produto: ${estoque_id} `
             await queryDatabase(mutationHistoricVenda, [venda_id, acao])
             await queryDatabase(mutationItem_Produto_novo, ['vendido', item_novo_codBarra]);
 
-            if (motivo === 'defeito'){
+            if (motivo === 'defeito') {
                 await queryDatabase(mutationItem_Produto_Old, ['devolvidoFornecedor', item_antigo_codBarra]);
                 const statusTrocaFornecedor = 'solicitado'
                 const osResult = await queryDatabase(mutationTroca_fornecedor, [item_antigo_codBarra, compra_id, fornecedor_id, statusTrocaFornecedor, descricaoTroca]);
@@ -93,10 +100,10 @@ const centroTrocaController = {
 
     //     try {
     //         const updateQuery = `
-	// 			UPDATE centro_troca 
-	// 			SET venda_id = ?, item_antigo_codBarra = ?, item_novo_codBarra = ?, motivo = ?, descricaoTroca = ?
-	// 			WHERE id = ?
-	// 		`;
+    // 			UPDATE centro_troca 
+    // 			SET venda_id = ?, item_antigo_codBarra = ?, item_novo_codBarra = ?, motivo = ?, descricaoTroca = ?
+    // 			WHERE id = ?
+    // 		`;
     //         await queryDatabase(updateQuery, [venda_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca]);
 
     //         return res.status(200).json({ message: "Fornecedor atualizado com sucesso" });

@@ -5,7 +5,7 @@ Content-Type: application/json
 
   "venda_id": 9,
   "compra_id": 1,
-  "estoque_id": 1,
+  "estoque_id": 3,
   "item_antigo_codBarra": "48BD",
   "item_novo_codBarra": "78GT",
   "motivo": "defeito",

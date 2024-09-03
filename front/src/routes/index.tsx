@@ -16,6 +16,7 @@ import { AReceber } from '../pages/Venda/components/Receber/Receber';
 import { APagar } from "../pages/Compra/components/Pagar/Pagar"
 import { ListarCategorias } from '../pages/Estoque/components/Categoria/ListarCategorias';
 import { ListarMarcas } from '../pages/Estoque/components/Marca/ListarMarcas';
+import { ListarCentroTroca } from '../pages/CentroTroca/ListarCentroTroca';
 
 export const AppRoutes = () => {
   const { setDrawerOptions } = useDrawerContext();
@@ -105,6 +106,13 @@ export const AppRoutes = () => {
         path="/pagar"
         element={
           <APagar />
+        }
+      />
+
+      <Route
+        path="/centroTroca"
+        element={
+          <ListarCentroTroca />
         }
       />
       {/* Rota padrão */}
