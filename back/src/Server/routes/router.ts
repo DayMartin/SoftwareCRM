@@ -12,7 +12,7 @@ import { produtoMovimentoRouter } from './produto_movimento';
 import { parcelasCompraRouter } from './parcelasCompra';
 import { fornecedorRouter } from './fornecedor';
 import { clienteRouter } from './cliente';
-
+import { trocaRouter } from './centro_troca';
 
 const router = Router();
 
@@ -29,5 +29,6 @@ router.use("/", categoriaRouter);
 router.use("/", historicEstoqueRouter);
 router.use("/", marcaRouter)
 router.use("/", produtoMovimentoRouter)
+router.use("/", trocaRouter)
 
 export { router };
