@@ -86,6 +86,8 @@ export const Estoque: React.VFC = () => {
                 return { color: 'red' };
             case 'Entrada':
                 return { color: 'green' };
+            case 'Defeito':
+                    return { color: 'orange' };
             default:
                 return { fontWeight: 'bold' };
         }
