@@ -12,7 +12,7 @@ export interface IUser {
   status: string;
 }
 
-export interface IListagemCliente {
+export interface IListagemUser {
   id: string;
   tipo: string;
   cpfcnpj: string;
@@ -38,11 +38,11 @@ export interface IDetalheUsers {
 }
 
 export interface IApiResponse {
-  rows: IListagemCliente[]; 
+  rows: IListagemUser[]; 
   total: number;
 }
 
-const getAll = async (page = 1, filterId = '', filterName = ''): Promise<IListagemCliente | Error> => {
+const getAll = async (page = 1, filterId = '', filterName = ''): Promise<IListagemUser | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/user/all?page=${page}&filterId=${filterId}&filterName=${filterName}`;
 
@@ -60,11 +60,11 @@ const getAll = async (page = 1, filterId = '', filterName = ''): Promise<IListag
 };
 
 
-const getClientes = async (tipo: string): Promise<IListagemCliente[] | Error> => {
+const getClientes = async (tipo: string): Promise<IListagemUser[] | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/user/getAlltipo`;
     const params = { tipo: tipo };
-    const { data } = await Api.post<IListagemCliente[]>(urlRelativa, params);
+    const { data } = await Api.post<IListagemUser[]>(urlRelativa, params);
 
     if (data) {
       return data;
@@ -118,7 +118,7 @@ const create = async (dados: IDetalheUsers): Promise<void | Error> => {
   }
 };
 
-const updateById = async (id: string, dados: IListagemCliente): Promise<void | Error> => {
+const updateById = async (id: string, dados: IListagemUser): Promise<void | Error> => {
   try {
     await Api.put(`user/edit/${id}`, dados);
   } catch (error) {

@@ -22,7 +22,7 @@ import {
   Tab,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { UsersService, IListagemCliente } from "../../../shared/services";
+import { UsersService, IListagemUser } from "../../../shared/services";
 import {
   EstoqueService,
   IDetalheEstoque,
@@ -91,7 +91,7 @@ const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
     valorUnitario: 0,
   });
   const [fornecedor, setFornecedor] = useState<IListagemFornecedor[]>([]);
-  const [funcionarios, setFuncionario] = useState<IListagemCliente[]>([]);
+  const [funcionarios, setFuncionario] = useState<IListagemUser[]>([]);
   const [produtos, setProdutos] = useState<IDetalheEstoque[]>([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState<number | "">("");
   const [quantidade, setQuantidade] = useState<number>(1);

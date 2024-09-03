@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { Home, Contas, Estoque } from "../pages";
 import React from "react";
 import { ListagemUsers } from "../pages/Users/components/ListagemUsers";
-import { Cliente } from "../pages/Users/components/Cliente";
 import { Venda } from "../pages/Venda/Venda";
 import { Compra } from "../pages/Compra/Compra";
 import { AReceber } from "../pages/Venda/components/Receber/Receber";
@@ -14,6 +13,7 @@ import { ListarCategorias } from "../pages/Estoque/components/Categoria/ListarCa
 import { ListarMarcas } from "../pages/Estoque/components/Marca/ListarMarcas";
 import { ListarCentroTroca } from "../pages/CentroTroca/ListarCentroTroca";
 import { Fornecedor } from "../pages/Fornecedor/FornecedorListagem";
+import { ListagemCliente } from "../pages/Cliente/ClienteListagem";
 
 export const AppRoutes = () => {
   const { setDrawerOptions } = useDrawerContext();
@@ -58,6 +58,8 @@ export const AppRoutes = () => {
 
       <Route path="/centroTroca" element={<ListarCentroTroca />} />
       <Route path="/fornecedor" element={<Fornecedor />} />
+      <Route path="/cliente" element={<ListagemCliente />} />
+
       {/* Rota padrão */}
       <Route path="*" element={<Navigate to="/home" />} />
     </Routes>

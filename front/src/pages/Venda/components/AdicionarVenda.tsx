@@ -22,7 +22,7 @@ import {
   Tab,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { UsersService, IListagemCliente } from "../../../shared/services";
+import { UsersService, IListagemUser } from "../../../shared/services";
 import {
   EstoqueService,
   IDetalheEstoque,
@@ -33,6 +33,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { MarcaService, ViewMarca } from "../../../shared/services/api/Estoque/MarcaService";
 import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
+import { ClienteService, IListagemCliente } from "../../../shared/services/api/Cliente/ClienteService";
 
 interface AdicionarVendasProps {
   open: boolean;
@@ -84,7 +85,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     valorUnitario: 0,
   });
   const [clientes, setClientes] = useState<IListagemCliente[]>([]);
-  const [funcionarios, setFuncionario] = useState<IListagemCliente[]>([]);
+  const [funcionarios, setFuncionario] = useState<IListagemUser[]>([]);
   const [produtos, setProdutos] = useState<IDetalheEstoque[]>([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState<number | "">("");
   const [quantidade, setQuantidade] = useState<number>(1);
@@ -96,7 +97,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
 
   const ConsultarClientes = async () => {
     try {
-      const consultar = await UsersService.getClientes("cliente");
+      const consultar = await ClienteService.getCliente();
       if (consultar instanceof Error) {
         console.error("Erro ao consultar clientes:", consultar.message);
       } else {

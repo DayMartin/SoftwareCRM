@@ -1,40 +1,38 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
-import { IListagemCliente, UsersService } from "../../../shared/services/api/Users/UsersService";
-import { BarraUsuarios } from "../../../shared/components";
-import { LayoutBaseDePagina } from "../../../shared/layouts";
-import ClienteDialog from "../components/VisualizarUsers";
 import EditIcon from '@mui/icons-material/Edit';
 import PaidIcon from '@mui/icons-material/Paid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { BarraInicial } from "../../../shared/components/barra-inicial/BarraInicial";
-import ClienteCompras from "./ClienteCompras";
+import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
+import { IListagemCliente, ClienteService } from "../../shared/services/api/Cliente/ClienteService";
+import ClienteDialog from "./components/VisualizarCliente";
+import { BarraClientes } from "./components/BarraClientes"
+import ClienteCompras from "./components/ClienteCompras";
 
-export const Cliente: React.VFC = () => {
+
+export const ListagemCliente: React.VFC = () => {
     const [rows, setRows] = useState<IListagemCliente[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const [selectedClient, setSelectedClient] = useState<IListagemCliente | null>(null);
+    const [selectedCliente, setSelectedCliente] = useState<IListagemCliente | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5); // Ajustado para 5 conforme o backend
+    const [rowsPerPage, setRowsPerPage] = useState(5); 
     const [filterId, setFilterId] = useState('');
-    const [filterName, setFilterName] = useState('');
-    const [totalRecords, setTotalRecords] = useState(0); // Adicionado para total de registros
+    const [totalRecords, setTotalRecords] = useState(0);
     const [openModalVendas, setOpenModalVendas] = useState(false);
     const [selectedClientForVendas, setSelectedClientForVendas] = useState<number | null>(null);
     const [selectedClientForVendasName, setSelectedClientForVendasName] = useState<IListagemCliente | null>(null);
 
-    const titulo = "Cadastros";
+    const titulo = "Cliente";
 
-    const consultar = async (tipo: string) => {
+    const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await UsersService.getClientesList(page + 1, filterId, filterName, tipo);
+            const consulta = await ClienteService.getClienteList(page + 1, filterId);
 
             if (consulta instanceof Error) {
                 // alert(consulta.message);
@@ -53,8 +51,8 @@ export const Cliente: React.VFC = () => {
     };
 
     useEffect(() => {
-        consultar(tipoUsuario);
-    }, [tipoUsuario, page, filterId, filterName]);
+        consultar();
+    }, [page, filterId]);
 
     const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -71,6 +69,24 @@ export const Cliente: React.VFC = () => {
     };
 
 
+    const handleVisualizar = (client: IListagemCliente) => {
+        setSelectedCliente(client);
+        setOpen(true);
+        setIsEditing(false);
+    };
+
+    const handleEditar = (client: IListagemCliente) => {
+        setSelectedCliente(client);
+        setOpen(true);
+        setIsEditing(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedCliente(null);
+        setIsEditing(false);
+    };
+
     const handleOpenModalVendas = (client: IListagemCliente) => {
         const idN = Number(client.id)
         setSelectedClientForVendas(idN);
@@ -85,28 +101,10 @@ export const Cliente: React.VFC = () => {
     };
 
 
-    const handleVisualizar = (client: IListagemCliente) => {
-        setSelectedClient(client);
-        setOpen(true);
-        setIsEditing(false);
-    };
-
-    const handleEditar = (client: IListagemCliente) => {
-        setSelectedClient(client);
-        setOpen(true);
-        setIsEditing(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-        setSelectedClient(null);
-        setIsEditing(false);
-    };
-
     const handleSave = async (updatedClient: IListagemCliente) => {
         try {
-            await UsersService.updateById(updatedClient.id, updatedClient);
-            await consultar(tipoUsuario);
+            await ClienteService.updateById(updatedClient.id, updatedClient);
+            await consultar();
         } catch (error) {
             alert('Erro ao atualizar cliente');
         }
@@ -114,19 +112,19 @@ export const Cliente: React.VFC = () => {
 
     const handleDesativar = async (id: string) => {
         try {
-            await UsersService.deleteById(id);
-            await consultar(tipoUsuario);
+            await ClienteService.deleteById(id);
+            await consultar();
         } catch (error) {
-            alert('Erro ao desativar usuário');
+            alert('Erro ao desativar cliente');
         }
     };
 
     const handleAtivar = async (id: string) => {
         try {
-            await UsersService.ativarById(id);
-            await consultar(tipoUsuario);
+            await ClienteService.ativarById(id);
+            await consultar();
         } catch (error) {
-            alert('Erro ao ativar usuário');
+            alert('Erro ao ativar cliente');
         }
     };
 
@@ -136,7 +134,7 @@ export const Cliente: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraUsuarios onTipoChange={setTipoUsuario} />
+            <BarraClientes/>
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
                     <TableHead>
@@ -199,10 +197,10 @@ export const Cliente: React.VFC = () => {
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
             />
-            {selectedClient && (
+            {selectedCliente && (
                 <ClienteDialog
                     open={open}
-                    client={selectedClient}
+                    client={selectedCliente}
                     isEditing={isEditing}
                     onClose={handleClose}
                     onSave={handleSave}

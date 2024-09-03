@@ -12,7 +12,7 @@ import {
   SelectChangeEvent,
   Grid,
 } from "@mui/material";
-import { IListagemCliente, UsersService } from "../../../shared/services";
+import { IListagemUser, UsersService } from "../../../shared/services";
 import {
   CategoriaService,
   ViewCategoria,
@@ -44,7 +44,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     valorUnitario: 0,
   });
   const [fornecedorSelecionado, setFornecedorSelecionado] = useState<
-    IListagemCliente[]
+    IListagemUser[]
   >([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<
     ViewCategoria[]

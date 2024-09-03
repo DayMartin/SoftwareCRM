@@ -1,17 +1,18 @@
 import * as React from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Typography, Grid } from "@mui/material";
-import { IListagemUser } from "../../../shared/services/api/Users/UsersService";
+import { IListagemFornecedor } from "../../../shared/services/api/Fornecedor/FornecedorService";
+import { IListagemCliente } from "../../../shared/services/api/Cliente/ClienteService";
 
 interface ClienteDialogProps {
     open: boolean;
     onClose: () => void;
-    client: IListagemUser | null;
-    onSave?: (client: IListagemUser) => void;
+    client: IListagemCliente | null;
+    onSave?: (client: IListagemCliente) => void;
     isEditing: boolean; 
 }
 
 const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, onSave, isEditing }) => {
-    const [editClient, setEditClient] = React.useState<IListagemUser | null>(null);
+    const [editClient, setEditClient] = React.useState<IListagemCliente | null>(null);
 
     React.useEffect(() => {
         setEditClient(client);
@@ -34,7 +35,7 @@ const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, on
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{isEditing ? "Editar Usuário" : "Detalhes do Usuário"}</DialogTitle>
+            <DialogTitle>{isEditing ? "Editar Cliente" : "Detalhes do Cliente"}</DialogTitle>
             <DialogContent>
                 {editClient ? (
                     <Grid container spacing={2}>
@@ -140,21 +141,7 @@ const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, on
                                 onChange={handleChange}
                             />
                         </Grid>
-                        {editClient.tipo === "funcionario" && (
-                            <Grid item xs={12} sm={4}>
-                                <TextField
-                                    id="senha"
-                                    label="Senha"
-                                    name="senha"
-                                    type="password"
-                                    value={editClient.senha || ""}
-                                    fullWidth
-                                    margin="normal"
-                                    disabled={!isEditing}
-                                    onChange={handleChange}
-                                />
-                            </Grid>
-                        )}
+
                     </Grid>
                 ) : (
                     <Typography variant="body1">Nenhum cliente selecionado.</Typography>
