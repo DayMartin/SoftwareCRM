@@ -1,0 +1,2 @@
+porcentagem de desconto
+promoção - se o prouto estiver na promoçãao ai ele cobra o valor da promoção
