@@ -11,12 +11,15 @@ import { historicEstoqueRouter } from './historicEstoque';
 import { produtoMovimentoRouter } from './produto_movimento';
 import { parcelasCompraRouter } from './parcelasCompra';
 import { fornecedorRouter } from './fornecedor';
+import { clienteRouter } from './cliente';
+
 
 const router = Router();
 
 router.use("/", usersRouter);
 router.use("/", servicoRouter);
 router.use("/", fornecedorRouter);
+router.use("/", clienteRouter);
 router.use("/", vendaRouter);
 router.use("/", compraRouter)
 router.use("/", parcelasVendaRouter);
