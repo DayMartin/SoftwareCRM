@@ -51,28 +51,34 @@ const centroTrocaController = {
 
     // Função para criar um novo Troca
     createTroca: async (req: Request, res: Response) => {
-        const { venda_id, compra_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca, fornecedor_id } = req.body;
-        const query = "INSERT INTO centro_troca ( venda_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca) VALUES ( ?, ?, ?, ?, ?, ?)";
+        const { venda_id, compra_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca, fornecedor_id, responseUser } = req.body;
+        const query = "INSERT INTO centro_troca ( venda_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca, send_fornecedor) VALUES (?, ?, ?, ?, ?, ?, ?)";
         const mutationHistoricVenda = "INSERT INTO historicVenda ( venda_id, acao) VALUES (?,?)";
         const mutationItem_Produto_Old = 'UPDATE financeiro.item_produto SET status= ? WHERE codBarras = ?';
         const mutationItem_Produto_novo = 'UPDATE financeiro.item_produto SET status= ? WHERE codBarras = ?';
         const mutationTroca_fornecedor = "INSERT INTO troca_fornecedor ( codBarra_item, id_compra, fornecedor_id, status, descricaoDefeito) VALUES (?,?,?,?,?)";
         try {
-            await queryDatabase(query, [venda_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca]);
+            await queryDatabase(query, [venda_id, estoque_id, item_antigo_codBarra, item_novo_codBarra, motivo, descricaoTroca, responseUser]);
 
             const acao = `realizado troca de: ${item_antigo_codBarra} para: ${item_novo_codBarra} do produto: ${estoque_id} `
             await queryDatabase(mutationHistoricVenda, [venda_id, acao])
             await queryDatabase(mutationItem_Produto_novo, ['vendido', item_novo_codBarra]);
 
-            if (motivo === 'defeito') {
-                await queryDatabase(mutationItem_Produto_Old, ['devolvidoFornecedor', item_antigo_codBarra]);
-                const statusTrocaFornecedor = 'solicitado'
-                const osResult = await queryDatabase(mutationTroca_fornecedor, [item_antigo_codBarra, compra_id, fornecedor_id, statusTrocaFornecedor, descricaoTroca]);
+            if (motivo === 'defeito' ) {
+                await queryDatabase(mutationItem_Produto_Old, ['foraEstoque', item_antigo_codBarra]);
 
-                // Recuperar o ID da Troca recém-criada
-                const defeito_id = osResult.insertId;
+                if (responseUser === true){
+                    const statusTrocaFornecedor = 'solicitado'
+                    const osResult = await queryDatabase(mutationTroca_fornecedor, [item_antigo_codBarra, compra_id, fornecedor_id, statusTrocaFornecedor, descricaoTroca]);
+    
+                    // Recuperar o ID da Troca recém-criada
+                    const defeito_id = osResult.insertId;
+                    await historicEstoqueService.createHistoricEstoque("Defeito", 1, estoque_id, defeito_id, fornecedor_id)
+ 
+                } else if (responseUser === false){
+                    await historicEstoqueService.createHistoricEstoque("DefeitoWithout", 1, estoque_id, fornecedor_id)
 
-                await historicEstoqueService.createHistoricEstoque("Defeito", 1, estoque_id, defeito_id, fornecedor_id)
+                }
 
             } else {
                 await queryDatabase(mutationItem_Produto_Old, ['disponivel', item_antigo_codBarra]);

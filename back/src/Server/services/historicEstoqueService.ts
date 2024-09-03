@@ -3,7 +3,7 @@ import queryDatabase from '../database/queryPromise'
 const historicEstoqueService = {
 
 	// Função para criar um novo Histórico de Estoque
-	createHistoricEstoque: async (tipo: string, quantidade: number, estoque_id: number, tipo_id: number, fornecedor_id?: number) => {
+	createHistoricEstoque: async (tipo: string, quantidade: number, estoque_id: number, tipo_id?: number, fornecedor_id?: number) => {
 		console.log('Criando histórico de estoque', tipo, quantidade, estoque_id, tipo_id, fornecedor_id);
 		const updateEstoque = "UPDATE estoque SET quantidade = ? WHERE id = ?";
 		const queryEstoque = "SELECT * FROM estoque WHERE id = ?";
@@ -38,6 +38,14 @@ const historicEstoqueService = {
 				const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id, defeito_id, fornecedor_id) VALUES (?, ?, ?, ?, ?)";
 
 				await queryDatabase(query, [tipo, quantidade, estoque_id, tipo_id, fornecedor_id ]);
+				return "Defeito cadastrado com sucesso";
+			} else if (tipo === "DefeitoWithout") {
+				const tipos = "Defeito"
+				const subtracao = extracaoQuantidade - quantidade;
+				await queryDatabase(updateEstoque, [subtracao, extracaoId]);
+				const query = "INSERT INTO estoqueHistoric (tipo, quantidade, estoque_id, fornecedor_id) VALUES ( ?, ?, ?, ?)";
+
+				await queryDatabase(query, [tipos, quantidade, estoque_id, fornecedor_id ]);
 				return "Defeito cadastrado com sucesso";
 			} 
 			

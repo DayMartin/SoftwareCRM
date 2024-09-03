@@ -438,6 +438,7 @@ export class CreateTables {
 						item_novo_codBarra VARCHAR(100),
 						motivo VARCHAR(100),
 						descricaoTroca VARCHAR(100),
+						send_fornecedor BOOLEAN,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (venda_id) REFERENCES venda(id),
 						FOREIGN KEY (estoque_id) REFERENCES estoque(id)

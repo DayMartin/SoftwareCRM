@@ -1,7 +1,7 @@
 status de item_produto
     vendido
     disponivel
-    devolvidoFornecedor
+    foraEstoque
 
 status Usuários
     ativo

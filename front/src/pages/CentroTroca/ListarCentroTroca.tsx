@@ -106,7 +106,7 @@ export const ListarCentroTroca: React.FC = () => {
                             <TableCell>Id</TableCell>
                             <TableCell>Descrição</TableCell>
                             <TableCell>Venda</TableCell>
-                            <TableCell>estoque_id</TableCell>
+                            <TableCell>Produto</TableCell>
                             <TableCell>item Antigo</TableCell>
                             <TableCell>item Novo</TableCell>
                             <TableCell>motivo</TableCell>

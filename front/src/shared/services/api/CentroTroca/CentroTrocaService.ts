@@ -4,12 +4,13 @@ import { Api } from '../axios-config';
 export interface ICentroTroca {
   venda_id: number;
   compra_id: number;
-  fornecedor_id: number;
   estoque_id: number;
   item_antigo_codBarra: number;
   item_novo_codBarra: number;
   motivo: string;
   descricaoTroca: string;
+  fornecedor_id: number;
+  responseUser: boolean
 } 
 
 export interface IDetalheCentroTroca {
@@ -64,6 +65,8 @@ const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> 
 
 const create = async (dados: ICentroTroca): Promise<void | Error> => {
   try {
+
+    console.log('dados', dados)
     await Api.post<ICentroTroca>('troca/create', dados);
 
   } catch (error) {
