@@ -16,12 +16,12 @@ import LocalMallIcon from "@mui/icons-material/LocalMall";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import HomeIcon from "@mui/icons-material/Home";
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
-const expandedDrawerWidth = 220; // Largura do drawer quando aberto
+const expandedDrawerWidth = 220;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: expandedDrawerWidth,
@@ -98,11 +98,11 @@ export default function MenuLateral() {
   const [openFinanceiro, setOpenFinanceiro] = React.useState(false);
   const [openComercial, setOpenComercial] = React.useState(false);
   const [openEstoque, setOpenEstoque] = React.useState(false);
-
+  const [openContas, setOpenContas] = React.useState(false);
 
   const handleListItemClick = (text: string) => {
     if (text === "Contas") {
-      navigate("/user");
+      setOpenContas(!openContas)
     } else if (text === "Estoque") {
       setOpenEstoque(!openEstoque);
     } else if (text === "Comercial") {
@@ -142,11 +142,22 @@ export default function MenuLateral() {
     }
   };
 
+  const handleSubItemClickContas = (text: string) => {
+    if (text === "Cliente") {
+      navigate("/cliente");
+    } else if (text === "Funcionario") {
+      navigate("/funcionario");
+    } else if (text === "Fornecedor") {
+      navigate("/fornecedor");
+    }
+  };
+
   const handleMouseLeave = () => {
     setOpen(false);
     setOpenFinanceiro(false);
     setOpenComercial(false);
     setOpenEstoque(false);
+    setOpenContas(false);
   };
 
   return (
@@ -161,84 +172,145 @@ export default function MenuLateral() {
         <DrawerHeader />
         <Divider />
         <List sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-          {["Contas", "Comercial", "Financeiro", "Estoque"].map((text, index) => (
-            <ListItem
-              key={text}
-              disablePadding
-              sx={{
-                display: "block",
-                flexGrow: 1,
-              }}
-            >
-              <ListItemButton
-                selected={location.pathname.includes(text.toLowerCase())}
-                onClick={() => handleListItemClick(text)}
+          {["Contas", "Comercial", "Financeiro", "Estoque"].map(
+            (text, index) => (
+              <ListItem
+                key={text}
+                disablePadding
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  display: "block",
+                  flexGrow: 1,
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : "auto", justifyContent: "center" }}>
-                  {index === 0 ? (
-                    <PeopleOutlineIcon />
-                  ) : index === 1 ? (
-                    <PointOfSaleIcon />
-                  ) : index === 2 ? (
-                    <MonetizationOnIcon />
-                  ) : (
-                    <InventoryIcon />
-                  )}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
+                <ListItemButton
+                  selected={location.pathname.includes(text.toLowerCase())}
+                  onClick={() => handleListItemClick(text)}
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {index === 0 ? (
+                      <PeopleOutlineIcon />
+                    ) : index === 1 ? (
+                      <PointOfSaleIcon />
+                    ) : index === 2 ? (
+                      <MonetizationOnIcon />
+                    ) : (
+                      <InventoryIcon />
+                    )}
+                  </ListItemIcon>
+                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
 
-              {text === "Financeiro" && (
-                <Collapse in={openFinanceiro} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickFinanceiro("Contas a pagar")}>
-                      <ListItemText primary="Contas a pagar" />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickFinanceiro("Contas a receber")}>
-                      <ListItemText primary="Contas a receber" />
-                    </ListItemButton>
-                  </List>
-                </Collapse>
-              )}
+                {text === "Financeiro" && (
+                  <Collapse in={openFinanceiro} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() =>
+                          handleSubItemClickFinanceiro("Contas a pagar")
+                        }
+                      >
+                        <ListItemText primary="Contas a pagar" />
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() =>
+                          handleSubItemClickFinanceiro("Contas a receber")
+                        }
+                      >
+                        <ListItemText primary="Contas a receber" />
+                      </ListItemButton>
+                    </List>
+                  </Collapse>
+                )}
 
-              {text === "Comercial" && (
-                <Collapse in={openComercial} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickComercial("Vendas")}>
-                      <ListItemText primary="Vendas" />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickComercial("Compras")}>
-                      <ListItemText primary="Compras" />
-                    </ListItemButton>
-                  </List>
-                </Collapse>
-              )}
+                {text === "Comercial" && (
+                  <Collapse in={openComercial} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickComercial("Vendas")}
+                      >
+                        <ListItemText primary="Vendas" />
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickComercial("Compras")}
+                      >
+                        <ListItemText primary="Compras" />
+                      </ListItemButton>
+                    </List>
+                  </Collapse>
+                )}
 
-              {text === "Estoque" && (
-                <Collapse in={openEstoque} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickEstoque("Estoque")}>
-                      <ListItemText primary="Estoque" />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickEstoque("Categoria")}>
-                      <ListItemText primary="Categoria" />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickEstoque("Marca")}>
-                      <ListItemText primary="Marca" />
-                    </ListItemButton>
-                    <ListItemButton sx={{ pl: open ? 8 : 5 }} onClick={() => handleSubItemClickEstoque("CentroTroca")}>
-                      <ListItemText primary="CentroTroca" />
-                    </ListItemButton>
-                  </List>
-                </Collapse>
-              )}
-            </ListItem>
-          ))}
+                {text === "Estoque" && (
+                  <Collapse in={openEstoque} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickEstoque("Estoque")}
+                      >
+                        <ListItemText primary="Estoque" />
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickEstoque("Categoria")}
+                      >
+                        <ListItemText primary="Categoria" />
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickEstoque("Marca")}
+                      >
+                        <ListItemText primary="Marca" />
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickEstoque("CentroTroca")}
+                      >
+                        <ListItemText primary="CentroTroca" />
+                      </ListItemButton>
+                    </List>
+                  </Collapse>
+                )}
+
+                {text === "Contas" && (
+                  <Collapse in={openContas} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickContas("Cliente")}
+                      >
+                        <ListItemText primary="Cliente" />
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickContas("Funcionario")}
+                      >
+                        <ListItemText primary="Funcionario" />
+                      </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: open ? 8 : 5 }}
+                        onClick={() => handleSubItemClickContas("Fornecedor")}
+                      >
+                        <ListItemText primary="Fornecedor" />
+                      </ListItemButton>
+                    </List>
+                  </Collapse>
+                )}
+              </ListItem>
+            )
+          )}
         </List>
         <Divider />
         <List sx={{ display: "flex", flexGrow: 1 }}>
@@ -252,7 +324,13 @@ export default function MenuLateral() {
                 px: 2.5,
               }}
             >
-              <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : "auto", justifyContent: "center" }}>
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
                 <HomeIcon />
               </ListItemIcon>
               <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
