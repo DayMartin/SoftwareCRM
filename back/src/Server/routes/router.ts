@@ -10,11 +10,13 @@ import { marcaRouter } from './marca';
 import { historicEstoqueRouter } from './historicEstoque';
 import { produtoMovimentoRouter } from './produto_movimento';
 import { parcelasCompraRouter } from './parcelasCompra';
+import { fornecedorRouter } from './fornecedor';
 
 const router = Router();
 
 router.use("/", usersRouter);
 router.use("/", servicoRouter);
+router.use("/", fornecedorRouter);
 router.use("/", vendaRouter);
 router.use("/", compraRouter)
 router.use("/", parcelasVendaRouter);

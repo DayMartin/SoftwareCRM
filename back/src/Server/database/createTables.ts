@@ -3,7 +3,7 @@ import queryDatabase from "../database/queryPromise";
 require("dotenv").config();
 
 export class CreateTables {
-	constructor() {}
+	constructor() { }
 
 	// Chamar as funções para criar as tabelas durante a inicialização do banco de dados
 	async createAllTables() {
@@ -21,6 +21,11 @@ export class CreateTables {
 			await this.createProdutoMovimentoTable();
 			await this.createLogs();
 			await this.createItemProdutoTable();
+			//await this.createFornecedorTable();
+			//await this.createClienteTable();
+			//await this.createCentroTroca();
+			//await this.createTrocaFornecedor();
+
 		} catch (error) {
 			console.error("Erro ao criar as tabelas:", error);
 		}
@@ -54,6 +59,60 @@ export class CreateTables {
 			console.error("Erro ao criar a tabela 'usuarios':", error);
 		}
 	}
+
+	async createFornecedorTable() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'fornecedor'`;
+			// Verifique se a tabela 'fornecedor' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'fornecedor' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE fornecedor (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						cpfcnpj VARCHAR(100),
+						nome VARCHAR(100),
+						telefone VARCHAR(100),
+						endereco VARCHAR(100),
+						email VARCHAR(100),
+						status VARCHAR(50),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+					)
+				`);
+				console.log("Tabela 'fornecedor' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'fornecedor':", error);
+		}
+	}
+
+	async createClienteTable() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'cliente'`;
+			// Verifique se a tabela 'cliente' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'cliente' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE cliente (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						cpfcnpj VARCHAR(100),
+						nome VARCHAR(100),
+						telefone VARCHAR(100),
+						endereco VARCHAR(100),
+						email VARCHAR(100),
+						status VARCHAR(50),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+					)
+				`);
+				console.log("Tabela 'cliente' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'cliente':", error);
+		}
+	}	
 
 	// async createServicosTable() {
 	// 	try {
@@ -380,14 +439,74 @@ export class CreateTables {
 						id INT AUTO_INCREMENT PRIMARY KEY,
 						codBarras VARCHAR(100),
 						estoque_id INT,
+						compra_id INT,
+						status VARCHAR(100),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (estoque_id) REFERENCES estoque(id)
+						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
+						FOREIGN KEY (compra_id) REFERENCES compra(id)
 					)
 				`);
 				console.log("Tabela 'item_produto' criada com sucesso.");
 			}
 		} catch (error) {
 			console.error("Erro ao criar a tabela 'item_produto':", error);
+		}
+	}
+
+	async createCentroTroca() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'centro_troca'`;
+			// Verifique se a tabela 'centro_troca' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'centro_troca' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE centro_troca (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						venda_id INT,
+						estoque_id INT,
+						item_antigo_codBarra VARCHAR(100),
+						item_novo_codBarra VARCHAR(100),
+						motivo VARCHAR(100),
+						descricaoTroca VARCHAR(100),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (venda_id) REFERENCES venda(id),
+						FOREIGN KEY (estoque_id) REFERENCES estoque(id)
+					)
+				`);
+				console.log("Tabela 'centro_troca' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'centro_troca':", error);
+		}
+	}
+
+	async createTrocaFornecedor() {
+		try {
+			const consulta = `SHOW TABLES LIKE 'troca_fornecedor'`;
+			// Verifique se a tabela 'troca_fornecedor' existe
+			const rows = await queryDatabase(consulta);
+
+			// Se a tabela 'troca_fornecedor' não existir, crie-a
+			if (rows.length === 0) {
+				await queryDatabase(`
+					CREATE TABLE troca_fornecedor (
+						id INT AUTO_INCREMENT PRIMARY KEY,
+						codBarra_item VARCHAR(100),
+						id_compra INT,
+						fornecedor_id INT,
+						status VARCHAR(100),
+						descricaoDefeito VARCHAR(100),
+						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						FOREIGN KEY (id_compra) REFERENCES compra(id),
+						FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id)
+					)
+				`);
+				console.log("Tabela 'troca_fornecedor' criada com sucesso.");
+			}
+		} catch (error) {
+			console.error("Erro ao criar a tabela 'troca_fornecedor':", error);
 		}
 	}
 }
