@@ -4,6 +4,14 @@
 
 GET http://localhost:3048/api/user/all?page=1&id=
 
+### BUSCAR TODOS OS FORNECEDORES
+
+GET http://localhost:3048/api/fornecedor/list
+
+###
+
+POST http://localhost:3048/api/fornecedor/all?page=1&id=
+
 ### CADASTRAR NOVO USUARIO
 
 POST http://localhost:3048/api/user/create

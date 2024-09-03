@@ -7,7 +7,7 @@ import { FornecedorConsulta } from '../models/fornecedor.interface';
 const fornecedorController = {
     // Função para buscar todos os usuários
     getFornecedores: async (req: Request, res: Response) => {
-        const { page = 1, limit = 10, id, nome } = req.query;
+        const { page = 1, limit = 5, id } = req.query;
 
         // Construir a consulta SQL com filtros e paginação
         let query = "SELECT * FROM fornecedor WHERE 1=1";
@@ -18,28 +18,39 @@ const fornecedorController = {
             params.push(id);
         }
 
-        if (nome) {
-            query += " AND nome LIKE ?";
-            params.push(`%${nome}%`);
+		let countQuery = "SELECT COUNT(*) AS total FROM fornecedor WHERE 1=1";
+        const countParams: any[] = [];
+
+		if (id) {
+            countQuery += " AND id = ?";
+            countParams.push(Number(id)); 
         }
 
+        const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
         query += " LIMIT ? OFFSET ?";
-        params.push(parseInt(limit as string));
-        params.push((parseInt(page as string) - 1) * parseInt(limit as string));
-
+        params.push(parseInt(limit as string), offset);
+    
         try {
+            // Executar a consulta para obter os registros
             const rows: FornecedorConsulta = await queryDatabase(query, params);
-
+    
+            // Executar a consulta para contar o total de registros
+            const countResult = await queryDatabase(countQuery, countParams);
+            const total = countResult[0]?.total || 0;
+    
             if (!rows || rows === undefined) {
-                return res.status(404).json({ error: "Nenhum Fornecedor encontrado" });
+                return res.status(404).json({ error: "Fornecedor não encontrado" });
             }
-
-            return res.status(200).json(rows);
+            
+            // Retornar os registros e o total
+            return res.status(200).json({ rows, total });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: "Erro ao buscar Fornecedores" });
+            return res.status(500).json({ error: "Erro ao buscar Fornecedor" });
         }
     },
+
+
 
     // Função para criar um novo Fornecedor
     createFornecedor: async (req: Request, res: Response) => {
@@ -116,6 +127,25 @@ const fornecedorController = {
             return res.status(500).json({ error: "Erro ao buscar Fornecedor" });
         }
     },
+
+	    // Função para buscar todos os fornecedores
+		getFornecedoresALL: async (req: Request, res: Response) => {
+			try {
+			  const query = "SELECT * FROM fornecedor";
+			  const rows = await queryDatabase(query);
+		  
+			  // Verificar se rows é um array
+			  if (!Array.isArray(rows)) {
+				return res.status(500).json({ error: "Erro inesperado: Dados não são um array" });
+			  }
+		  
+			  // Retornar os dados encontrados
+			  return res.status(200).json(rows);
+			} catch (error) {
+			  console.error("Erro ao buscar fornecedores:", error);
+			  return res.status(500).json({ error: "Erro ao buscar fornecedores" });
+			}
+		  } ,
 
     // Função para desativar um Fornecedor
     desativarFornecedor: async (req: Request, res: Response) => {

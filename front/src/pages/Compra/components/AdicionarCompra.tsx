@@ -33,6 +33,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { MarcaService, ViewMarca } from "../../../shared/services/api/Estoque/MarcaService";
 import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
+import { FornecedorService, IListagemFornecedor } from "../../../shared/services/api/Fornecedor/FornecedorService";
 
 interface AdicionarCompraProps {
   open: boolean;
@@ -89,7 +90,7 @@ const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
     marca_id: 0,
     valorUnitario: 0,
   });
-  const [fornecedor, setFornecedor] = useState<IListagemCliente[]>([]);
+  const [fornecedor, setFornecedor] = useState<IListagemFornecedor[]>([]);
   const [funcionarios, setFuncionario] = useState<IListagemCliente[]>([]);
   const [produtos, setProdutos] = useState<IDetalheEstoque[]>([]);
   const [produtoSelecionado, setProdutoSelecionado] = useState<number | "">("");
@@ -104,16 +105,23 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
   const ConsultarFornecedor = async () => {
     try {
-      const consultar = await UsersService.getClientes("fornecedor");
+      const consultar = await FornecedorService.getFornecedor();
+      console.log('Tipo de consultar:', typeof consultar); // Verifique o tipo
+      console.log('Estrutura de consultar:', consultar); // Verifique o conteúdo
+  
       if (consultar instanceof Error) {
         console.error("Erro ao consultar fornecedor:", consultar.message);
-      } else {
+      } else if (Array.isArray(consultar)) { // Verifique se é um array
+        console.log('consultar fornecedor', consultar);
         setFornecedor(consultar.filter((item) => item.status === "ativo"));
+      } else {
+        console.error("Dados retornados não são um array:", consultar);
       }
     } catch (error) {
       console.error("Erro ao consultar fornecedor:", error);
     }
   };
+  
 
   const ConsultarFuncionarios = async () => {
     try {
