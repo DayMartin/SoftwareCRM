@@ -21,6 +21,8 @@ export interface IDetalheCentroTroca {
   item_novo_codBarra: number;
   motivo: string;
   descricaoTroca: string;
+  send_fornecedor: boolean
+
 } 
 
 export interface IApiResponse {

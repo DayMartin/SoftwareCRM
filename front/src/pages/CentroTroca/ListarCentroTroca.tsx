@@ -110,6 +110,7 @@ export const ListarCentroTroca: React.FC = () => {
                             <TableCell>item Antigo</TableCell>
                             <TableCell>item Novo</TableCell>
                             <TableCell>motivo</TableCell>
+                            <TableCell>Solicitado troca ao fornecedor</TableCell>
                             <TableCell>Ações</TableCell>
                         </TableRow>
                     </TableHead>
@@ -138,6 +139,7 @@ export const ListarCentroTroca: React.FC = () => {
                                         <TableCell>{row.item_antigo_codBarra}</TableCell>
                                         <TableCell>{row.item_novo_codBarra}</TableCell>
                                         <TableCell>{row.motivo}</TableCell>
+                                        <TableCell>{row.send_fornecedor ? "Sim" : "Não"}</TableCell>
 
                                         {/* <TableCell>
                                             <Button
