@@ -25,7 +25,7 @@ export const Fornecedor: React.VFC = () => {
     const [totalRecords, setTotalRecords] = useState(0);
 
 
-    const titulo = "Cadastros";
+    const titulo = "Fornecedor";
 
     const consultar = async () => {
         setIsLoading(true);
