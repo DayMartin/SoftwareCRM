@@ -1,6 +1,9 @@
 porcentagem de desconto
 promoção - se o prouto estiver na promoçãao ai ele cobra o valor da promoção
-
+--- adicionar comissao para os funcionarios
+--- listar para cada funcionario as vendas feitas e valor de comissao
+--- listar produtos cadastrados para cada TrocaFornecedor
+--- gerar relatorio de comissao por mes para cada funcionario
 
 
 
