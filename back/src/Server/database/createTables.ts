@@ -325,6 +325,8 @@ export class CreateTables {
 						categoria_id INT,
 						marca_id INT,
 						valorUnitario INT,
+						promocao VARCHAR(20),
+						valor_promocional INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id),
 						FOREIGN KEY (categoria_id) REFERENCES categoria(id),

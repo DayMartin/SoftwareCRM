@@ -212,6 +212,33 @@ const estoqueController = {
 		}
 	},
 
+	editEstoque: async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const { nome, valorUnitario, promocao, valor_promocional } = req.body;
+
+        const produtoExistsQuery = "SELECT * FROM estoque WHERE id = ?";
+        const [produtoRows] = await queryDatabase(produtoExistsQuery, [id]);
+
+        if (!produtoRows) {
+            return res.status(404).json({ error: "Produto não encontrado" });
+        }
+
+        try {
+
+            const updateQuery = `
+				UPDATE estoque 
+				SET nome = ?, valorUnitario = ?, promocao = ?, valor_promocional = ?
+				WHERE id = ?
+			`;
+            await queryDatabase(updateQuery, [nome, valorUnitario, promocao, valor_promocional, id]);
+
+            return res.status(200).json({ message: "Produto atualizado com sucesso" });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Erro ao atualizar Produto" });
+        }
+    },
+
 	deleteEstoque: async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const queryVerificar = "SELECT * FROM estoque WHERE id = ?";

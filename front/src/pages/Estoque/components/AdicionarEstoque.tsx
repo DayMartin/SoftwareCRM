@@ -21,6 +21,7 @@ import {
   MarcaService,
   ViewMarca,
 } from "../../../shared/services/api/Estoque/MarcaService";
+import { FornecedorService, IListagemFornecedor } from "../../../shared/services/api/Fornecedor/FornecedorService";
 
 interface AdicionarEstoqueProps {
   open: boolean;
@@ -42,9 +43,11 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     categoria_id: 0,
     marca_id: 0,
     valorUnitario: 0,
+    promocao: "",
+    valor_promocional: 0
   });
   const [fornecedorSelecionado, setFornecedorSelecionado] = useState<
-    IListagemUser[]
+    IListagemFornecedor[]
   >([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<
     ViewCategoria[]
@@ -71,16 +74,16 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
 
   const ConsultarFornecedor = async () => {
     try {
-      const consultar = await UsersService.getUsers();
+      const consultar = await FornecedorService.getFornecedor();
       if (consultar instanceof Error) {
-        console.error("Erro ao consultar clientes:", consultar.message);
+        console.error("Erro ao consultar fornecedores:", consultar.message);
       } else {
         setFornecedorSelecionado(
           consultar.filter((item) => item.status === "ativo")
         );
       }
     } catch (error) {
-      console.error("Erro ao consultar clientes:", error);
+      console.error("Erro ao consultar fornecedores:", error);
     }
   };
 
@@ -123,14 +126,21 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     }
   }, [formData.categoria_id]);
 
-  const handleSelectChange = (event: SelectChangeEvent<number | "">) => {
+  const handleInputChange = (event: SelectChangeEvent<number | "">) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value !== "" ? Number(value) : "",
+      [name]: value,
     }));
   };
-  
+
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const resetForm = () => {
     setFormData({
@@ -140,6 +150,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
       categoria_id: 0,
       valorUnitario: 0,
       marca_id: 0,
+      promocao: "",
+      valor_promocional: 0
     });
   };
 
@@ -155,7 +167,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     >
       <Box
         sx={{
-          width: 600,
+          width: "60%",
           bgcolor: "background.paper",
           p: 4,
           borderRadius: 2,
@@ -169,7 +181,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
         <Box component="form" sx={{ mt: 2 }}>
           {/* Grid para Inputs */}
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 name="nome"
                 label="Nome"
@@ -179,7 +191,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                 margin="normal"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 name="valorUnitario"
                 label="Valor Unitário"
@@ -190,14 +202,14 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
               />
             </Grid>
             {/* Select para Tipo */}
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={4}>
               <FormControl fullWidth margin="normal">
                 <InputLabel id="fornecedor-label">Fornecedor</InputLabel>
                 <Select
                   labelId="fornecedor-label"
                   name="fornecedor_id"
                   value={formData.fornecedor_id}
-                  onChange={handleSelectChange}
+                  onChange={handleInputChange}
                   displayEmpty
                 >
                   {fornecedorSelecionado.map((fornecedor) => (
@@ -215,7 +227,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                   labelId="categoria-label"
                   name="categoria_id"
                   value={formData.categoria_id}
-                  onChange={handleSelectChange}
+                  onChange={handleInputChange}
                   displayEmpty
                 >
                   {categoriaSelecionada.map((categoria) => (
@@ -233,7 +245,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                   labelId="marca-label"
                   name="marca_id"
                   value={formData.marca_id || ""}
-                  onChange={handleSelectChange}
+                  onChange={handleInputChange}
                   displayEmpty
                 >
                   {marcaSelecionada.length > 0 ? (
@@ -248,6 +260,31 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                 </Select>
               </FormControl>
 
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel id="promocao">Promoção</InputLabel>
+                <Select
+                  labelId="promocao"
+                  name="promocao"
+                  value={formData.promocao}
+                  onChange={handleSelectChange}
+                  label="Promoção"
+                >
+                  <MenuItem value="ativo">Ativo</MenuItem>
+                  <MenuItem value="inativo">Inativo</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                name="valor_promocional"
+                label="Valor Promocional"
+                value={formData.valor_promocional}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
             </Grid>
           </Grid>
           <Button

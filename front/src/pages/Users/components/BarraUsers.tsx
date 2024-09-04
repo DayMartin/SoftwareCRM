@@ -26,7 +26,7 @@ export const BarraUsers: React.FC<BarraUsersProps> = ({
 
     const handleSubmit = async (formData: any) => {
         try {
-            await FornecedorService.create(formData);
+            await UsersService.create(formData);
             alert('Fornecedor criado com sucesso!');
             listar();
             handleClose();

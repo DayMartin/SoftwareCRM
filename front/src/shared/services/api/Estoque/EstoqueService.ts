@@ -29,7 +29,16 @@ export interface IDetalheEstoque {
   marca_id: number;
   data_criacao: string;
   valorUnitario: number;
+  promocao: string;
+  valor_promocional: number;
+}
 
+export interface EditProducao{
+  id: number;
+  nome: string;
+  valorUnitario: number;
+  promocao: string;
+  valor_promocional: number;
 }
 
 export interface IDetalheHistoric {
@@ -111,7 +120,7 @@ const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> 
   }
 };
 
-const getByID = async (id: number): Promise<IDetalheEstoque[] | Error> => {
+const getByID = async (id: number, ): Promise<IDetalheEstoque[] | Error> => {
   try {
     const { data } = await Api.get(`/estoque/${id}`); 
 
@@ -210,9 +219,9 @@ const create = async (dados: IEstoque): Promise<void | Error> => {
   }
 };
 
-const updateById = async (id: string, dados: IDetalheEstoque): Promise<void | Error> => {
+const updateById = async (id: number, dados: EditProducao): Promise<void | Error> => {
   try {
-    await Api.put(`user/edit/${id}`, dados);
+    await Api.put(`estoque/edit/${id}`, dados);
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao atualizar o registro.');

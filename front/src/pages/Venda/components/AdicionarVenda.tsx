@@ -91,9 +91,9 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
   const [quantidade, setQuantidade] = useState<number>(1);
   const [abaSelecionada, setAbaSelecionada] = useState<number>(0);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<
-  ViewCategoria[]
->([]);
-const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
+    ViewCategoria[]
+  >([]);
+  const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
 
   const ConsultarClientes = async () => {
     try {
@@ -196,7 +196,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
       venda_id: 0,
       tipoPagamento: "",
     }));
-  
+
     setFormData((prevData) => ({
       ...prevData,
       parcelas: novasParcelas,
@@ -221,7 +221,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
     }
     calcularParcelas();
   }, [formData.QTparcelas, formData.valorTotal, formData.valorDesconto, formData.valorTotalDesconto, formData2.categoria_id, formData2.marca_id]);
-  
+
   const handleSelectChange = (event: SelectChangeEvent<number | "">) => {
     const { name, value } = event.target;
 
@@ -245,11 +245,15 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
       }));
     }
   };
-  
+
 
   const handleAddProduto = () => {
     const produto = produtos.find((p) => p.id === produtoSelecionado);
     if (produto) {
+      const valorUnitario = produto.promocao === "ativo" && produto.valor_promocional
+        ? produto.valor_promocional
+        : produto.valorUnitario;
+
       const produtoExistente = formData.produtos.find(
         (p) => p.id === produto.id
       );
@@ -265,16 +269,20 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
       } else {
         setFormData((prevData) => ({
           ...prevData,
-          produtos: [...prevData.produtos, { id: produto.id, quantidade, nome_produto: produto.nome, valorUnitario: produto.valorUnitario  }],
+          produtos: [
+            ...prevData.produtos,
+            { id: produto.id, quantidade, nome_produto: produto.nome, valorUnitario },
+          ],
         }));
       }
-      atualizarValorTotal(produto.valorUnitario * quantidade);
-      setQuantidade(1); 
-      setProdutoSelecionado(""); 
+      atualizarValorTotal(valorUnitario * quantidade);
+      setQuantidade(1);
+      setProdutoSelecionado("");
       setMarcaSelecionada([]);
       setCategoriaSelecionada([]);
     }
   };
+
 
   const handleRemoveProduto = (id: number) => {
     const produto = formData.produtos.find((p) => p.id === id);
@@ -407,47 +415,47 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
           {abaSelecionada === 1 && (
             <Box>
               <Grid container spacing={2} sx={{ alignItems: "center" }}>
-              <Grid item xs={12} sm={3}>
-              <FormControl fullWidth margin="normal">
-                <InputLabel id="categoria-label">Categoria</InputLabel>
-                <Select
-                  labelId="categoria-label"
-                  name="categoria_id"
-                  value={formData2.categoria_id}
-                  onChange={handleSelectChange}
-                  displayEmpty
-                >
-                  {categoriaSelecionada.map((categoria) => (
-                    <MenuItem key={categoria.id} value={categoria.id}>
-                      {categoria.nome}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              <FormControl fullWidth margin="normal">
-                <InputLabel id="marca-label">Marca</InputLabel>
-                <Select
-                  labelId="marca-label"
-                  name="marca_id"
-                  value={formData2.marca_id || ""}
-                  onChange={handleSelectChange}
-                  displayEmpty
-                >
-                  {marcaSelecionada.length > 0 ? (
-                    marcaSelecionada.map((marca) => (
-                      <MenuItem key={marca.id} value={marca.id}>
-                        {marca.nome}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem disabled>Nenhuma marca disponível</MenuItem>
-                  )}
-                </Select>
-              </FormControl>
+                <Grid item xs={12} sm={3}>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel id="categoria-label">Categoria</InputLabel>
+                    <Select
+                      labelId="categoria-label"
+                      name="categoria_id"
+                      value={formData2.categoria_id}
+                      onChange={handleSelectChange}
+                      displayEmpty
+                    >
+                      {categoriaSelecionada.map((categoria) => (
+                        <MenuItem key={categoria.id} value={categoria.id}>
+                          {categoria.nome}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={3}>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel id="marca-label">Marca</InputLabel>
+                    <Select
+                      labelId="marca-label"
+                      name="marca_id"
+                      value={formData2.marca_id || ""}
+                      onChange={handleSelectChange}
+                      displayEmpty
+                    >
+                      {marcaSelecionada.length > 0 ? (
+                        marcaSelecionada.map((marca) => (
+                          <MenuItem key={marca.id} value={marca.id}>
+                            {marca.nome}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem disabled>Nenhuma marca disponível</MenuItem>
+                      )}
+                    </Select>
+                  </FormControl>
 
-            </Grid>
+                </Grid>
                 <Grid item xs={12} sm={3.5}>
                   <FormControl fullWidth margin="normal">
                     <InputLabel id="produto-label">Produto</InputLabel>
@@ -506,12 +514,13 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                   </TableHead>
                   <TableBody sx={{ backgroundColor: "#fafafa" }}>
                     {formData.produtos.map((produto, index) => {
-                      const detalheProduto = produtos.find(
-                        (p) => p.id === produto.id
-                      );
-                      const valorTotal =
-                        (produto.valorUnitario || 0) *
-                        produto.quantidade;
+                      const detalheProduto = produtos.find((p) => p.id === produto.id);
+                      const valorUnitario = detalheProduto?.promocao === "ativo" && detalheProduto?.valor_promocional
+                        ? detalheProduto.valor_promocional
+                        : detalheProduto?.valorUnitario;
+
+                      const valorTotal = (valorUnitario || 0) * produto.quantidade;
+
                       return (
                         <TableRow key={index}>
                           <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
@@ -521,7 +530,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                             {produto.quantidade}
                           </TableCell>
                           <TableCell sx={{ p: 0.1 }}>
-                            R$ {produto.valorUnitario.toFixed(2)}
+                            R$ {valorUnitario?.toFixed(2)}
                           </TableCell>
                           <TableCell sx={{ p: 0.1 }}>
                             R$ {valorTotal.toFixed(2)}
@@ -538,6 +547,7 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                       );
                     })}
                   </TableBody>
+
                 </Table>
               </TableContainer>
             </Box>
@@ -640,9 +650,9 @@ const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
                                   parcelas: prevData.parcelas.map((p, i) =>
                                     i === index
                                       ? {
-                                          ...p,
-                                          tipoPagamento: novoTipoPagamento,
-                                        }
+                                        ...p,
+                                        tipoPagamento: novoTipoPagamento,
+                                      }
                                       : p
                                   ),
                                 }));

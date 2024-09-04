@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
-import { EstoqueService, IApiResponseHistoric, IDetalheEstoque, IDetalheHistoric } from "../../shared/services/api/Estoque/EstoqueService";
+import { EditProducao, EstoqueService, IApiResponseHistoric, IDetalheEstoque, IDetalheHistoric } from "../../shared/services/api/Estoque/EstoqueService";
 import { Environment } from "../../shared/environment";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,6 +10,9 @@ import { BarraEstoque } from "./components/BarraEstoque";
 import { HistoricoModal } from "./components/ListarHistorico";
 import { ItemProdutoModal } from "./components/ListarItemProduto";
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import EditIcon from '@mui/icons-material/Edit';
+import ProdutoEditViewDialog from "./components/VisualizarEditarProduto";
+
 
 export const Estoque: React.VFC = () => {
     const [rows, setRows] = useState<IDetalheEstoque[]>([]);
@@ -25,6 +28,10 @@ export const Estoque: React.VFC = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
+    const [selectedProd, setSelectedProds] = useState<IDetalheEstoque | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [openEditView, setOpenEditView] = useState(false);
+
 
     const titulo = "Estoque";
 
@@ -134,6 +141,28 @@ export const Estoque: React.VFC = () => {
         }
     }
 
+    const handleEditar = (prod: IDetalheEstoque) => {
+        setSelectedProds(prod);
+        setOpenEditView(true);
+        setIsEditing(true);
+    };
+
+    const handleCloseProd = () => {
+        setOpenEditView(false);
+        setSelectedProds(null);
+        setIsEditing(false);
+    };
+
+    const handleSave = async (updatedProd: EditProducao) => {
+        try {
+            await EstoqueService.updateById(updatedProd.id, updatedProd);
+            await consultar();
+        } catch (error) {
+            alert('Erro ao atualizar Produto');
+        }
+    };
+
+
     return (
         <Box>
             <BarraInicial
@@ -151,8 +180,11 @@ export const Estoque: React.VFC = () => {
                             <TableCell>Categoria</TableCell>
                             <TableCell>Marca</TableCell>
                             <TableCell>Quantidade</TableCell>
-                            <TableCell>Data</TableCell>
+                            <TableCell>Promoção</TableCell>
+                            <TableCell>Valor promocional</TableCell>
                             <TableCell>Ações</TableCell>
+                            <TableCell>Data</TableCell>
+
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -170,11 +202,16 @@ export const Estoque: React.VFC = () => {
                                     <TableCell>{row.categoria_id}</TableCell>
                                     <TableCell>{row.marca_id}</TableCell>
                                     <TableCell>{row.quantidade}</TableCell>
+                                    <TableCell>{row.promocao}</TableCell>
+                                    <TableCell>{row.valor_promocional}</TableCell>
                                     <TableCell>{row.data_criacao}</TableCell>
                                     <TableCell>
                                         <Button variant="contained" color="primary" startIcon={<VisibilityIcon />} onClick={() => handleVisualizar(row.id)}>
                                         </Button>
                                         <Button variant="contained" color="primary" startIcon={<MenuBookIcon />} onClick={() => handleVisualizarItemEstoque(row.id)}>
+                                        </Button>
+                                        <Button onClick={() => handleEditar(row)}>
+                                        <EditIcon />
                                         </Button>
                                         <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={() => handleExcluir(row.id)}>
                                         </Button>
@@ -209,6 +246,15 @@ export const Estoque: React.VFC = () => {
                     idHistoric={selectedItemEstoque}
                     onClose={handleCloseItemEstoque}
                     getTipoColor={getTipoColor}
+                />
+            )}
+            {selectedProd && (
+                <ProdutoEditViewDialog
+                    open={openEditView}
+                    prod={selectedProd}
+                    isEditing={isEditing}
+                    onClose={handleCloseProd}
+                    onSave={handleSave}
                 />
             )}
         </Box>
