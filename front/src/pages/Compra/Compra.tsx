@@ -27,7 +27,6 @@ export const Compra: React.VFC = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [currentRow, setCurrentRow] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
@@ -35,7 +34,7 @@ export const Compra: React.VFC = () => {
 
     const titulo = "Compras";
 
-    const consultar = async (tipo: string) => {
+    const consultar = async () => {
         setIsLoading(true);
         try {
             const consulta = await CompraService.getAllList(page + 1, filterId);
@@ -65,8 +64,8 @@ export const Compra: React.VFC = () => {
     };
 
     useEffect(() => {
-        consultar(tipoUsuario);
-    }, [tipoUsuario, page, filterId,]);
+        consultar();
+    }, [ page, filterId,]);
 
     const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -123,6 +122,14 @@ export const Compra: React.VFC = () => {
     //     }
     // };
 
+    const listar = async() => {
+        try {
+            await consultar();
+        } catch (error) {
+            console.error('Erro ao listar', error)
+        }
+    }
+
 
     return (
         <Box>
@@ -130,7 +137,7 @@ export const Compra: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraCompra />
+            <BarraCompra listar={listar}/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>

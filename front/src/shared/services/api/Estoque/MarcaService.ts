@@ -26,7 +26,7 @@ const createMarca = async (dados: AddMarca): Promise<void | Error> => {
   }
 };
 
-const consultaMarca = async (page = 1, filter = ''): Promise<[ViewMarca] | Error> => {
+const consultaMarca = async (page = 1, filter = ''): Promise<ViewMarca[] | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/marca/all`;
 

@@ -10,7 +10,13 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
-export const BarraCompra: React.VFC = () => {
+interface BarraCompraProps {
+    listar: () => void
+}
+
+export const BarraCompra: React.FC<BarraCompraProps> = ({
+    listar
+}) => {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
     const [alertVisible, setAlertVisible] = React.useState(false);
@@ -21,6 +27,7 @@ export const BarraCompra: React.VFC = () => {
         try {
             await CompraService.create(formData);
             setAlertVisible(true);
+            listar()
             setTimeout(() => {
                 setAlertVisible(false);
               }, 3000);

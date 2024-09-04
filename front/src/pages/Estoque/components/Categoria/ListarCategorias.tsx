@@ -62,16 +62,13 @@ export const ListarCategorias: React.FC = () => {
         setPage(0);
     };
 
-    const handleSubmitCategoria = async (formData: any) => {
+    const listar = async() => {
         try {
-            await CategoriaService.createCategoria(formData);
-            alert('Categoria criada com sucesso!');
-            handleCloseCategoria();
+            await consultar();
         } catch (error) {
-            console.error(error);
-            alert('Erro ao criar categoria');
+            console.error("Erro ao listar:", error); 
         }
-    };
+    }
 
     const handleExcluir = async (id: number) => {
         try {
@@ -97,7 +94,7 @@ export const ListarCategorias: React.FC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraCategoria />
+            <BarraCategoria listar={listar}/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
@@ -154,7 +151,6 @@ export const ListarCategorias: React.FC = () => {
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
             />
-            <AdicionarCategoria open={openCategoria} onClose={handleCloseCategoria} title="Nova categoria" onSubmit={handleSubmitCategoria} />
         </Box>
     );
 };

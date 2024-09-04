@@ -7,7 +7,13 @@ import { CentroTrocaService } from "../../../shared/services/api/CentroTroca/Cen
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import AdicionarCentroTroca from "./AdicionarCentroTroca";
 
-export const BarraCentroTroca: React.VFC = () => {
+interface BarraCentroTrocaProps {
+    listar: () => void;
+}
+
+export const BarraCentroTroca: React.FC<BarraCentroTrocaProps> = ({
+    listar
+}) => {
     const navigate = useNavigate();
     const [openCentroTroca, setOpenCentroTroca] = React.useState(false);
 
@@ -21,6 +27,7 @@ export const BarraCentroTroca: React.VFC = () => {
         try {
             await CentroTrocaService.create(formData);
             alert('CentroTroca criada com sucesso!');
+            listar();
             handleCloseCentroTroca();
         } catch (error) {
             console.error(error);

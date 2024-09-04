@@ -6,9 +6,12 @@ import { ClienteService } from "../../../shared/services/api/Cliente/ClienteServ
 import AdicionarCliente from "./AdicionarCliente";
 
 interface BarraClienteProps {
+    listar: () => void
 }
 
-export const BarraClientes: React.VFC<BarraClienteProps> = () => {
+export const BarraClientes: React.VFC<BarraClienteProps> = ({
+    listar
+}) => {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
 
@@ -19,6 +22,7 @@ export const BarraClientes: React.VFC<BarraClienteProps> = () => {
         try {
             await ClienteService.create(formData);
             alert('Cliente criado com sucesso!');
+            listar()
             handleClose();
         } catch (error) {
             console.error(error);

@@ -13,9 +13,12 @@ import { FornecedorService } from "../../../shared/services/api/Fornecedor/Forne
 import AdicionarFornecedor from "./AdicionarFornecedor";
 
 interface BarraFornecedorProps {
+    listar: () => void
 }
 
-export const BarraFornecedor: React.VFC<BarraFornecedorProps> = () => {
+export const BarraFornecedor: React.FC<BarraFornecedorProps> = ({
+    listar
+}) => {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
 
@@ -26,6 +29,7 @@ export const BarraFornecedor: React.VFC<BarraFornecedorProps> = () => {
         try {
             await FornecedorService.create(formData);
             alert('Fornecedor criado com sucesso!');
+            listar();
             handleClose();
         } catch (error) {
             console.error(error);

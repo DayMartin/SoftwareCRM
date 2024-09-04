@@ -128,13 +128,21 @@ export const ListagemCliente: React.VFC = () => {
         }
     };
 
+    const listar = async() => {
+        try {
+            await consultar()
+        } catch (error) {
+            console.error('Erro ao listar', error)
+        }
+    }
+
     return (
         <Box>
             <BarraInicial
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraClientes/>
+            <BarraClientes listar={listar}/>
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
                     <TableHead>

@@ -10,7 +10,13 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 
-export const BarraVenda: React.VFC = () => {
+interface BarraVendaProps {
+    listar: () => void;
+  }
+
+export const BarraVenda: React.FC<BarraVendaProps> = ({
+    listar
+}) => {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(false);
     const [alertVisible, setAlertVisible] = React.useState(false);
@@ -20,6 +26,7 @@ export const BarraVenda: React.VFC = () => {
     const handleSubmit = async (formData: any) => {
         try {
             await VendasService.create(formData);
+            listar();
             setAlertVisible(true);
             setTimeout(() => {
                 setAlertVisible(false);

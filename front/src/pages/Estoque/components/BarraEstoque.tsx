@@ -1,53 +1,33 @@
 import { Box, Button } from "@mui/material";
 import * as React from "react";
 import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
 import AdicionarEstoque from "./AdicionarEstoque";
 import { EstoqueService } from "../../../shared/services/api/Estoque/EstoqueService";
-import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
-import AdicionarCategoria from "./Categoria/AdicionarCategoria";
-import { MarcaService } from "../../../shared/services/api/Estoque/MarcaService";
-import AdicionarMarca from "./Marca/AdicionarMarca";
-import { ListarCategorias } from "./Categoria/ListarCategorias";
-import { ListarMarcas } from "./Marca/ListarMarcas";
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-export const BarraEstoque: React.VFC = () => {
+interface BarraEstoqueProps {
+    listar: () => void
+}
+
+export const BarraEstoque: React.FC<BarraEstoqueProps> = ({
+    listar
+}) => {
     const navigate = useNavigate();
     const [openEstoque, setOpenEstoque] = React.useState(false);
-    const [openCategoria, setOpenCategoria] = React.useState(false);
-    const [openMarca, setOpenMarca] = React.useState(false);
-
 
     const handleOpenEstoque = () => setOpenEstoque(true);
     const handleCloseEstoque = () => setOpenEstoque(false);
-
-    const handleOpenCategoria = () => setOpenCategoria(true);
-    const handleCloseCategoria = () => setOpenCategoria(false);
-
-    const handleOpenMarca = () => setOpenMarca(true);
-    const handleCloseMarca = () => setOpenMarca(false);
 
     const handleSubmit = async (formData: any) => {
         try {
             await EstoqueService.create(formData);
             alert('Produto criado com sucesso!');
+            listar();
             handleCloseEstoque();
         } catch (error) {
             console.error(error);
             alert('Erro ao criar Venda');
-        }
-    };
-
-    const handleSubmitMarca = async (formData: any) => {
-        try {
-            await MarcaService.createMarca(formData);
-            alert('Marca criada com sucesso!');
-            handleCloseMarca();
-        } catch (error) {
-            console.error(error);
-            alert('Erro ao criar Marca');
         }
     };
 
@@ -123,7 +103,6 @@ export const BarraEstoque: React.VFC = () => {
                         },
                         mr: 1,
                     }}
-                    onClick={handleOpenCategoria}
                 >
                     Solicitação de compra
                 </Button>

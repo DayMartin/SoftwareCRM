@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import { Environment } from "../../../../shared/environment";
 import { MarcaService, ViewMarca } from "../../../../shared/services/api/Estoque/MarcaService";
-import AdicionarMarca from "./AdicionarMarca";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Busca } from "../../../../shared/components/barra-inicial/Busca";
 import { useNavigate } from 'react-router-dom';
@@ -29,11 +28,7 @@ export const ListarMarcas: React.FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filterId, setFilterId] = useState('');
   const [totalRecords, setTotalRecords] = useState(0);
-
-  const navigate = useNavigate();
   
-  const handleOpenMarca = () => setOpenMarca(true);
-  const handleCloseMarca = () => setOpenMarca(false);
   const titulo = "Marca";
 
   const consultar = async () => {
@@ -77,17 +72,14 @@ export const ListarMarcas: React.FC = () => {
     setPage(0);
   };
 
-  const handleSubmitMarca = async (formData: any) => {
+  const listar = async () => {
     try {
-      await MarcaService.createMarca(formData);
-      alert('Marca criada com sucesso!');
-      handleCloseMarca();
-      consultar(); // Recarregar a lista de marcas após adicionar uma nova
+      await consultar();
     } catch (error) {
-      console.error(error);
-      alert('Erro ao criar Marca');
+      console.error("Erro ao listar:", error);
     }
   };
+  
 
   const handleExcluir = async (id: number) => {
     try {
@@ -98,7 +90,7 @@ export const ListarMarcas: React.FC = () => {
         return;
       }
       alert("Marca excluída com sucesso!");
-      consultar(); // Recarregar a lista de marcas após exclusão
+      consultar();
     } catch (error) {
       console.error("Erro inesperado:", error);
     }
@@ -111,7 +103,7 @@ export const ListarMarcas: React.FC = () => {
         titulo={titulo}
         onFilterIdChange={handleFilterIdChange}
       />
-      <BarraMarca/>
+      <BarraMarca listar={listar}/>
       <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
       <Table>
           <TableHead>
@@ -169,7 +161,7 @@ export const ListarMarcas: React.FC = () => {
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />
-      <AdicionarMarca open={openMarca} onClose={handleCloseMarca} title="Nova Marca" onSubmit={handleSubmitMarca} />
+
     </Box>
   );
 };

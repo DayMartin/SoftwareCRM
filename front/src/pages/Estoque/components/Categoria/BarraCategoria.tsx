@@ -7,7 +7,14 @@ import AdicionarCategoria from "./AdicionarCategoria";
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-export const BarraCategoria: React.VFC = () => {
+interface BarraCategoriaProps {
+    listar: () => void;
+  }
+
+
+export const BarraCategoria: React.FC<BarraCategoriaProps> = ({
+    listar
+}) => {
     const navigate = useNavigate();
     const [openCategoria, setOpenCategoria] = React.useState(false);
 
@@ -21,6 +28,7 @@ export const BarraCategoria: React.VFC = () => {
         try {
             await CategoriaService.createCategoria(formData);
             alert('Categoria criada com sucesso!');
+            listar();
             handleCloseCategoria();
         } catch (error) {
             console.error(error);

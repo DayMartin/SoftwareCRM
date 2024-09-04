@@ -7,10 +7,16 @@ import AdicionarMarca from "./AdicionarMarca";
 
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
-export const BarraMarca: React.VFC = () => {
+interface BarraMarcaProps {
+    listar: () => void;
+  }
+
+export const BarraMarca: React.FC<BarraMarcaProps> = ({
+    listar
+    }) => {
     const navigate = useNavigate();
     const [openMarca, setOpenMarca] = React.useState(false);
-
+    
 
     const handleOpenMarca = () => setOpenMarca(true);
     const handleCloseMarca = () => setOpenMarca(false);
@@ -21,6 +27,7 @@ export const BarraMarca: React.VFC = () => {
         try {
             await MarcaService.createMarca(formData);
             alert('Marca criada com sucesso!');
+            listar();
             handleCloseMarca();
         } catch (error) {
             console.error(error);

@@ -25,7 +25,6 @@ export const Venda: React.VFC = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [currentRow, setCurrentRow] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
@@ -33,7 +32,7 @@ export const Venda: React.VFC = () => {
 
     const titulo = "Vendas";
 
-    const consultar = async (tipo: string) => {
+    const consultar = async () => {
         setIsLoading(true);
         try {
             const consulta = await VendasService.getAllList(page + 1, filterId);
@@ -64,8 +63,8 @@ export const Venda: React.VFC = () => {
     };
 
     useEffect(() => {
-        consultar(tipoUsuario);
-    }, [tipoUsuario, page, filterId,]);
+        consultar();
+    }, [page, filterId,]);
 
     const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -112,6 +111,15 @@ export const Venda: React.VFC = () => {
         }
     };
 
+    const listar = async() => {
+        try {
+            await consultar();
+        } catch (error) {
+            console.error("Erro ao listar:", error);
+
+        }
+    }
+
 
     // const handleSave = async (updatedClient: IListagemCliente) => {
     //     try {
@@ -129,7 +137,7 @@ export const Venda: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraVenda />
+            <BarraVenda listar={listar}/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
