@@ -8,13 +8,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import { BarraEstoque } from "./components/BarraEstoque";
 import { HistoricoModal } from "./components/ListarHistorico";
+import { ItemProdutoModal } from "./components/ListarItemProduto";
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 export const Estoque: React.VFC = () => {
     const [rows, setRows] = useState<IDetalheEstoque[]>([]);
 
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const [openItemProduto, setOpenItemProduto] = useState(false);
+
     const [selectedEstoque, setSelectedEstoque] = useState<number | null>(null);
+    const [selectedItemEstoque, setSelectedItemEstoque] = useState<number | null>(null);
+
     const [totalRecords, setTotalRecords] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -80,6 +86,16 @@ export const Estoque: React.VFC = () => {
         setSelectedEstoque(null);
     };
 
+    const handleVisualizarItemEstoque = async (estoque_id: number) => {
+        setSelectedItemEstoque(estoque_id);
+        setOpenItemProduto(true);
+    };
+
+    const handleCloseItemEstoque = () => {
+        setOpenItemProduto(false);
+        setSelectedItemEstoque(null);
+    };
+
     const getTipoColor = (tipo: string) => {
         switch (tipo) {
             case 'Saída':
@@ -87,7 +103,7 @@ export const Estoque: React.VFC = () => {
             case 'Entrada':
                 return { color: 'green' };
             case 'Defeito':
-                    return { color: 'orange' };
+                return { color: 'orange' };
             default:
                 return { fontWeight: 'bold' };
         }
@@ -110,7 +126,7 @@ export const Estoque: React.VFC = () => {
         }
     };
 
-    const listar = async() => {
+    const listar = async () => {
         try {
             await consultar();
         } catch (error) {
@@ -124,7 +140,7 @@ export const Estoque: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraEstoque listar={listar}/>
+            <BarraEstoque listar={listar} />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
@@ -156,9 +172,11 @@ export const Estoque: React.VFC = () => {
                                     <TableCell>{row.quantidade}</TableCell>
                                     <TableCell>{row.data_criacao}</TableCell>
                                     <TableCell>
-                                        <Button variant="contained" color="primary" startIcon={<VisibilityIcon/>} onClick={() => handleVisualizar(row.id)}>
+                                        <Button variant="contained" color="primary" startIcon={<VisibilityIcon />} onClick={() => handleVisualizar(row.id)}>
                                         </Button>
-                                        <Button variant="contained" color="secondary" startIcon={<DeleteIcon/>} onClick={() => handleExcluir(row.id)}>
+                                        <Button variant="contained" color="primary" startIcon={<MenuBookIcon />} onClick={() => handleVisualizarItemEstoque(row.id)}>
+                                        </Button>
+                                        <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={() => handleExcluir(row.id)}>
                                         </Button>
                                     </TableCell>
                                 </TableRow>
@@ -182,6 +200,14 @@ export const Estoque: React.VFC = () => {
                     open={open}
                     idHistoric={selectedEstoque}
                     onClose={handleClose}
+                    getTipoColor={getTipoColor}
+                />
+            )}
+            {selectedItemEstoque && (
+                <ItemProdutoModal
+                    open={openItemProduto}
+                    idHistoric={selectedItemEstoque}
+                    onClose={handleCloseItemEstoque}
                     getTipoColor={getTipoColor}
                 />
             )}

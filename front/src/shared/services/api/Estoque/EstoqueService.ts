@@ -57,8 +57,22 @@ export interface IApiResponse {
   total: number;
 }
 
+export interface ItemProduto {
+  id: number
+  codBarras: string;
+  estoque_id: number;
+  compra_id: number;
+  status: string;
+  data_criacao: string;
+}
+
 export interface IApiResponseHistoric {
   rows: IDetalheHistoric[]; 
+  total: number;
+}
+
+export interface IApiItemProduto{
+  rows: ItemProduto[]; 
   total: number;
 }
 
@@ -172,6 +186,21 @@ const getByHistoricList = async (page = 1, filter = '', estoque_id: number): Pro
   }
 };
 
+const getItemProduto = async (page = 1, filter = '', estoque_id: number): Promise<IApiItemProduto | Error> => {
+  try {
+    const { data } = await Api.post<IApiItemProduto>(`/estoque/allListItem?page=${page}&estoque_id=${estoque_id}`); 
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao consultar o registro.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
+  }
+};
+
 const create = async (dados: IEstoque): Promise<void | Error> => {
   try {
     await Api.post<IEstoque>('estoque/create', dados);
@@ -219,6 +248,7 @@ export const EstoqueService = {
   ativarById,
   getByHistoric,
   getAllList,
-  getByHistoricList
+  getByHistoricList,
+  getItemProduto
 
 };

@@ -9,6 +9,8 @@ export class CreateTables {
 	async createAllTables() {
 		try {
 			await this.createUsuariosTable();
+			await this.createFornecedorTable();
+			await this.createClienteTable();
 			await this.createCategoriaTable();
 			await this.createMarcaTable();
 			await this.createEstoqueTable();
@@ -20,8 +22,6 @@ export class CreateTables {
 			await this.createProdutoMovimentoTable();
 			await this.createLogs();
 			await this.createItemProdutoTable();
-			await this.createFornecedorTable();
-			await this.createClienteTable();
 			await this.createCentroTroca();
 			await this.createTrocaFornecedor();
 			await this.createHistoricEstoqueTable();
@@ -160,7 +160,7 @@ export class CreateTables {
 						valorPago DECIMAL(10, 2),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (cliente_id) REFERENCES usuarios(id),
+						FOREIGN KEY (cliente_id) REFERENCES cliente(id),
 						FOREIGN KEY (funcionario_id) REFERENCES usuarios(id)
 					)
 				`);
@@ -190,7 +190,7 @@ export class CreateTables {
 						valorPago DECIMAL(10, 2),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id),
+						FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id),
 						FOREIGN KEY (funcionario_id) REFERENCES usuarios(id)
 					)
 				`);
@@ -326,7 +326,7 @@ export class CreateTables {
 						marca_id INT,
 						valorUnitario INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id),
+						FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id),
 						FOREIGN KEY (categoria_id) REFERENCES categoria(id),
 						FOREIGN KEY (marca_id) REFERENCES marca(id)
 					)
@@ -359,7 +359,7 @@ export class CreateTables {
 						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
 						FOREIGN KEY (venda_id) REFERENCES venda(id),
 						FOREIGN KEY (compra_id) REFERENCES compra(id),
-						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id)
+						FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id)
 
 				)
 				`);
@@ -526,7 +526,7 @@ export class CreateTables {
 						FOREIGN KEY (venda_id) REFERENCES venda(id),
 						FOREIGN KEY (compra_id) REFERENCES compra(id),
 						FOREIGN KEY (defeito_id) REFERENCES troca_fornecedor(id),
-						FOREIGN KEY (fornecedor_id) REFERENCES usuarios(id)
+						FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id)
 
 				)
 				`);
