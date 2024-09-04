@@ -4,7 +4,8 @@ promoção - se o prouto estiver na promoçãao ai ele cobra o valor da promoç�
 --- listar para cada funcionario as vendas feitas e valor de comissao
 --- listar produtos cadastrados para cada TrocaFornecedor
 --- gerar relatorio de comissao por mes para cada funcionario
-
+--- poder desativar produto
+--- atualzar listagem de constas a receber e apagar em tempo real
 
 
 if motivo === "Defeito" { 
