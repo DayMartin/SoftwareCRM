@@ -146,7 +146,7 @@ export default function MenuLateral() {
     if (text === "Cliente") {
       navigate("/cliente");
     } else if (text === "Funcionario") {
-      navigate("/funcionario");
+      navigate("/user");
     } else if (text === "Fornecedor") {
       navigate("/fornecedor");
     }

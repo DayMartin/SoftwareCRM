@@ -71,7 +71,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
 
   const ConsultarFornecedor = async () => {
     try {
-      const consultar = await UsersService.getClientes("fornecedor");
+      const consultar = await UsersService.getUsers();
       if (consultar instanceof Error) {
         console.error("Erro ao consultar clientes:", consultar.message);
       } else {

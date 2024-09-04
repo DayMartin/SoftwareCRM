@@ -11,5 +11,7 @@ router.route("/user/getAlltipoList").get((req: Request, res: Response) => usersC
 router.route("/user/delete/:id").delete((req: Request, res: Response) => usersController.desativarUser(req, res));
 router.route("/user/ativar/:id").put((req: Request, res: Response) => usersController.ativarUser(req, res));
 router.route("/user/edit/:id").put((req: Request, res: Response) => usersController.editUser(req, res));
+router.route("/user/list").get((req: Request, res: Response) => usersController.getUsersALL(req, res));
+
 
 export { router as usersRouter };

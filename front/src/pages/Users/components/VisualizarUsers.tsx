@@ -2,7 +2,7 @@ import * as React from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Typography, Grid } from "@mui/material";
 import { IListagemUser } from "../../../shared/services/api/Users/UsersService";
 
-interface ClienteDialogProps {
+interface UsersDialogProps {
     open: boolean;
     onClose: () => void;
     client: IListagemUser | null;
@@ -10,7 +10,7 @@ interface ClienteDialogProps {
     isEditing: boolean; 
 }
 
-const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, onSave, isEditing }) => {
+const UsersDialog: React.FC<UsersDialogProps> = ({ open, onClose, client, onSave, isEditing }) => {
     const [editClient, setEditClient] = React.useState<IListagemUser | null>(null);
 
     React.useEffect(() => {
@@ -157,7 +157,7 @@ const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, on
                         )}
                     </Grid>
                 ) : (
-                    <Typography variant="body1">Nenhum cliente selecionado.</Typography>
+                    <Typography variant="body1">Nenhum Users selecionado.</Typography>
                 )}
             </DialogContent>
             <DialogActions>
@@ -168,4 +168,4 @@ const ClienteDialog: React.FC<ClienteDialogProps> = ({ open, onClose, client, on
     );
 };
 
-export default ClienteDialog;
+export default UsersDialog;

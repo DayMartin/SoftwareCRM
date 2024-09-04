@@ -60,11 +60,10 @@ const getAll = async (page = 1, filterId = '', filterName = ''): Promise<IListag
 };
 
 
-const getClientes = async (tipo: string): Promise<IListagemUser[] | Error> => {
+const getUsers = async (): Promise<IListagemUser[] | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/user/getAlltipo`;
-    const params = { tipo: tipo };
-    const { data } = await Api.post<IListagemUser[]>(urlRelativa, params);
+    const urlRelativa = `${Environment.URL_BASE}/user/list`;
+    const { data } = await Api.get<IListagemUser[]>(urlRelativa);
 
     if (data) {
       return data;
@@ -77,9 +76,9 @@ const getClientes = async (tipo: string): Promise<IListagemUser[] | Error> => {
   }
 };
 
-const getClientesList = async (page = 1, filterId = '', filterName = '', tipo: string): Promise<IApiResponse | Error> => {
+const getUsersList = async (page = 1, filterId = '', filterName = ''): Promise<IApiResponse | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/user/getAlltipoList?page=${page}&id=${filterId}&nome=${filterName}&tipo=${tipo}`;
+    const urlRelativa = `${Environment.URL_BASE}/user/getAlltipoList?page=${page}&id=${filterId}&nome=${filterName}`;
 
     const { data } = await Api.get<IApiResponse>(urlRelativa);
 
@@ -146,12 +145,12 @@ const ativarById = async (id: string): Promise<void | Error> => {
 };
 
 export const UsersService = {
-  getClientesList,
+  getUsersList,
   create,
   updateById,
   deleteById,
   getByEmail,
   ativarById,
-  getClientes,
+  getUsers,
   getAll
 };

@@ -2,9 +2,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useDrawerContext } from "../shared/contexts";
 import { useEffect } from "react";
 
-import { Home, Contas, Estoque } from "../pages";
+import { Home, Estoque } from "../pages";
 import React from "react";
-import { ListagemUsers } from "../pages/Users/components/ListagemUsers";
+import { Users } from "../pages/Users/ListagemUsers";
 import { Venda } from "../pages/Venda/Venda";
 import { Compra } from "../pages/Compra/Compra";
 import { AReceber } from "../pages/Venda/components/Receber/Receber";
@@ -43,8 +43,7 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/home" />
-      <Route path="/listagemContas" element={<ListagemUsers />} />
-      <Route path="/user" element={<ListagemUsers />} />
+      <Route path="/user" element={<Users />} />
       <Route path="/estoque" element={<Estoque />} />
 
       <Route path="/categoria" element={<ListarCategorias />} />

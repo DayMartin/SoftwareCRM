@@ -125,9 +125,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
 
   const ConsultarFuncionarios = async () => {
     try {
-      const consultarFuncionario = await UsersService.getClientes(
-        "funcionario"
-      );
+      const consultarFuncionario = await UsersService.getUsers();
       if (consultarFuncionario instanceof Error) {
         console.error(
           "Erro ao consultar funcionários:",
