@@ -155,14 +155,13 @@ const vendaController = {
 
 	getVendasVendedor: async (req: Request, res: Response) => {
 		const { page = 1, limit = 5, funcionario_id, data_inicio, data_fim } = req.body;
-		let query = "SELECT * FROM venda WHERE 1=1";
-		let countQuery = "SELECT COUNT(*) AS total FROM venda WHERE 1=1";
+		let query = "SELECT * FROM venda WHERE status <> 'cancelado'";
+		let countQuery = "SELECT COUNT(*) AS total FROM venda WHERE status <> 'cancelado'";
 		const params: any[] = [];
-
+	
 		console.log('funcionario_id', funcionario_id)
 		let dataInicioFormatada = data_inicio ? new Date(`${data_inicio}T00:00:00.000Z`).toISOString() : null;
 		let dataFimFormatada = data_fim ? new Date(`${data_fim}T23:59:59.999Z`).toISOString() : null;
-	
 	
 		// Filtro por funcionário
 		if (funcionario_id) {
@@ -190,7 +189,7 @@ const vendaController = {
 	
 			// Obtenção das vendas
 			const vendas = await queryDatabase(query, params);
-
+	
 			console.log('vendas', vendas)
 	
 			if (!vendas || vendas.length === 0) {
@@ -219,7 +218,7 @@ const vendaController = {
 	
 			return res.status(200).json({
 				vendas: vendasComComissao,
-				total, 
+				total,
 				totalComissao
 			});
 		} catch (error) {
@@ -227,6 +226,7 @@ const vendaController = {
 			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
+	
 	
 
 	// Função para deletar uma Compra
