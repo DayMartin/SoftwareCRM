@@ -63,11 +63,11 @@ export interface IParcela {
     QTparcelas: number;
     valorTotal: number;
     valorDesconto: number;
+    valorTotalDesconto: number;
     valorPago: number;
     status: string;
     data_criacao: string;
-    valorTotalDesconto: number;
-
+    comissao: number
   }
 
 
@@ -86,6 +86,12 @@ export interface IParcela {
 export interface IApiResponse {
   rows: IVendaDetalhe[]; 
   total: number;
+}
+
+export interface ComissaoVendedor {
+  vendas: IVendaDetalhe[]
+  total: number;
+  totalComissao: number;
 }
 
 const getAll = async (page = 1, filter = ''): Promise<IVendaDetalhe | Error> => {
@@ -241,6 +247,34 @@ const deleteVenda = async (id: number): Promise<void | Error> => {
   }
 };
 
+const getComissaoVendedor = async (
+  page = 1,
+  limit = 5,
+  funcionario_id: number | null = null,
+  data_inicio: string | '',
+  data_fim: string | ''
+): Promise<ComissaoVendedor | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/venda/comissaoVendedor`;
+
+    // Construa o corpo da requisição
+    const requestBody = {
+      page,
+      limit,
+      funcionario_id,
+      data_inicio,
+      data_fim
+    };
+
+    // Envie a requisição POST com o corpo correto
+    const { data } = await Api.post<ComissaoVendedor>(urlRelativa, requestBody);
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
 
 export const VendasService = {
   getAll,
@@ -253,5 +287,6 @@ export const VendasService = {
   deleteVenda,
   getByProdutoMovimento,
   getAllList,
-  getAllListCliente
+  getAllListCliente,
+  getComissaoVendedor
 };

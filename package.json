@@ -1,6 +1,10 @@
 {
   "dependencies": {
-    "@mui/icons-material": "^5.16.4"
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.4",
+    "@mui/material": "^6.0.2",
+    "@mui/x-date-pickers": "^7.15.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

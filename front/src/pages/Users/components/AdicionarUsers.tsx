@@ -10,14 +10,16 @@ interface AdicionarUsersProps {
 
 const AdicionarUsers: React.FC<AdicionarUsersProps> = ({ open, onClose, title, onSubmit }) => {
     const [formData, setFormData] = useState({
-        tipo: 'cliente',
+        tipo: '',
         cpfcnpj: '',
         nome: '',
         telefone: '',
         endereco: '',
         email: '',
         senha: '123',
-        status: 'ativo'
+        status: 'ativo',
+        porcentoComissao: 0
+
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -43,14 +45,16 @@ const AdicionarUsers: React.FC<AdicionarUsersProps> = ({ open, onClose, title, o
 
     const resetForm = () => {
         setFormData({
-            tipo: 'cliente',
+            tipo: '',
             cpfcnpj: '',
             nome: '',
             telefone: '',
             endereco: '',
             email: '',
             senha: '123',
-            status: 'ativo'
+            status: 'ativo',
+            porcentoComissao: 0
+
         });
     };
 
@@ -88,9 +92,11 @@ const AdicionarUsers: React.FC<AdicionarUsersProps> = ({ open, onClose, title, o
                             onChange={handleSelectChange}
                             displayEmpty
                         >
-                            <MenuItem value="cliente">Cliente</MenuItem>
-                            <MenuItem value="fornecedor">Fornecedor</MenuItem>
-                            <MenuItem value="funcionario">Funcionário</MenuItem>
+                            <MenuItem value="adm">Administrador</MenuItem>
+                            <MenuItem value="vendedor">Vendedor</MenuItem>
+                            <MenuItem value="estoquista">Estoquista</MenuItem>
+                            <MenuItem value="financeiro">Financeiro</MenuItem>
+
                         </Select>
                     </FormControl>
 
@@ -138,6 +144,16 @@ const AdicionarUsers: React.FC<AdicionarUsersProps> = ({ open, onClose, title, o
                         </Grid>
                         <Grid item xs={12} sm={4}>
                             <TextField
+                                name="porcentoComissao"
+                                label="Porcentagem comissão"
+                                value={formData.porcentoComissao}
+                                onChange={handleChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
                                 name="email"
                                 label="Email"
                                 value={formData.email}
@@ -146,7 +162,6 @@ const AdicionarUsers: React.FC<AdicionarUsersProps> = ({ open, onClose, title, o
                                 margin="normal"
                             />
                         </Grid>
-                        {formData.tipo === "funcionario" && (
                             <Grid item xs={12} sm={4}>
                                 <TextField
                                     id="senha"
@@ -159,7 +174,6 @@ const AdicionarUsers: React.FC<AdicionarUsersProps> = ({ open, onClose, title, o
                                     onChange={handleChange}
                                 />
                             </Grid>
-                        )}
                     </Grid>
 
                     <Button

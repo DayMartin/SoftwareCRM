@@ -11,6 +11,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import { BarraUsers } from "./components/BarraUsers";
 import { IListagemUser, UsersService } from "../../shared/services";
+import Comissao from "./components/Comissao";
 
 export const Users: React.VFC = () => {
     const [rows, setRows] = useState<IListagemUser[]>([]);
@@ -22,6 +23,10 @@ export const Users: React.VFC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5); 
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
+    const [openModalVendas, setOpenModalVendas] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedVendedorForVendas, setSelectedVendedorForVendas] = useState<number | null>(null);
+    const [selectedVendedorForVendasName, setSelectedVendedorForVendasName] = useState<IListagemUser | null>(null);
 
 
     const titulo = "Funcionários";
@@ -119,6 +124,20 @@ export const Users: React.VFC = () => {
         }
     }
 
+    const handleOpenModalVendas = (client: IListagemUser) => {
+        const idN = Number(client.id)
+        setSelectedVendedorForVendas(idN);
+        setSelectedVendedorForVendasName(client);
+
+        setOpenModalVendas(true);
+    };
+    
+
+    const handleCloseModalVendas = () => {
+        setOpenModalVendas(false);
+        setSelectedVendedorForVendas(null);
+    };
+
     return (
         <Box>
             <BarraInicial
@@ -158,6 +177,9 @@ export const Users: React.VFC = () => {
                                     <Button onClick={() => handleVisualizar(row)}>
                                         <VisibilityIcon />
                                     </Button>
+                                    <Button onClick={() => handleOpenModalVendas(row)}>
+                                        <PaidIcon />
+                                    </Button>
                                     <Button onClick={() => handleEditar(row)}>
                                         <EditIcon />
                                     </Button>
@@ -194,7 +216,15 @@ export const Users: React.VFC = () => {
                     onSave={handleSave}
                 />
             )}
+            {openModalVendas && (
+                <Comissao
+                    open={openModalVendas}
+                    onClose={handleCloseModalVendas}
+                    funcionario_id={selectedVendedorForVendas}
+                    title={`Comissões do vendedor: ${selectedVendedorForVendasName?.nome || ''}`}
 
+                />
+            )}
 
             {isLoading && <LinearProgress />}
         </Box>

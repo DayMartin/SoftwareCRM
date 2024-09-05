@@ -153,6 +153,82 @@ const vendaController = {
 		}
 	},
 
+	getVendasVendedor: async (req: Request, res: Response) => {
+		const { page = 1, limit = 5, funcionario_id, data_inicio, data_fim } = req.body;
+		let query = "SELECT * FROM venda WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM venda WHERE 1=1";
+		const params: any[] = [];
+
+		console.log('funcionario_id', funcionario_id)
+		let dataInicioFormatada = data_inicio ? new Date(`${data_inicio}T00:00:00.000Z`).toISOString() : null;
+		let dataFimFormatada = data_fim ? new Date(`${data_fim}T23:59:59.999Z`).toISOString() : null;
+	
+	
+		// Filtro por funcionário
+		if (funcionario_id) {
+			query += " AND funcionario_id = ?";
+			countQuery += " AND funcionario_id = ?";
+			params.push(funcionario_id);
+		}
+	
+		// Filtro por data de venda (entre data_inicio e data_fim)
+		if (data_inicio && data_fim) {
+			query += " AND data_criacao BETWEEN ? AND ?";
+			countQuery += " AND data_criacao BETWEEN ? AND ?";
+			params.push(dataInicioFormatada, dataFimFormatada);
+		}
+	
+		// Consulta de contagem total
+		try {
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+	
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+	
+			// Obtenção das vendas
+			const vendas = await queryDatabase(query, params);
+
+			console.log('vendas', vendas)
+	
+			if (!vendas || vendas.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
+			}
+	
+			// Obter a porcentagem de comissão do cliente
+			let porcentoComissao = 0;
+			if (funcionario_id) {
+				const funcionarioQuery = "SELECT porcentoComissao FROM usuarios WHERE id = ?";
+				const funcionarioResult = await queryDatabase(funcionarioQuery, [funcionario_id]);
+				console.log('funcionarioResult', funcionarioResult)
+				porcentoComissao = funcionarioResult[0]?.porcentoComissao || 0;
+			}
+	
+			// Calcular comissão e valor total de comissão
+			let totalComissao = 0;
+			const vendasComComissao = vendas.map((venda: VendaConsulta) => {
+				const comissao = (venda.valorTotalDesconto * porcentoComissao) / 100;
+				totalComissao += comissao;
+				return {
+					...venda,
+					comissao
+				};
+			});
+	
+			return res.status(200).json({
+				vendas: vendasComComissao,
+				total, 
+				totalComissao
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+	
+
 	// Função para deletar uma Compra
 	deleteVenda: async (req: Request, res: Response) => {
 		const { id } = req.body;
@@ -185,49 +261,6 @@ const vendaController = {
 		}
 	},
 
-	// Função para buscar quantidade de consultas por mês
-	// consultaMes: async (_: Request, res: Response) => {
-	// 	const query = "SELECT * FROM os";
-
-	// 	try {
-	// 		const rows: any[] = await queryDatabase(query);
-
-	// 		// Verificar se há OSs cadastradas
-	// 		if (!rows || rows.length === 0) {
-	// 			return res.status(404).json({ error: "Nenhuma OS cadastrada" });
-	// 		}
-
-	// 		// Calcular a contagem de documentos por mês
-	// 		const monthlyCount: { [key: string]: MonthlyCount } = rows.reduce((acc, row) => {
-	// 			const [ rowYear, rowMonth] = row.dataServico.split('/');
-	// 			const key = `${rowYear}/${rowMonth}`;
-
-	// 			if (!acc[key]) {
-	// 				acc[key] = {
-	// 					month: rowMonth,
-	// 					year: rowYear,
-	// 					count: 0
-	// 				};
-	// 			}
-
-	// 			acc[key].count++;
-
-	// 			return acc;
-	// 		}, {});
-
-	// 		// Converter o objeto em uma matriz de resultados
-	// 		const monthlyCountArray = Object.values(monthlyCount);
-
-	// 		// Se houver OSs cadastradas, retornar os dados da contagem mensal
-	// 		return res.status(200).json(monthlyCountArray);
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 		return res.status(500).json({ error: "Erro ao buscar OS's" });
-	// 	}
-	// },
-
-
-	// Função para buscar consultas agendadas hoje
 }
 
 export { vendaController };

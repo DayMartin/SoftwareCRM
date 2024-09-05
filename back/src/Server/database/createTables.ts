@@ -50,6 +50,7 @@ export class CreateTables {
 						email VARCHAR(100),
 						senha VARCHAR(100),
 						status VARCHAR(50),
+						porcentoComissao INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 					)
 				`);
@@ -324,7 +325,8 @@ export class CreateTables {
 						fornecedor_id INT,
 						categoria_id INT,
 						marca_id INT,
-						valorUnitario INT,
+						valorUnitarioCompra INT,
+						valorUnitarioVenda INT,
 						promocao VARCHAR(20),
 						valor_promocional INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

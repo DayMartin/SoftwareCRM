@@ -43,8 +43,8 @@ const usersController = {
 
     // Função para criar um novo usuário
     createUser: async (req: Request, res: Response) => {
-        const { tipo, cpfcnpj, nome, telefone, endereco, email, senha, status } = req.body;
-        const query = "INSERT INTO usuarios (tipo, cpfcnpj, nome, telefone, endereco, email, senha, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        const { tipo, cpfcnpj, nome, telefone, endereco, email, senha, status, porcentoComissao } = req.body;
+        const query = "INSERT INTO usuarios (tipo, cpfcnpj, nome, telefone, endereco, email, senha, status, porcentoComissao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             // Verifica se o email já está cadastrado
@@ -54,7 +54,7 @@ const usersController = {
             if (emailRows) {
                 return res.status(400).json({ error: "Usuário já cadastrado" });
             }
-            await queryDatabase(query, [tipo, cpfcnpj, nome, telefone, endereco, email, senha, status]);
+            await queryDatabase(query, [tipo, cpfcnpj, nome, telefone, endereco, email, senha, status, porcentoComissao]);
             return res.status(201).json({ message: `Usuário criado com sucesso` });
         } catch (error) {
             console.error(error);
@@ -65,7 +65,7 @@ const usersController = {
     // Função para editar um usuário existente
     editUser: async (req: Request, res: Response) => {
         const { id } = req.params;
-        const { tipo, cpfcnpj, nome, telefone, endereco, email, senha, status } = req.body;
+        const { tipo, cpfcnpj, nome, telefone, endereco, email, senha, status,porcentoComissao } = req.body;
 
         const userExistsQuery = "SELECT * FROM usuarios WHERE id = ?";
         const [userRows] = await queryDatabase(userExistsQuery, [id]);
@@ -84,10 +84,10 @@ const usersController = {
 
             const updateQuery = `
 				UPDATE usuarios 
-				SET tipo = ?, cpfcnpj = ?, nome = ?, telefone = ?, endereco = ?, email = ?, senha = ?, status = ? 
+				SET tipo = ?, cpfcnpj = ?, nome = ?, telefone = ?, endereco = ?, email = ?, senha = ?, status = ? , porcentoComissao = ?
 				WHERE id = ?
 			`;
-            await queryDatabase(updateQuery, [tipo, cpfcnpj, nome, telefone, endereco, email, senha, status, id]);
+            await queryDatabase(updateQuery, [tipo, cpfcnpj, nome, telefone, endereco, email, senha, status, porcentoComissao, id]);
 
             return res.status(200).json({ message: "Usuário atualizado com sucesso" });
         } catch (error) {

@@ -4,8 +4,10 @@ export interface Venda{
 	QTparcelas: number;
 	valorTotal: number;
 	valorDesconto: number;
+	valorTotalDesconto: number;
 	valorPago: number;
-	status: string
+	status: string;
+	data_criacao: string;
 }
 
 export interface VendaConsulta{
@@ -15,8 +17,10 @@ export interface VendaConsulta{
 	QTparcelas: number;
 	valorTotal: number;
 	valorDesconto: number;
+	valorTotalDesconto: number;
 	valorPago: number;
-	status: string
+	status: string;
+	data_criacao: string;
 }
 
 export interface HistoricVenda {

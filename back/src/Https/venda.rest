@@ -62,3 +62,16 @@ Content-Type: application/json
 {
   "id": 1
 }
+
+#### 
+
+POST http://localhost:3048/api/venda/comissaoVendedor
+Content-Type: application/json
+
+{
+  "page": 1,
+  "limit": 5,
+  "funcionario_id": 1,
+  "data_inicio": "2024-09-05",
+  "data_fim": "2024-09-05"
+}

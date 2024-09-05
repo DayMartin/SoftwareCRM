@@ -9,6 +9,7 @@ router.route("/venda/create").post((req, res) => vendaController.createVenda(req
 router.route("/venda/get").post((req, res) => vendaController.getVenda(req, res));
 // router.route("/venda/totalmes").get((req, res) => vendaController.consultaMes(req, res));
 router.route("/venda/delete").put((req, res) => vendaController.deleteVenda(req, res));
+router.route("/venda/comissaoVendedor").post((req, res) => vendaController.getVendasVendedor(req, res));
 
 
 export { router as vendaRouter };

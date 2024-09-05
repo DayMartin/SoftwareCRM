@@ -10,6 +10,7 @@ export interface IUser {
   email: string;
   senha: string;
   status: string;
+  porcentoComissao: number;
 }
 
 export interface IListagemUser {
@@ -23,6 +24,8 @@ export interface IListagemUser {
   status: string;
   data_criacao: string;
   senha: string;
+  porcentoComissao: number;
+
 }
 
 export interface IDetalheUsers {
@@ -35,6 +38,8 @@ export interface IDetalheUsers {
   email: string;
   senha: string;
   status: string;
+  porcentoComissao: number;
+
 }
 
 export interface IApiResponse {

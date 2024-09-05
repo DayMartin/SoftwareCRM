@@ -17,4 +17,5 @@ export interface ClienteConsulta {
     endereco: string;
     email: string;
     status: string;
+
 }

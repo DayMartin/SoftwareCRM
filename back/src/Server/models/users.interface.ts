@@ -7,6 +7,8 @@ export interface UserCreate {
     email: string;
     senha: string;
     status: string;
+    porcentoComissao: number;
+
 }
 
 export interface UserConsulta {
@@ -19,4 +21,6 @@ export interface UserConsulta {
     email: string;
     senha: string;
     status: string;
+    porcentoComissao: number;
+
 }
