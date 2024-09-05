@@ -96,7 +96,6 @@ const parcelasVendaController = {
 		}
 	
 		const valorPagoNumero = Number(valorPago);
-		console.log('valor', valorPagoNumero);
 	
 		const queryVerificar = "SELECT * FROM parcelas_venda WHERE id = ?";
 		const atualizarStatus = 'UPDATE parcelas_venda SET status= ? WHERE id = ?';
@@ -118,7 +117,6 @@ const parcelasVendaController = {
 			}
 	
 			const novoValorPago = Number(venda.valorPago) + valorPagoNumero;
-			console.log('novoValorPago', novoValorPago);
 	
 			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
 			await queryDatabase(atualizarStatus, ['pago', id]);
@@ -129,8 +127,7 @@ const parcelasVendaController = {
 			const valorPago = parseFloat(consultarNovoPago[0].valorPago);
 			const valorTotal = parseFloat(consultarValorTotal[0].valorTotalDesconto);
 
-			console.log('consultarNovoPago', valorPago)
-			console.log('consultarValorTotal', valorTotal)
+			await queryDatabase(atualizarVendaStatus, ['parcial', idvenda]);
 
 			if (valorPago == valorTotal) {
 				await queryDatabase(atualizarVendaStatus, ['pago', idvenda]);
@@ -172,10 +169,16 @@ const parcelasVendaController = {
 			// Calcular o novo valor de 'valorPago'
 			const novoValorPago = venda.valorPago - valorPago;
 
+			if (novoValorPago === 0.00){
+				await queryDatabase(atualizarVendaStatus, ["pendente", parcela.venda_id]);
+			} else {
+				await queryDatabase(atualizarVendaStatus, ["parcial", parcela.venda_id]);
+
+			}
+
 			// Atualizar o valor de 'valorPago' na tabela 'venda'
 			await queryDatabase(queryPagar, ["pendente", id]);
 			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
-			await queryDatabase(atualizarVendaStatus, ["pendente", parcela.venda_id]);
 
 			return res
 				.status(200)

@@ -85,6 +85,7 @@ export const Venda: React.VFC = () => {
         setOpen(false);
         setSelectedEstoque(null);
         setIsEditing(false);
+        consultar()
     };
 
     const handleVisualizar = (venda: IVendaDetalhe) => {
@@ -205,7 +206,7 @@ export const Venda: React.VFC = () => {
                                                 <MenuItem onClick={() => { /* Aqui você pode adicionar a lógica para gerar PDF */ handleCloseMenu(); }}>
                                                     <PictureAsPdfIcon sx={{ mr: 1 }} /> Gerar PDF
                                                 </MenuItem>
-                                                {currentRow?.status !== 'cancelado' && (
+                                                {currentRow?.status !== 'cancelado' && currentRow?.status !== 'pago' && currentRow?.status !== 'parcial' &&(
                                                     <MenuItem onClick={() => { cancelarVenda(currentRow.id); handleCloseMenu(); }}>
                                                         <CancelIcon sx={{ mr: 1 }} /> Cancelar
                                                     </MenuItem>

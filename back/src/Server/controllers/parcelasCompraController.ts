@@ -129,8 +129,7 @@ const parcelasCompraController = {
 			const valorPago = parseFloat(consultarNovoPago[0].valorPago);
 			const valorTotal = parseFloat(consultarValorTotal[0].valorTotalDesconto);
 
-			console.log('consultarNovoPago', valorPago)
-			console.log('consultarValorTotal', valorTotal)
+			await queryDatabase(atualizarCompraStatus, ['parcial', idcompra]);
 
 			if (valorPago == valorTotal) {
 				await queryDatabase(atualizarCompraStatus, ['pago', idcompra]);
@@ -172,10 +171,16 @@ const parcelasCompraController = {
 			// Calcular o novo valor de 'valorPago'
 			const novoValorPago = compra.valorPago - valorPago;
 
+			if (novoValorPago === 0.00){
+				await queryDatabase(atualizarCompraStatus, ["pendente", parcela.compra_id]);
+			} else {
+				await queryDatabase(atualizarCompraStatus, ["parcial", parcela.compra_id]);
+
+			}
+
 			// Atualizar o valor de 'valorPago' na tabela 'compra'
 			await queryDatabase(queryPagar, ["pendente", id]);
 			await queryDatabase(atualizarCompra, [novoValorPago, parcela.compra_id]);
-			await queryDatabase(atualizarCompraStatus, ["pendente", parcela.compra_id]);
 
 			return res
 				.status(200)
