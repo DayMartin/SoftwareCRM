@@ -42,7 +42,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
     fornecedor_id: 0,
     categoria_id: 0,
     marca_id: 0,
-    valorUnitario: 0,
+    valorUnitarioCompra: 0,
+    valorUnitarioVenda: 0,
     promocao: "",
     valor_promocional: 0
   });
@@ -148,7 +149,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
       quantidade: 0,
       fornecedor_id: 0,
       categoria_id: 0,
-      valorUnitario: 0,
+      valorUnitarioCompra: 0,
+      valorUnitarioVenda: 0,
       marca_id: 0,
       promocao: "",
       valor_promocional: 0
@@ -193,9 +195,19 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                name="valorUnitario"
-                label="Valor Unitário"
-                value={formData.valorUnitario}
+                name="valorUnitarioCompra"
+                label="Valor Unitário Compra"
+                value={formData.valorUnitarioCompra}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                name="valorUnitarioVenda"
+                label="Valor Unitário Venda"
+                value={formData.valorUnitarioVenda}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"

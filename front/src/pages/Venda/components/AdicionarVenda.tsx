@@ -252,7 +252,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     if (produto) {
       const valorUnitario = produto.promocao === "ativo" && produto.valor_promocional
         ? produto.valor_promocional
-        : produto.valorUnitario;
+        : produto.valorUnitarioVenda;
 
       const produtoExistente = formData.produtos.find(
         (p) => p.id === produto.id
@@ -289,7 +289,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     if (produto) {
       const valorProduto =
         produto.quantidade *
-        (produtos.find((p) => p.id === id)?.valorUnitario || 0);
+        (produtos.find((p) => p.id === id)?.valorUnitarioVenda || 0);
       setFormData((prevData) => ({
         ...prevData,
         produtos: prevData.produtos.filter((p) => p.id !== id),
@@ -468,7 +468,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                     >
                       {produtos.map((produto) => (
                         <MenuItem key={produto.id} value={produto.id}>
-                          {produto.nome} - R$ {produto.valorUnitario.toFixed(2)}
+                          {produto.nome} - R$ {produto.valorUnitarioVenda.toFixed(2)}
                         </MenuItem>
                       ))}
                     </Select>
@@ -517,7 +517,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                       const detalheProduto = produtos.find((p) => p.id === produto.id);
                       const valorUnitario = detalheProduto?.promocao === "ativo" && detalheProduto?.valor_promocional
                         ? detalheProduto.valor_promocional
-                        : detalheProduto?.valorUnitario;
+                        : detalheProduto?.valorUnitarioVenda;
 
                       const valorTotal = (valorUnitario || 0) * produto.quantidade;
 

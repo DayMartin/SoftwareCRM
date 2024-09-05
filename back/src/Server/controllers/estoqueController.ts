@@ -64,12 +64,12 @@ const estoqueController = {
 
 	// Função para criar um novo Estoque
 	createEstoque: async (req: Request, res: Response) => {
-		const { nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitario } = req.body;
-		const query = "INSERT INTO estoque (nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitario) VALUES (?, ?, ?, ?, ?, ?)";
+		const { nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional} = req.body;
+		const query = "INSERT INTO estoque (nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try {
-			await queryDatabase(query, [nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitario]);
-			return res.status(201).json({ message: "Estoque criado com sucesso" });
+			await queryDatabase(query, [nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional]);
+			return res.status(201).json({ message: "Estoque criado com sucesso " });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao criar Estoque" });
@@ -214,7 +214,7 @@ const estoqueController = {
 
 	editEstoque: async (req: Request, res: Response) => {
         const { id } = req.params;
-        const { nome, valorUnitario, promocao, valor_promocional } = req.body;
+        const { nome, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional } = req.body;
 
         const produtoExistsQuery = "SELECT * FROM estoque WHERE id = ?";
         const [produtoRows] = await queryDatabase(produtoExistsQuery, [id]);
@@ -227,10 +227,10 @@ const estoqueController = {
 
             const updateQuery = `
 				UPDATE estoque 
-				SET nome = ?, valorUnitario = ?, promocao = ?, valor_promocional = ?
+				SET nome = ?, valorUnitarioCompra = ?, valorUnitarioVenda = ?, promocao = ?, valor_promocional = ?
 				WHERE id = ?
 			`;
-            await queryDatabase(updateQuery, [nome, valorUnitario, promocao, valor_promocional, id]);
+            await queryDatabase(updateQuery, [nome, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional, id]);
 
             return res.status(200).json({ message: "Produto atualizado com sucesso" });
         } catch (error) {

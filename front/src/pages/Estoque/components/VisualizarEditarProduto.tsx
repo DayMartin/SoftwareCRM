@@ -78,10 +78,23 @@ const ProdutoEditViewDialog: React.FC<ProdutoEditViewDialogProps> = ({ open, onC
                         <Grid item xs={12} sm={4}>
                             <TextField
                                 required
-                                id="valorUnitario"
-                                label="Valor unitário"
-                                name="valorUnitario"
-                                value={editProd.valorUnitario}
+                                id="valorUnitarioCompra"
+                                label="Valor unitário Compra"
+                                name="valorUnitarioCompra"
+                                value={editProd.valorUnitarioCompra}
+                                fullWidth
+                                margin="normal"
+                                disabled={!isEditing}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                required
+                                id="valorUnitarioVenda"
+                                label="Valor unitário Venda"
+                                name="valorUnitarioVenda"
+                                value={editProd.valorUnitarioVenda}
                                 fullWidth
                                 margin="normal"
                                 disabled={!isEditing}

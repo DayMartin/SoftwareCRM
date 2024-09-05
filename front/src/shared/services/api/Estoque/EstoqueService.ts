@@ -28,7 +28,9 @@ export interface IDetalheEstoque {
   categoria_id: number;
   marca_id: number;
   data_criacao: string;
-  valorUnitario: number;
+  valorUnitarioCompra: number;
+  valorUnitarioVenda: number;
+
   promocao: string;
   valor_promocional: number;
 }
@@ -36,7 +38,8 @@ export interface IDetalheEstoque {
 export interface EditProducao{
   id: number;
   nome: string;
-  valorUnitario: number;
+  valorUnitarioCompra: number;
+  valorUnitarioVenda: number;
   promocao: string;
   valor_promocional: number;
 }

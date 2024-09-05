@@ -280,10 +280,10 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
       } else {
         setFormData((prevData) => ({
           ...prevData,
-          produtos: [...prevData.produtos, { id: produto.id, quantidade, nome_produto: produto.nome, valorUnitario: produto.valorUnitario  }],
+          produtos: [...prevData.produtos, { id: produto.id, quantidade, nome_produto: produto.nome, valorUnitario: produto.valorUnitarioCompra  }],
         }));
       }
-      atualizarValorTotal(produto.valorUnitario * quantidade);
+      atualizarValorTotal(produto.valorUnitarioCompra * quantidade);
       setQuantidade(1); 
       setProdutoSelecionado(""); 
       setMarcaSelecionada([]);
@@ -296,7 +296,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
     if (produto) {
       const valorProduto =
         produto.quantidade *
-        (produtos.find((p) => p.id === id)?.valorUnitario || 0);
+        (produtos.find((p) => p.id === id)?.valorUnitarioCompra || 0);
       setFormData((prevData) => ({
         ...prevData,
         produtos: prevData.produtos.filter((p) => p.id !== id),
@@ -545,7 +545,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
                     >
                       {produtos.map((produto) => (
                         <MenuItem key={produto.id} value={produto.id}>
-                          {produto.nome} - R$ {produto.valorUnitario.toFixed(2)}
+                          {produto.nome} - R$ {produto.valorUnitarioCompra.toFixed(2)}
                         </MenuItem>
                       ))}
                     </Select>
