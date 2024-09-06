@@ -66,7 +66,7 @@ export const ItemProdutoModal: React.VFC<ItemProdutoModalProps> = ({
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-            <DialogTitle>Item de cada Produto</DialogTitle>
+            <DialogTitle>Catálogo de produtos</DialogTitle>
             <DialogContent>
                 <Table>
                     <TableHead sx={{ backgroundColor: "#F0F0F0" }}>
