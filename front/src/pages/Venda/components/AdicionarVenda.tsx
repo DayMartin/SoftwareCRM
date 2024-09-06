@@ -46,13 +46,46 @@ interface AdicionarVendasProps {
   onSubmit: (data: any) => void;
 }
 
+// Define o tipo para ItemProduto
+interface ItemProduto {
+  codBarra: string;
+  estoque_id: number;
+}
+
+// Define o tipo para o estado formData
+interface FormData {
+  cliente_id: number;
+  funcionario_id: number;
+  QTparcelas: number;
+  valorTotal: number;
+  valorDesconto: number;
+  valorTotalDesconto: number;
+  totalPago: number;
+  status: string;
+  parcelas: {
+    parcela: number;
+    valorParcela: number;
+    dataPagamento: string;
+    status: string;
+    venda_id: number;
+    tipoPagamento: string;
+  }[];
+  produtos: {
+    quantidade: number;
+    id: number;
+    nome_produto: string;
+    valorUnitario: number;
+  }[];
+  ItemProduto: ItemProduto[];
+}
+
 const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
   open,
   onClose,
   title,
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     cliente_id: 0,
     funcionario_id: 0,
     QTparcelas: 0,
@@ -72,18 +105,8 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
       },
     ],
     produtos: [
-      {
-        quantidade: 0,
-        id: 0,
-        nome_produto: '',
-        valorUnitario: 0,
-      },
     ],
     ItemProduto: [
-      {
-        codBarra: '',
-        estoque_id: 0
-      }
     ]
   });
   const [formData2, setFormData2] = useState({

@@ -42,13 +42,44 @@ interface AdicionarCompraProps {
   onSubmit: (data: any) => void;
 }
 
+interface ItemProduto {
+  codBarra: string;
+  estoque_id: number;
+}
+
+interface FormData {
+  fornecedor_id: number;
+  funcionario_id: number;
+  QTparcelas: number;
+  valorTotal: number;
+  valorDesconto: number;
+  valorTotalDesconto: number;
+  totalPago: number;
+  status: string;
+  parcelas: {
+    parcela: number;
+    valorParcela: number;
+    dataPagamento: string;
+    status: string;
+    compra_id: number;
+    tipoPagamento: string;
+  }[];
+  produtos: {
+    quantidade: number;
+    id: number;
+    nome_produto: string;
+    valorUnitario: number;
+  }[];
+  ItemProduto: ItemProduto[];
+}
+
 const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
   open,
   onClose,
   title,
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fornecedor_id: 0,
     funcionario_id: 0,
     QTparcelas: 0,
@@ -68,18 +99,8 @@ const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
       },
     ],
     produtos: [
-      {
-        quantidade: 0,
-        id: 0,
-        nome_produto: '',
-        valorUnitario: 0,
-      },
     ],
     ItemProduto: [
-      {
-        codBarra: '',
-        estoque_id: 0
-      }
     ]
   });
   const [formData2, setFormData2] = useState({
