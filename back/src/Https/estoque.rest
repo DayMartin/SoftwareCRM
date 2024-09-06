@@ -39,3 +39,6 @@ Content-Type: application/json
 DELETE http://localhost:3048/api/estoque/delete/2
 Content-Type: application/json
 
+####
+
+GET http://localhost:3048/api/itemProduto/2

@@ -54,6 +54,7 @@ export interface IParcela {
     status: string;
     parcelas: IParcelaCreate[];
     produtos: IProduto[];
+    ItemProduto	: SetarItemProduto[];
   }
 
   export interface IVendaDetalhe {
@@ -81,6 +82,11 @@ export interface IParcela {
 //   data_criacao: string;
 
 // }
+
+export interface SetarItemProduto {
+    id: number;
+    codBarras: string;
+}
 
 
 export interface IApiResponse {
@@ -221,6 +227,8 @@ const getByProdutoMovimento = async (id: number): Promise<IDetalheHistoric[] | E
 };
 
 const create = async (dados: IVenda): Promise<void | Error> => {
+
+  console.log('dados', dados)
   try {
     await Api.post<IVenda>('venda/create', dados);
 
@@ -275,6 +283,7 @@ const getComissaoVendedor = async (
     return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
   }
 };
+
 
 export const VendasService = {
   getAll,

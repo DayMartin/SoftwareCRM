@@ -412,10 +412,13 @@ export class CreateTables {
 						codBarras VARCHAR(100),
 						estoque_id INT,
 						compra_id INT,
+						venda_id INT,
 						status VARCHAR(100),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (estoque_id) REFERENCES estoque(id),
-						FOREIGN KEY (compra_id) REFERENCES compra(id)
+						FOREIGN KEY (compra_id) REFERENCES compra(id),
+						FOREIGN KEY (compra_id) REFERENCES venda(id)
+
 					)
 				`);
 				console.log("Tabela 'item_produto ' criada com sucesso.");

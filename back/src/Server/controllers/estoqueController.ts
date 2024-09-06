@@ -212,6 +212,24 @@ const estoqueController = {
 		}
 	},
 
+	getItemProduto: async (req: Request, res: Response) => {
+		const { idProduto } = req.params
+ 		const query = "SELECT * FROM item_produto WHERE estoque_id = ?";
+		try {
+			const rows = await queryDatabase(query, [idProduto]);
+
+			// Verificar se tem item_produto cadastrada
+			if (rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum item_produto cadastrada" });
+			}
+			return res.status(200).json(rows);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar item_produto" });
+		}
+	},
+
+
 	editEstoque: async (req: Request, res: Response) => {
         const { id } = req.params;
         const { nome, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional } = req.body;

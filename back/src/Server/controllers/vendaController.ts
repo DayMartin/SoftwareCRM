@@ -52,7 +52,7 @@ const vendaController = {
 
 	// Função para criar uma nova venda
 	createVenda: async (req: Request, res: Response) => {
-		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status, parcelas, produtos } = req.body;
+		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status, parcelas, produtos, ItemProduto } = req.body;
 		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
 		const insertProdutoMovimento = "INSERT INTO produto_movimento (tipo, quantidade, estoque_id, venda_id) VALUES (?, ?, ?, ?)";
@@ -78,6 +78,31 @@ const vendaController = {
 				const tipo = "Saída"
 				await queryDatabase(insertProdutoMovimento, [tipo, produto.quantidade, produto.id, venda_id]);
 
+			}
+
+			for ( const item of ItemProduto	) { 
+
+				try {
+					const itemExistsQuery = "SELECT * FROM item_produto WHERE codBarras = ?";
+					const idItem = item.codBarra
+					const [itemRows] = await queryDatabase(itemExistsQuery, [idItem]);
+			
+					if (!itemRows) {
+						return res.status(404).json({ error: "item_produto não encontrado" });
+					}
+	
+					const status = 'vendido'
+	
+					const updateQuery = `
+					UPDATE item_produto 
+					SET status = ?, venda_id = ?
+					WHERE codBarras = ?
+				`;
+						await queryDatabase(updateQuery, [status, venda_id, item.codBarra ]);
+				} catch (error) {
+					console.error('Erro ao editar item_produto', error)
+				}
+		
 			}
 
 			return res.status(201).json({ message: `Venda criada com sucesso` });
@@ -227,8 +252,6 @@ const vendaController = {
 		}
 	},
 	
-	
-
 	// Função para deletar uma Compra
 	deleteVenda: async (req: Request, res: Response) => {
 		const { id } = req.body;

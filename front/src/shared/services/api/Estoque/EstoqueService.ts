@@ -78,6 +78,13 @@ export interface ItemProduto {
   data_criacao: string;
 }
 
+export interface ViewItemProduto {
+  id: number;
+  codBarras: string;
+  status: string;
+}
+
+
 export interface IApiResponseHistoric {
   rows: IDetalheHistoric[]; 
   total: number;
@@ -213,6 +220,24 @@ const getItemProduto = async (page = 1, filter = '', estoque_id: number): Promis
   }
 };
 
+const getItemProdutoList = async (idProduto: number): Promise<ViewItemProduto[] | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/itemProduto/${idProduto}`;
+
+    const { data } = await Api.get<ViewItemProduto[]>(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+
 const create = async (dados: IEstoque): Promise<void | Error> => {
   try {
     await Api.post<IEstoque>('estoque/create', dados);
@@ -261,6 +286,7 @@ export const EstoqueService = {
   getByHistoric,
   getAllList,
   getByHistoricList,
-  getItemProduto
+  getItemProduto,
+  getItemProdutoList
 
 };

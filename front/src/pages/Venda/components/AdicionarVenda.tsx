@@ -20,6 +20,8 @@ import {
   Paper,
   Tabs,
   Tab,
+  Autocomplete,
+  CircularProgress
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { UsersService, IListagemUser } from "../../../shared/services";
@@ -27,6 +29,7 @@ import {
   EstoqueService,
   IDetalheEstoque,
   ViewCategoria,
+  ViewItemProduto,
 } from "../../../shared/services/api/Estoque/EstoqueService";
 
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -34,6 +37,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { MarcaService, ViewMarca } from "../../../shared/services/api/Estoque/MarcaService";
 import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
 import { ClienteService, IListagemCliente } from "../../../shared/services/api/Cliente/ClienteService";
+
 
 interface AdicionarVendasProps {
   open: boolean;
@@ -75,6 +79,12 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
         valorUnitario: 0,
       },
     ],
+    ItemProduto: [
+      {
+        codBarra: '',
+        estoque_id: 0
+      }
+    ]
   });
   const [formData2, setFormData2] = useState({
     nome: "",
@@ -94,6 +104,12 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     ViewCategoria[]
   >([]);
   const [marcaSelecionada, setMarcaSelecionada] = useState<ViewMarca[]>([]);
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  const [codigoBarras, setCodigoBarras] = useState<{ [key: number]: string[] }>({});
+  let isExpanded;
+  const [codigosDeBarras, setCodigosDeBarras] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
 
   const ConsultarClientes = async () => {
     try {
@@ -334,10 +350,98 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
         },
       ],
       produtos: [],
+      ItemProduto: []
+
     });
   };
 
   const valorTotalFinal = formData.valorTotal - formData.valorDesconto;
+
+  const handleToggleRow = (id: number) => {
+    setExpandedRows(prev =>
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    );
+  };
+
+  const handleCodigoBarrasChange = (id: number, index: number, value: string) => {
+    setCodigoBarras(prev => ({
+      ...prev,
+      [id]: [
+        ...(prev[id] || []).slice(0, index),
+        value,
+        ...(prev[id] || []).slice(index + 1),
+      ],
+    }));
+  };
+
+  const handleAddCodigoBarras = (id: number) => {
+    setCodigoBarras(prev => ({
+      ...prev,
+      [id]: [...(prev[id] || []), ""],
+    }));
+  };
+
+  useEffect(() => {
+    // Calcula o itemProduto apenas com códigos de barras não vazios
+    const updatedItemProduto = formData.produtos.flatMap(produto =>
+      (codigoBarras[produto.id] || [])
+        .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
+        .map(codBarra => ({
+          codBarra,
+          estoque_id: produto.id,
+        }))
+    );
+
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      ItemProduto: updatedItemProduto
+    }));
+
+    console.log('FormData atualizado:', updatedItemProduto);
+    console.log('FormData:', formData);
+
+
+  }, [codigoBarras, formData.produtos]);
+
+
+  const fetchCodigosBarras = async (idProduto: number) => {
+
+    try {
+      const consultarCodBarras = await EstoqueService.getItemProdutoList(idProduto);
+      if (consultarCodBarras instanceof Error) {
+        console.error(
+          "Erro ao consultar CodigosBarras:",
+          consultarCodBarras.message
+        );
+      } else {
+
+        const codBarras = consultarCodBarras
+        .filter((dados) => dados.status === "disponivel") 
+        .map((dados) => dados.codBarras);
+
+        setCodigosDeBarras(codBarras);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar CodigosBarras:", error);
+
+    }
+  }
+
+  const handleSubmit = () => {
+    if (!formData.cliente_id || !formData.funcionario_id || quantidade <= 0) {
+      alert('Por favor, preencha todos os campos obrigatórios.');
+      return;
+    }
+  
+    // Chama a função de submissão se todos os campos obrigatórios estiverem preenchidos
+    onSubmit(formData);
+    onClose();
+    setTimeout(() => {
+      resetForm();
+    }, 5000); 
+  };
+  
+
 
   return (
     <Modal
@@ -383,6 +487,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                     value={formData.cliente_id}
                     onChange={handleSelectChange}
                     displayEmpty
+                    required
                   >
                     {clientes.map((cliente) => (
                       <MenuItem key={cliente.id} value={cliente.id}>
@@ -520,30 +625,97 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                         : detalheProduto?.valorUnitarioVenda;
 
                       const valorTotal = (valorUnitario || 0) * produto.quantidade;
+                      const isExpanded = expandedRows.includes(produto.id);
 
                       return (
-                        <TableRow key={index}>
-                          <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
-                            {produto.nome_produto}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            {produto.quantidade}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            R$ {valorUnitario?.toFixed(2)}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            R$ {valorTotal.toFixed(2)}
-                          </TableCell>
-                          <TableCell sx={{ p: 0.1 }}>
-                            <IconButton
-                              color="error"
-                              onClick={() => handleRemoveProduto(produto.id)}
-                            >
-                              <RemoveIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
+                        <React.Fragment key={index}>
+
+                          <TableRow key={index}>
+                            <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
+                              {produto.nome_produto}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              {produto.quantidade}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              R$ {valorUnitario?.toFixed(2)}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              R$ {valorTotal.toFixed(2)}
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              <IconButton
+                                color="error"
+                                onClick={() => handleRemoveProduto(produto.id)}
+                              >
+                                <RemoveIcon />
+                              </IconButton>
+                            </TableCell>
+                            <TableCell sx={{ p: 0.1 }}>
+                              <Button
+                                onClick={() => handleToggleRow(produto.id)}
+                              >
+                                {isExpanded ? "Fechar" : "Abrir"}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+
+                          {isExpanded && (
+                            <TableRow>
+                              <TableCell colSpan={6}>
+                                <Box>
+                                  {Array.from({ length: produto.quantidade }).map((_, i) => (
+                                    <Box key={i} sx={{ mb: 0.6 }}>
+                                      {/* <TextField
+                                        label={`Código de Barras ${i + 1}`}
+                                        value={codigoBarras[produto.id]?.[i] || ""}
+                                        onChange={(e) =>
+                                          handleCodigoBarrasChange(produto.id, i, e.target.value)
+                                        }
+                                        fullWidth
+                                      /> */}
+                                      <Autocomplete
+                                        options={codigosDeBarras} 
+                                        getOptionLabel={(option) => option || ""} 
+                                        value={codigoBarras[produto.id]?.[i] || ""} 
+                                        onChange={(e, newValue) => {
+                                          if (newValue) {
+                                            handleCodigoBarrasChange(produto.id, i, newValue);
+                                          }
+                                        }}
+                                        onOpen={() => fetchCodigosBarras(produto.id)}
+                                        loading={loading}
+                                        renderInput={(params) => (
+                                          <TextField
+                                            {...params}
+                                            label={`Código de Barras ${i + 1}`}
+                                            fullWidth
+                                            InputProps={{
+                                              ...params.InputProps,
+                                              endAdornment: (
+                                                <>
+                                                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                  {params.InputProps.endAdornment}
+                                                </>
+                                              ),
+                                            }}
+                                          />
+                                        )}
+                                      />
+
+                                    </Box>
+                                  ))}
+                                  <Button
+                                    variant="outlined"
+                                    onClick={() => handleAddCodigoBarras(produto.id)}
+                                  >
+                                    Adicionar Código de Barras
+                                  </Button>
+                                </Box>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </TableBody>
@@ -690,10 +862,8 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => {
-                  onSubmit(formData);
-                  resetForm();
-                  onClose();
+                onClick={() => {handleSubmit()
+
                 }}
                 fullWidth
               >
