@@ -427,22 +427,120 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     }
   }
 
-  const handleSubmit = () => {
-    if (!formData.cliente_id || !formData.funcionario_id || quantidade <= 0) {
-      alert('Por favor, preencha todos os campos obrigatórios.');
-      return;
+  const TratamentoErro = () => {
+    // Verifica se o cliente_id está preenchido
+    if (!formData.cliente_id) {
+      return 'Por favor, selecione o cliente';
     }
   
-    // Chama a função de submissão se todos os campos obrigatórios estiverem preenchidos
-    onSubmit(formData);
-    onClose();
-    setTimeout(() => {
-      resetForm();
-    }, 5000); 
-  };
+    // Verifica se o funcionario_id está preenchido
+    if (!formData.funcionario_id) {
+      return 'Por favor, selecione o funcionário';
+    }
+  
+    // Verifica se QTparcelas é maior que 0
+    if (formData.QTparcelas <= 0) {
+      return 'Por favor, defina a quantidade de parcelas';
+    }
+  
+    // Verifica se valorTotal é maior que 0
+    if (formData.valorTotal <= 0) {
+      return 'O valor total deve ser maior que 0';
+    }
+  
+    // Verifica se valorDesconto é um número válido
+    if (isNaN(formData.valorDesconto)) {
+      return 'O valor do desconto deve ser um número válido';
+    }
+  
+    // Verifica se valorTotalDesconto é um número válido
+    if (isNaN(formData.valorTotalDesconto)) {
+      return 'O valor total com desconto deve ser um número válido';
+    }
+  
+    // Verifica se totalPago é um número válido
+    if (isNaN(formData.totalPago)) {
+      return 'O total pago deve ser um número válido';
+    }
+  
+    // Verifica se há pelo menos um item em parcelas
+    if (formData.parcelas.length === 0) {
+      return 'Adicione pelo menos uma parcela';
+    }
+  
+    // Verifica se todos os itens em parcelas estão preenchidos corretamente
+    for (const parcela of formData.parcelas) {
+      if (!parcela.dataPagamento) {
+        return 'Por favor, informe a data de pagamento para todas as parcelas';
+      }
+      if (parcela.valorParcela <= 0) {
+        return 'O valor da parcela deve ser maior que 0';
+      }
+    }
+  
+    // Verifica se há pelo menos um produto
+    if (formData.produtos.length === 0) {
+      return 'Adicione pelo menos um produto';
+    }
+  
+    // Verifica se todos os produtos estão preenchidos corretamente
+    for (const produto of formData.produtos) {
+      if (produto.quantidade <= 0) {
+        return 'A quantidade do produto deve ser maior que 0';
+      }
+      if (!produto.id) {
+        return 'O ID do produto é obrigatório';
+      }
+      if (produto.valorUnitario <= 0) {
+        return 'O valor unitário do produto deve ser maior que 0';
+      }
+    }
+  
+    let totalCodBarras = 0;
+    formData.produtos.forEach(produto => {
+      const quantidadeCodBarras = (codigoBarras[produto.id] || []).length;
+      if (quantidadeCodBarras < produto.quantidade) {
+        totalCodBarras += produto.quantidade;
+      }
+    });
+  
+    const totalCodBarrasPreenchidos = Object.values(codigoBarras).flat().filter(codBarra => codBarra.trim() !== "").length;
+  
+    if (totalCodBarrasPreenchidos < totalCodBarras) {
+      return 'A quantidade total de códigos de barras preenchidos não corresponde à quantidade de produtos';
+    }
+  
+    // Verifica se todos os itens do ItemProduto estão preenchidos corretamente
+    for (const item of formData.ItemProduto) {
+      if (!item.codBarra) {
+        return 'O código de barras é obrigatório para todos os itens de produto';
+      }
+      if (item.estoque_id <= 0) {
+        return 'O ID do estoque deve ser maior que 0 para todos os itens de produto';
+      }
+    }
+    return null;
+  }
   
 
-
+  const handleSubmit = async () => {
+    const erro = TratamentoErro();
+    if (erro) {
+      alert(erro);
+      return; 
+    }
+  
+    try {
+      onSubmit(formData);
+      onClose();
+      setTimeout(() => {
+        resetForm();
+      }, 5000); 
+    } catch (error) {
+      console.error('Erro ao enviar o formulário:', error);
+    }
+  };
+  
   return (
     <Modal
       open={open}
