@@ -330,6 +330,7 @@ export class CreateTables {
 						promocao VARCHAR(20),
 						valor_promocional INT,
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						imagem LONGBLOB,
 						FOREIGN KEY (fornecedor_id) REFERENCES fornecedor(id),
 						FOREIGN KEY (categoria_id) REFERENCES categoria(id),
 						FOREIGN KEY (marca_id) REFERENCES marca(id)

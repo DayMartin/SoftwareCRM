@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useDrawerContext } from "../shared/contexts";
 import { useEffect } from "react";
 
-import { Home, Estoque } from "../pages";
+import { Home } from "../pages";
 import React from "react";
 import { Users } from "../pages/Users/ListagemUsers";
 import { Venda } from "../pages/Venda/Venda";
@@ -14,6 +14,7 @@ import { ListarMarcas } from "../pages/Estoque/components/Marca/ListarMarcas";
 import { ListarCentroTroca } from "../pages/CentroTroca/ListarCentroTroca";
 import { Fornecedor } from "../pages/Fornecedor/FornecedorListagem";
 import { ListagemCliente } from "../pages/Cliente/ClienteListagem";
+import Estoque from "../pages/Estoque/Estoque";
 
 export const AppRoutes = () => {
   const { setDrawerOptions } = useDrawerContext();

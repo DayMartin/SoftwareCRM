@@ -64,12 +64,23 @@ const estoqueController = {
 
 	// Função para criar um novo Estoque
 	createEstoque: async (req: Request, res: Response) => {
-		const { nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional} = req.body;
-		const query = "INSERT INTO estoque (nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+		const { nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional } = req.body;
+	
+		// Verifica se a imagem foi carregada
+		const imagem = req.file ? req.file.buffer : null;  // O `multer` armazena o buffer da imagem em `req.file.buffer`
+	
+		console.log('imagem', imagem)
+		// Query de inserção (adiciona o campo para a imagem como BLOB)
+		const query = `
+			INSERT INTO estoque 
+			(nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional, imagem)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`;
+	
 		try {
-			await queryDatabase(query, [nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional]);
-			return res.status(201).json({ message: "Estoque criado com sucesso " });
+			// Execute a query passando os parâmetros
+			await queryDatabase(query, [nome, quantidade, fornecedor_id, categoria_id, marca_id, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional, imagem]);
+			return res.status(201).json({ message: "Estoque criado com sucesso!" });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao criar Estoque" });
@@ -234,6 +245,10 @@ const estoqueController = {
         const { id } = req.params;
         const { nome, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional } = req.body;
 
+		req.file ? req.file.path : null;
+		const imagemTratada = req.file?.buffer
+
+
         const produtoExistsQuery = "SELECT * FROM estoque WHERE id = ?";
         const [produtoRows] = await queryDatabase(produtoExistsQuery, [id]);
 
@@ -245,10 +260,10 @@ const estoqueController = {
 
             const updateQuery = `
 				UPDATE estoque 
-				SET nome = ?, valorUnitarioCompra = ?, valorUnitarioVenda = ?, promocao = ?, valor_promocional = ?
+				SET nome = ?, valorUnitarioCompra = ?, valorUnitarioVenda = ?, promocao = ?, valor_promocional = ?, imagem = ?
 				WHERE id = ?
 			`;
-            await queryDatabase(updateQuery, [nome, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional, id]);
+            await queryDatabase(updateQuery, [nome, valorUnitarioCompra, valorUnitarioVenda, promocao, valor_promocional, imagemTratada, id]);
 
             return res.status(200).json({ message: "Produto atualizado com sucesso" });
         } catch (error) {

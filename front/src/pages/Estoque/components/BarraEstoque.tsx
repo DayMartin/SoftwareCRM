@@ -18,18 +18,31 @@ export const BarraEstoque: React.FC<BarraEstoqueProps> = ({
 
     const handleOpenEstoque = () => setOpenEstoque(true);
     const handleCloseEstoque = () => setOpenEstoque(false);
+    const [imagem, setImagem] = React.useState<File | null>(null);
 
-    const handleSubmit = async (formData: any) => {
-        try {
-            await EstoqueService.create(formData);
+    const handleSubmit = async (formData: any, imagem: File | null) => {
+        if (imagem) {
+          try {
+            await EstoqueService.create(formData, imagem);  // Passando `formData` e `imagem`
             alert('Produto criado com sucesso!');
             listar();
             handleCloseEstoque();
-        } catch (error) {
+          } catch (error) {
             console.error(error);
-            alert('Erro ao criar Venda');
+            alert('Erro ao criar o produto');
+          }
+        } else {
+          alert('Imagem é obrigatória.');
         }
-    };
+      };
+
+      // Lidar com a mudança da imagem
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setImagem(event.target.files[0]);
+    }
+  };
+
 
     return (
         <Box

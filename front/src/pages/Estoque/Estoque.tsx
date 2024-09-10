@@ -1,119 +1,93 @@
-import * as React from "react";
-import { useState, useEffect } from 'react';
-import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
-import { EditProducao, EstoqueService, IApiResponseHistoric, IDetalheEstoque, IDetalheHistoric } from "../../shared/services/api/Estoque/EstoqueService";
-import { Environment } from "../../shared/environment";
+import React, { useState, useEffect } from 'react';
+import { Grid, Card, CardMedia, CardContent, CardActions, Button, Typography, LinearProgress, Box, TableContainer, Paper } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
-import { BarraEstoque } from "./components/BarraEstoque";
-import { HistoricoModal } from "./components/ListarHistorico";
-import { ItemProdutoModal } from "./components/ListarItemProduto";
-import MenuBookIcon from '@mui/icons-material/MenuBook';
 import EditIcon from '@mui/icons-material/Edit';
-import ProdutoEditViewDialog from "./components/VisualizarEditarProduto";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { HistoricoModal } from './components/ListarHistorico';
+import { ItemProdutoModal } from './components/ListarItemProduto';
+import ProdutoEditViewDialog from './components/VisualizarEditarProduto';
+import { EditProducao, EstoqueService, IDetalheEstoque } from '../../shared/services/api/Estoque/EstoqueService';
+import { BarraInicial } from '../../shared/components/barra-inicial/BarraInicial';
+import { BarraEstoque } from './components/BarraEstoque';
+import { ThreeDRotationSharp } from '@mui/icons-material';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 
-
-export const Estoque: React.VFC = () => {
+const Estoque: React.FC = () => {
     const [rows, setRows] = useState<IDetalheEstoque[]>([]);
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [openItemProduto, setOpenItemProduto] = useState(false);
-
     const [selectedEstoque, setSelectedEstoque] = useState<number | null>(null);
     const [selectedItemEstoque, setSelectedItemEstoque] = useState<number | null>(null);
-
+    const [selectedProd, setSelectedProd] = useState<IDetalheEstoque | null>(null);
+    const [open, setOpen] = useState(false);
+    const [openItemProduto, setOpenItemProduto] = useState(false);
+    const [openEditView, setOpenEditView] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [filterId, setFilterId] = useState<number | null>(null);
+    const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({}); // Armazena URLs de imagens
     const [totalRecords, setTotalRecords] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [filterId, setFilterId] = useState('');
-    const [selectedProd, setSelectedProds] = useState<IDetalheEstoque | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [openEditView, setOpenEditView] = useState(false);
 
 
-    const titulo = "Estoque";
 
     const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await EstoqueService.getAllList(page + 1, filterId);
+            const consulta = await EstoqueService.getAllList();
             if (consulta instanceof Error) {
-                // alert(consulta.message);
                 setRows([]);
-                setTotalRecords(0);
-
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
-                setTotalRecords(consulta.total);
-
+                // handle array data
+                generateImageUrls(consulta); // Gera URLs para imagens
             } else if (typeof consulta === 'object') {
                 setRows(consulta.rows);
-                setTotalRecords(consulta.total);
-
+                generateImageUrls(consulta.rows); // Gera URLs para imagens
             } else {
                 setRows([]);
-                // alert('Dados retornados não são válidos');
-                setTotalRecords(0);
-
             }
         } catch (error) {
-            // alert('Erro ao consultar estoque');
             setRows([]);
         }
         setIsLoading(false);
+    };
+
+    const generateImageUrls = (items: IDetalheEstoque[]) => {
+        items.forEach(item => {
+            if (item.imagem) {
+                // Verifica se `item.imagem` é um Blob
+                if (item.imagem instanceof Blob) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setImageUrls(prev => ({ ...prev, [item.id]: reader.result as string }));
+                    };
+                    reader.readAsDataURL(item.imagem);
+                } else if (item.imagem.type && item.imagem.data) {
+                    // Se `item.imagem` é um objeto com `type` e `data`, converte para Blob
+                    const byteArray = new Uint8Array(item.imagem.data);
+                    const blob = new Blob([byteArray], { type: item.imagem.type });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setImageUrls(prev => ({ ...prev, [item.id]: reader.result as string }));
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        });
+    };
+
+    const handleFilterIdChange = (id: string) => {
+        // setFilterId(id);
+        setPage(0);
     };
 
     useEffect(() => {
         consultar();
     }, [page, filterId]);
 
-    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-    const handleFilterIdChange = (id: string) => {
-        setFilterId(id);
-        setPage(0);
-    };
-
-    const handleVisualizar = async (estoque_id: number) => {
-        setSelectedEstoque(estoque_id);
+    const handleVisualizar = (id: number) => {
+        setSelectedEstoque(id);
         setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-        setSelectedEstoque(null);
-    };
-
-    const handleVisualizarItemEstoque = async (estoque_id: number) => {
-        setSelectedItemEstoque(estoque_id);
-        setOpenItemProduto(true);
-    };
-
-    const handleCloseItemEstoque = () => {
-        setOpenItemProduto(false);
-        setSelectedItemEstoque(null);
-    };
-
-    const getTipoColor = (tipo: string) => {
-        switch (tipo) {
-            case 'Saída':
-                return { color: 'red' };
-            case 'Entrada':
-                return { color: 'green' };
-            case 'Defeito':
-                return { color: 'orange' };
-            default:
-                return { fontWeight: 'bold' };
-        }
     };
 
     const handleExcluir = async (id: number) => {
@@ -133,23 +107,16 @@ export const Estoque: React.VFC = () => {
         }
     };
 
-    const listar = async () => {
-        try {
-            await consultar();
-        } catch (error) {
-            console.error("Erro ao listar:", error)
-        }
-    }
 
     const handleEditar = (prod: IDetalheEstoque) => {
-        setSelectedProds(prod);
+        setSelectedProd(prod);
         setOpenEditView(true);
         setIsEditing(true);
     };
 
     const handleCloseProd = () => {
         setOpenEditView(false);
-        setSelectedProds(null);
+        setSelectedProd(null);
         setIsEditing(false);
     };
 
@@ -157,11 +124,36 @@ export const Estoque: React.VFC = () => {
         try {
             await EstoqueService.updateById(updatedProd.id, updatedProd);
             await consultar();
+            handleCloseProd();
         } catch (error) {
             alert('Erro ao atualizar Produto');
         }
     };
 
+
+    const listar = async () => {
+        try {
+            await consultar();
+        } catch (error) {
+            console.error("Erro ao listar:", error)
+        }
+    }
+    const titulo = "Estoque";
+    const handleClose = () => setOpen(false);
+    const handleCloseItemEstoque = () => setOpenItemProduto(false);
+
+    const getTipoColor = (tipo: string) => {
+        switch (tipo) {
+            case 'Saída':
+                return { color: 'red' };
+            case 'Entrada':
+                return { color: 'green' };
+            case 'Defeito':
+                return { color: 'orange' };
+            default:
+                return { fontWeight: 'bold' };
+        }
+    };
 
     return (
         <Box>
@@ -170,66 +162,67 @@ export const Estoque: React.VFC = () => {
                 onFilterIdChange={handleFilterIdChange}
             />
             <BarraEstoque listar={listar} />
-
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Id</TableCell>
-                            <TableCell>Nome</TableCell>
-                            <TableCell>Categoria</TableCell>
-                            <TableCell>Marca</TableCell>
-                            <TableCell>Quantidade</TableCell>
-                            <TableCell>Promoção</TableCell>
-                            <TableCell>Valor promocional</TableCell>
-                            <TableCell>Ações</TableCell>
-                            <TableCell>Data</TableCell>
+                {isLoading ? (
+                    <LinearProgress variant="indeterminate" />
+                ) : (
+                    <Grid container spacing={2}>
+                        {rows.map((item: IDetalheEstoque) => (
+                            <Grid item xs={6} sm={4} md={2.1} key={item.id}>
+                                <Card sx={{ maxWidth: 200, minWidth: 200 }}>
+                                    <CardMedia
+                                        sx={{ height: 100 }} // Ajusta a altura da imagem para ser menor
+                                        image={imageUrls[item.id] || '/static/images/cards/contemplative-reptile.jpg'}
+                                        title={item.nome}
+                                    />
+                                    <CardContent sx={{ padding: 1 }}>
+                                        <Typography gutterBottom variant="body2" component="div" noWrap>
+                                            {item.nome}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                            Quantidade: {item.quantidade || '0'}
+                                            <br />
+                                            Valor compra: {item.valorUnitarioCompra || '0'}
+                                            <br />
+                                            Valor venda: {item.valorUnitarioVenda || '0'}
+                                            <br />
+                                            Promoção: {item.promocao || '0'}
+                                        </Typography>
 
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={7}>
-                                    <LinearProgress variant="indeterminate" />
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            rows.map(row => (
-                                <TableRow key={row.id}>
-                                    <TableCell>{row.id}</TableCell>
-                                    <TableCell>{row.nome}</TableCell>
-                                    <TableCell>{row.categoria_id}</TableCell>
-                                    <TableCell>{row.marca_id}</TableCell>
-                                    <TableCell>{row.quantidade}</TableCell>
-                                    <TableCell>{row.promocao}</TableCell>
-                                    <TableCell>{row.valor_promocional}</TableCell>
-                                    <TableCell>{row.data_criacao}</TableCell>
-                                    <TableCell>
-                                        <Button variant="contained" color="primary" startIcon={<VisibilityIcon />} onClick={() => handleVisualizar(row.id)}>
-                                        </Button>
-                                        {/* <Button variant="contained" color="primary" startIcon={<MenuBookIcon />} onClick={() => handleVisualizarItemEstoque(row.id)}>
-                                        </Button> */}
-                                        <Button onClick={() => handleEditar(row)}>
-                                        <EditIcon />
-                                        </Button>
-                                        <Button variant="contained" color="secondary" startIcon={<DeleteIcon />} onClick={() => handleExcluir(row.id)}>
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-                <TablePagination
-                    rowsPerPageOptions={[5]}
-                    component="div"
-                    count={totalRecords}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handlePageChange}
-                    onRowsPerPageChange={handleRowsPerPageChange}
-                />
+                                    </CardContent>
+                                    <CardActions sx={{ padding: 2, margin: 0, display: 'flex', flexDirection: 'row', gap: 0.5 }}>
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            startIcon={<VisibilityIcon />}
+                                            onClick={() => handleVisualizar(item.id)}
+                                        />
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            startIcon={<AccessTimeFilledIcon />}
+                                            onClick={() => handleVisualizar(item.id)}
+                                        />
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            startIcon={<EditIcon />}
+                                            onClick={() => handleEditar(item)}
+                                        />
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            color="error"
+                                            startIcon={<DeleteIcon />}
+                                            onClick={() => handleExcluir(item.id)}
+                                        />
+                                    </CardActions>
+
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
             </TableContainer>
 
             {selectedEstoque && (
@@ -252,7 +245,7 @@ export const Estoque: React.VFC = () => {
                 <ProdutoEditViewDialog
                     open={openEditView}
                     prod={selectedProd}
-                    isEditing={isEditing}
+                    isEditing={true}
                     onClose={handleCloseProd}
                     onSave={handleSave}
                 />
@@ -260,3 +253,5 @@ export const Estoque: React.VFC = () => {
         </Box>
     );
 };
+
+export default Estoque;

@@ -7,7 +7,14 @@ export interface IEstoque {
   fornecedor_id: number;
   categoria_id: number;
   marca_id: number;
-  valorUnitario: number;
+
+  valorUnitarioCompra: number;
+  valorUnitarioVenda: number;
+
+  promocao: string;
+  valor_promocional: number;
+
+  imagem: File
 }
 
 export interface IListagemEstoque {
@@ -33,15 +40,18 @@ export interface IDetalheEstoque {
 
   promocao: string;
   valor_promocional: number;
+
+  imagem?: File | { type: string; data: number[] }
 }
 
-export interface EditProducao{
+export interface EditProducao {
   id: number;
   nome: string;
   valorUnitarioCompra: number;
   valorUnitarioVenda: number;
   promocao: string;
   valor_promocional: number;
+  imagem?: File | { type: string; data: number[] }
 }
 
 export interface IDetalheHistoric {
@@ -65,7 +75,7 @@ export interface ViewCategoria {
 }
 
 export interface IApiResponse {
-  rows: IDetalheEstoque[]; 
+  rows: IDetalheEstoque[];
   total: number;
 }
 
@@ -86,12 +96,12 @@ export interface ViewItemProduto {
 
 
 export interface IApiResponseHistoric {
-  rows: IDetalheHistoric[]; 
+  rows: IDetalheHistoric[];
   total: number;
 }
 
-export interface IApiItemProduto{
-  rows: ItemProduto[]; 
+export interface IApiItemProduto {
+  rows: ItemProduto[];
   total: number;
 }
 
@@ -130,9 +140,9 @@ const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> 
   }
 };
 
-const getByID = async (id: number, ): Promise<IDetalheEstoque[] | Error> => {
+const getByID = async (id: number,): Promise<IDetalheEstoque[] | Error> => {
   try {
-    const { data } = await Api.get(`/estoque/${id}`); 
+    const { data } = await Api.get(`/estoque/${id}`);
 
     if (data) {
       return data;
@@ -147,7 +157,7 @@ const getByID = async (id: number, ): Promise<IDetalheEstoque[] | Error> => {
 
 const getByFornecedor = async (id: number): Promise<IDetalheEstoque[] | Error> => {
   try {
-    const { data } = await Api.get(`/estoque/AllFornecedor/${id}`); 
+    const { data } = await Api.get(`/estoque/AllFornecedor/${id}`);
 
     if (data) {
       return data;
@@ -162,7 +172,7 @@ const getByFornecedor = async (id: number): Promise<IDetalheEstoque[] | Error> =
 
 const getBymarca = async (id: number): Promise<IDetalheEstoque[] | Error> => {
   try {
-    const { data } = await Api.get(`/estoque/AllMarca/${id}`); 
+    const { data } = await Api.get(`/estoque/AllMarca/${id}`);
 
     if (data) {
       return data;
@@ -177,7 +187,7 @@ const getBymarca = async (id: number): Promise<IDetalheEstoque[] | Error> => {
 
 const getByHistoric = async (id: number): Promise<IDetalheHistoric[] | Error> => {
   try {
-    const { data } = await Api.get(`/historic/AllEstoque/${id}`); 
+    const { data } = await Api.get(`/historic/AllEstoque/${id}`);
 
     if (data) {
       return data;
@@ -192,7 +202,7 @@ const getByHistoric = async (id: number): Promise<IDetalheHistoric[] | Error> =>
 
 const getByHistoricList = async (page = 1, filter = '', estoque_id: number): Promise<IApiResponseHistoric | Error> => {
   try {
-    const { data } = await Api.post<IApiResponseHistoric>(`/historic/AllEstoqueList?page=${page}&id=${filter}&estoque_id=${estoque_id}`); 
+    const { data } = await Api.post<IApiResponseHistoric>(`/historic/AllEstoqueList?page=${page}&id=${filter}&estoque_id=${estoque_id}`);
 
     if (data) {
       return data;
@@ -207,7 +217,7 @@ const getByHistoricList = async (page = 1, filter = '', estoque_id: number): Pro
 
 const getItemProduto = async (page = 1, filter = '', estoque_id: number): Promise<IApiItemProduto | Error> => {
   try {
-    const { data } = await Api.post<IApiItemProduto>(`/estoque/allListItem?page=${page}&estoque_id=${estoque_id}`); 
+    const { data } = await Api.post<IApiItemProduto>(`/estoque/allListItem?page=${page}&estoque_id=${estoque_id}`);
 
     if (data) {
       return data;
@@ -238,18 +248,72 @@ const getItemProdutoList = async (idProduto: number): Promise<ViewItemProduto[] 
 };
 
 
-const create = async (dados: IEstoque): Promise<void | Error> => {
-  try {
-    await Api.post<IEstoque>('estoque/create', dados);
+// const create = async (dados: IEstoque): Promise<void | Error> => {
+//   try {
+//     await Api.post<IEstoque>('estoque/create', dados);
 
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+const create = async (dados: IEstoque, imagem: File): Promise<void | Error> => {
+  try {
+    const formData = new FormData();
+
+    console.log('imagem', imagem)
+
+    // Adiciona os dados ao FormData
+    formData.append("nome", dados.nome);
+    formData.append("quantidade", String(dados.quantidade));
+    formData.append("fornecedor_id", String(dados.fornecedor_id));
+    formData.append("categoria_id", String(dados.categoria_id));
+    formData.append("marca_id", String(dados.marca_id));
+    formData.append("valorUnitarioCompra", String(dados.valorUnitarioCompra));
+    formData.append("valorUnitarioVenda", String(dados.valorUnitarioVenda));
+    formData.append("promocao", String(dados.promocao));
+    formData.append("valor_promocional", String(dados.valor_promocional));
+
+    formData.append("imagem", imagem);
+
+    // Faz a requisição POST com FormData
+    await Api.post<IEstoque>('estoque/create', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
   } catch (error) {
     throw error;
   }
 };
 
+
 const updateById = async (id: number, dados: EditProducao): Promise<void | Error> => {
   try {
-    await Api.put(`estoque/edit/${id}`, dados);
+    const formData = new FormData();
+
+
+    formData.append('id', dados.id.toString());
+    formData.append('nome', dados.nome);
+    formData.append('valorUnitarioCompra', dados.valorUnitarioCompra.toString());
+    formData.append('valorUnitarioVenda', dados.valorUnitarioVenda.toString());
+    formData.append('promocao', dados.promocao);
+    formData.append('valor_promocional', dados.valor_promocional.toString());
+
+    if (dados.imagem instanceof File) {
+      formData.append('imagem', dados.imagem);
+      console.log('entrou aqui', dados.imagem)
+
+    }
+
+    console.log('aaa', dados)
+
+    await Api.put<EditProducao>(`estoque/edit/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao atualizar o registro.');
@@ -258,7 +322,7 @@ const updateById = async (id: number, dados: EditProducao): Promise<void | Error
 
 const deleteEstoqueById = async (id: number): Promise<void | Error> => {
   try {
-    await Api.delete(`estoque/delete/${id}`); 
+    await Api.delete(`estoque/delete/${id}`);
   } catch (error: any) {
     const errorMessage = error?.response?.data?.message || 'Erro ao apagar o registro.';
     return new Error(errorMessage);
@@ -267,7 +331,7 @@ const deleteEstoqueById = async (id: number): Promise<void | Error> => {
 
 const ativarById = async (id: string): Promise<void | Error> => {
   try {
-    await Api.put(`user/ativar/${id}`); 
+    await Api.put(`user/ativar/${id}`);
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao ativar o usuário.');
