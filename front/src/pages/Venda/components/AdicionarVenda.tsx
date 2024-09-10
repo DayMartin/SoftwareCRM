@@ -76,7 +76,7 @@ interface FormData {
     nome_produto: string;
     valorUnitario: number;
   }[];
-  ItemProduto: ItemProduto[];
+  // ItemProduto: ItemProduto[];
 }
 
 const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
@@ -106,8 +106,8 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     ],
     produtos: [
     ],
-    ItemProduto: [
-    ]
+    // ItemProduto: [
+    // ]
   });
   const [formData2, setFormData2] = useState({
     nome: "",
@@ -373,7 +373,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
         },
       ],
       produtos: [],
-      ItemProduto: []
+      // ItemProduto: []
 
     });
   };
@@ -404,27 +404,27 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
     }));
   };
 
-  useEffect(() => {
-    // Calcula o itemProduto apenas com códigos de barras não vazios
-    const updatedItemProduto = formData.produtos.flatMap(produto =>
-      (codigoBarras[produto.id] || [])
-        .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
-        .map(codBarra => ({
-          codBarra,
-          estoque_id: produto.id,
-        }))
-    );
+  // useEffect(() => {
+  //   // Calcula o itemProduto apenas com códigos de barras não vazios
+  //   const updatedItemProduto = formData.produtos.flatMap(produto =>
+  //     (codigoBarras[produto.id] || [])
+  //       .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
+  //       .map(codBarra => ({
+  //         codBarra,
+  //         estoque_id: produto.id,
+  //       }))
+  //   );
 
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      ItemProduto: updatedItemProduto
-    }));
+  //   setFormData(prevFormData => ({
+  //     ...prevFormData,
+  //     ItemProduto: updatedItemProduto
+  //   }));
 
-    console.log('FormData atualizado:', updatedItemProduto);
-    console.log('FormData:', formData);
+  //   console.log('FormData atualizado:', updatedItemProduto);
+  //   console.log('FormData:', formData);
 
 
-  }, [codigoBarras, formData.produtos]);
+  // }, [codigoBarras, formData.produtos]);
 
 
   const fetchCodigosBarras = async (idProduto: number) => {
@@ -519,29 +519,29 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
       }
     }
   
-    let totalCodBarras = 0;
-    formData.produtos.forEach(produto => {
-      const quantidadeCodBarras = (codigoBarras[produto.id] || []).length;
-      if (quantidadeCodBarras < produto.quantidade) {
-        totalCodBarras += produto.quantidade;
-      }
-    });
+    // let totalCodBarras = 0;
+    // formData.produtos.forEach(produto => {
+    //   const quantidadeCodBarras = (codigoBarras[produto.id] || []).length;
+    //   if (quantidadeCodBarras < produto.quantidade) {
+    //     totalCodBarras += produto.quantidade;
+    //   }
+    // });
   
-    const totalCodBarrasPreenchidos = Object.values(codigoBarras).flat().filter(codBarra => codBarra.trim() !== "").length;
+    // const totalCodBarrasPreenchidos = Object.values(codigoBarras).flat().filter(codBarra => codBarra.trim() !== "").length;
   
-    if (totalCodBarrasPreenchidos < totalCodBarras) {
-      return 'A quantidade total de códigos de barras preenchidos não corresponde à quantidade de produtos';
-    }
+    // if (totalCodBarrasPreenchidos < totalCodBarras) {
+    //   return 'A quantidade total de códigos de barras preenchidos não corresponde à quantidade de produtos';
+    // }
   
-    // Verifica se todos os itens do ItemProduto estão preenchidos corretamente
-    for (const item of formData.ItemProduto) {
-      if (!item.codBarra) {
-        return 'O código de barras é obrigatório para todos os itens de produto';
-      }
-      if (item.estoque_id <= 0) {
-        return 'O ID do estoque deve ser maior que 0 para todos os itens de produto';
-      }
-    }
+    // // Verifica se todos os itens do ItemProduto estão preenchidos corretamente
+    // for (const item of formData.ItemProduto) {
+    //   if (!item.codBarra) {
+    //     return 'O código de barras é obrigatório para todos os itens de produto';
+    //   }
+    //   if (item.estoque_id <= 0) {
+    //     return 'O ID do estoque deve ser maior que 0 para todos os itens de produto';
+    //   }
+    // }
     return null;
   }
   
@@ -772,70 +772,72 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                                 <RemoveIcon />
                               </IconButton>
                             </TableCell>
-                            <TableCell sx={{ p: 0.1 }}>
+                            {/* <TableCell sx={{ p: 0.1 }}>
                               <Button
                                 onClick={() => handleToggleRow(produto.id)}
                               >
                                 {isExpanded ? "Fechar" : "Abrir"}
                               </Button>
-                            </TableCell>
+                            </TableCell> */}
                           </TableRow>
 
-                          {isExpanded && (
-                            <TableRow>
-                              <TableCell colSpan={6}>
-                                <Box>
-                                  {Array.from({ length: produto.quantidade }).map((_, i) => (
-                                    <Box key={i} sx={{ mb: 0.6 }}>
-                                      {/* <TextField
-                                        label={`Código de Barras ${i + 1}`}
-                                        value={codigoBarras[produto.id]?.[i] || ""}
-                                        onChange={(e) =>
-                                          handleCodigoBarrasChange(produto.id, i, e.target.value)
-                                        }
-                                        fullWidth
-                                      /> */}
-                                      <Autocomplete
-                                        options={codigosDeBarras} 
-                                        getOptionLabel={(option) => option || ""} 
-                                        value={codigoBarras[produto.id]?.[i] || ""} 
-                                        onChange={(e, newValue) => {
-                                          if (newValue) {
-                                            handleCodigoBarrasChange(produto.id, i, newValue);
-                                          }
-                                        }}
-                                        onOpen={() => fetchCodigosBarras(produto.id)}
-                                        loading={loading}
-                                        renderInput={(params) => (
-                                          <TextField
-                                            {...params}
-                                            label={`Código de Barras ${i + 1}`}
-                                            fullWidth
-                                            InputProps={{
-                                              ...params.InputProps,
-                                              endAdornment: (
-                                                <>
-                                                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                                                  {params.InputProps.endAdornment}
-                                                </>
-                                              ),
-                                            }}
-                                          />
-                                        )}
-                                      />
+                          {
+                          // isExpanded && (
+                          //   <TableRow>
+                          //     <TableCell colSpan={6}>
+                          //       <Box>
+                          //         {Array.from({ length: produto.quantidade }).map((_, i) => (
+                          //           <Box key={i} sx={{ mb: 0.6 }}>
+                          //             {/* <TextField
+                          //               label={`Código de Barras ${i + 1}`}
+                          //               value={codigoBarras[produto.id]?.[i] || ""}
+                          //               onChange={(e) =>
+                          //                 handleCodigoBarrasChange(produto.id, i, e.target.value)
+                          //               }
+                          //               fullWidth
+                          //             /> */}
+                          //             <Autocomplete
+                          //               options={codigosDeBarras} 
+                          //               getOptionLabel={(option) => option || ""} 
+                          //               value={codigoBarras[produto.id]?.[i] || ""} 
+                          //               onChange={(e, newValue) => {
+                          //                 if (newValue) {
+                          //                   handleCodigoBarrasChange(produto.id, i, newValue);
+                          //                 }
+                          //               }}
+                          //               onOpen={() => fetchCodigosBarras(produto.id)}
+                          //               loading={loading}
+                          //               renderInput={(params) => (
+                          //                 <TextField
+                          //                   {...params}
+                          //                   label={`Código de Barras ${i + 1}`}
+                          //                   fullWidth
+                          //                   InputProps={{
+                          //                     ...params.InputProps,
+                          //                     endAdornment: (
+                          //                       <>
+                          //                         {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                          //                         {params.InputProps.endAdornment}
+                          //                       </>
+                          //                     ),
+                          //                   }}
+                          //                 />
+                          //               )}
+                          //             />
 
-                                    </Box>
-                                  ))}
-                                  <Button
-                                    variant="outlined"
-                                    onClick={() => handleAddCodigoBarras(produto.id)}
-                                  >
-                                    Adicionar Código de Barras
-                                  </Button>
-                                </Box>
-                              </TableCell>
-                            </TableRow>
-                          )}
+                          //           </Box>
+                          //         ))}
+                          //         <Button
+                          //           variant="outlined"
+                          //           onClick={() => handleAddCodigoBarras(produto.id)}
+                          //         >
+                          //           Adicionar Código de Barras
+                          //         </Button>
+                          //       </Box>
+                          //     </TableCell>
+                          //   </TableRow>
+                          // )
+                          }
                         </React.Fragment>
                       );
                     })}

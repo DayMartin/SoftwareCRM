@@ -80,30 +80,30 @@ const vendaController = {
 
 			}
 
-			for ( const item of ItemProduto	) { 
+			// for ( const item of ItemProduto	) { 
 
-				try {
-					const itemExistsQuery = "SELECT * FROM item_produto WHERE codBarras = ?";
-					const idItem = item.codBarra
-					const [itemRows] = await queryDatabase(itemExistsQuery, [idItem]);
+			// 	try {
+			// 		const itemExistsQuery = "SELECT * FROM item_produto WHERE codBarras = ?";
+			// 		const idItem = item.codBarra
+			// 		const [itemRows] = await queryDatabase(itemExistsQuery, [idItem]);
 			
-					if (!itemRows) {
-						return res.status(404).json({ error: "item_produto não encontrado" });
-					}
+			// 		if (!itemRows) {
+			// 			return res.status(404).json({ error: "item_produto não encontrado" });
+			// 		}
 	
-					const status = 'vendido'
+			// 		const status = 'vendido'
 	
-					const updateQuery = `
-					UPDATE item_produto 
-					SET status = ?, venda_id = ?
-					WHERE codBarras = ?
-				`;
-						await queryDatabase(updateQuery, [status, venda_id, item.codBarra ]);
-				} catch (error) {
-					console.error('Erro ao editar item_produto', error)
-				}
+			// 		const updateQuery = `
+			// 		UPDATE item_produto 
+			// 		SET status = ?, venda_id = ?
+			// 		WHERE codBarras = ?
+			// 	`;
+			// 			await queryDatabase(updateQuery, [status, venda_id, item.codBarra ]);
+			// 	} catch (error) {
+			// 		console.error('Erro ao editar item_produto', error)
+			// 	}
 		
-			}
+			// }
 
 			return res.status(201).json({ message: `Venda criada com sucesso` });
 		} catch (error) {

@@ -70,7 +70,7 @@ interface FormData {
     nome_produto: string;
     valorUnitario: number;
   }[];
-  ItemProduto: ItemProduto[];
+  // ItemProduto: ItemProduto[];
 }
 
 const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
@@ -100,8 +100,8 @@ const AdicionarCompra: React.FC<AdicionarCompraProps> = ({
     ],
     produtos: [
     ],
-    ItemProduto: [
-    ]
+    // ItemProduto: [
+    // ]
   });
   const [formData2, setFormData2] = useState({
     nome: "",
@@ -362,7 +362,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
         },
       ],
       produtos: [],
-      ItemProduto: []
+      // ItemProduto: []
     });
   };
 
@@ -407,31 +407,31 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
       itemProduto: updatedItemProduto
     }));
   
-    console.log('FormData atualizado:', updatedItemProduto);
+    // console.log('FormData atualizado:', updatedItemProduto);
   };
   
   
-  useEffect(() => {
-    // Calcula o itemProduto apenas com códigos de barras não vazios
-    const updatedItemProduto = formData.produtos.flatMap(produto => 
-      (codigoBarras[produto.id] || [])
-        .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
-        .map(codBarra => ({
-          codBarra,
-          estoque_id: produto.id,
-        }))
-    );
+  // useEffect(() => {
+  //   // Calcula o itemProduto apenas com códigos de barras não vazios
+  //   const updatedItemProduto = formData.produtos.flatMap(produto => 
+  //     (codigoBarras[produto.id] || [])
+  //       .filter(codBarra => codBarra.trim() !== "")  // Remove códigos vazios
+  //       .map(codBarra => ({
+  //         codBarra,
+  //         estoque_id: produto.id,
+  //       }))
+  //   );
   
-    setFormData(prevFormData => ({
-      ...prevFormData,
-      ItemProduto: updatedItemProduto
-    }));
+  //   setFormData(prevFormData => ({
+  //     ...prevFormData,
+  //     ItemProduto: updatedItemProduto
+  //   }));
   
-    console.log('FormData atualizado:', updatedItemProduto);
-    console.log('FormData:', formData);
+  //   console.log('FormData atualizado:', updatedItemProduto);
+  //   console.log('FormData:', formData);
 
   
-  }, [codigoBarras, formData.produtos]);
+  // }, [codigoBarras, formData.produtos]);
   
   
 
@@ -608,7 +608,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
                       <TableCell sx={{ p: 0.1 }}>Valor Unitário</TableCell>
                       <TableCell sx={{ p: 0.1 }}>Valor Total</TableCell>
                       <TableCell sx={{ p: 0.1 }}>Ação</TableCell>
-                      <TableCell sx={{ p: 0.1 }}>Código de Barras</TableCell>
+                      {/* <TableCell sx={{ p: 0.1 }}>Código de Barras</TableCell> */}
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{ backgroundColor: "#fafafa" }}>
@@ -643,15 +643,15 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
                                 <RemoveIcon />
                               </IconButton>
                             </TableCell>
-                            <TableCell sx={{ p: 0.1 }}>
+                            {/* <TableCell sx={{ p: 0.1 }}>
                               <Button
                                 onClick={() => handleToggleRow(produto.id)}
                               >
                                 {isExpanded ? "Fechar" : "Abrir"}
                               </Button>
-                            </TableCell>
+                            </TableCell> */}
                           </TableRow>
-                          {isExpanded && (
+                          {/* {isExpanded && (
                             <TableRow>
                               <TableCell colSpan={6}>
                                 <Box>
@@ -676,7 +676,7 @@ const [expandedRows, setExpandedRows] = useState<number[]>([]);
                                 </Box>
                               </TableCell>
                             </TableRow>
-                          )}
+                          )} */}
                         </React.Fragment>
                       );
                     })}

@@ -80,12 +80,12 @@ const compraController = {
 				await queryDatabase(insertProdutoMovimento, [tipo, produto.quantidade, produto.id, compra_id]);
 
 				// inserir item_produto
-				for (const Item of ItemProduto){
-					// console.log('ItemProduto', ItemProduto)
-					// console.log('ItemProduto', Item.codBarra)
-					const status = 'disponivel'
-					await queryDatabase(insertItemProduto, [Item.codBarra, produto.id, compra_id, status])
-				}
+				// for (const Item of ItemProduto){
+				// 	// console.log('ItemProduto', ItemProduto)
+				// 	// console.log('ItemProduto', Item.codBarra)
+				// 	const status = 'disponivel'
+				// 	await queryDatabase(insertItemProduto, [Item.codBarra, produto.id, compra_id, status])
+				// }
 			}
 
 

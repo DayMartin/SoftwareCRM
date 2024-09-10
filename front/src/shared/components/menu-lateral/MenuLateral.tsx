@@ -274,12 +274,12 @@ export default function MenuLateral() {
                       >
                         <ListItemText primary="Marca" />
                       </ListItemButton>
-                      <ListItemButton
+                      {/* <ListItemButton
                         sx={{ pl: open ? 8 : 5 }}
                         onClick={() => handleSubItemClickEstoque("CentroTroca")}
                       >
                         <ListItemText primary="CentroTroca" />
-                      </ListItemButton>
+                      </ListItemButton> */}
                     </List>
                   </Collapse>
                 )}

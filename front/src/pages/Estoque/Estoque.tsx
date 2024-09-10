@@ -208,8 +208,8 @@ export const Estoque: React.VFC = () => {
                                     <TableCell>
                                         <Button variant="contained" color="primary" startIcon={<VisibilityIcon />} onClick={() => handleVisualizar(row.id)}>
                                         </Button>
-                                        <Button variant="contained" color="primary" startIcon={<MenuBookIcon />} onClick={() => handleVisualizarItemEstoque(row.id)}>
-                                        </Button>
+                                        {/* <Button variant="contained" color="primary" startIcon={<MenuBookIcon />} onClick={() => handleVisualizarItemEstoque(row.id)}>
+                                        </Button> */}
                                         <Button onClick={() => handleEditar(row)}>
                                         <EditIcon />
                                         </Button>
