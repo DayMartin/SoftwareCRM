@@ -125,7 +125,7 @@ const getAll = async (): Promise<[IDetalheEstoque] | Error> => {
 
 const getAllList = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/estoque/allList?page=${page}&id=${filter}`;
+    const urlRelativa = `${Environment.URL_BASE}/estoque/allList?page=${page}&nome=${filter}`;
 
     const { data } = await Api.post<IApiResponse>(urlRelativa);
 

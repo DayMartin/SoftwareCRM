@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardMedia, CardContent, CardActions, Button, Typography, LinearProgress, Box, TableContainer, Paper } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, CardActions, Button, Typography, LinearProgress, Box, TableContainer, Paper, TablePagination } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,8 +21,8 @@ const Estoque: React.FC = () => {
     const [openItemProduto, setOpenItemProduto] = useState(false);
     const [openEditView, setOpenEditView] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [filterId, setFilterId] = useState<number | null>(null);
-    const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({}); // Armazena URLs de imagens
+    const [filterName, setFilterName] = useState('');
+    const [imageUrls, setImageUrls] = useState<{ [key: number]: string }>({});
     const [totalRecords, setTotalRecords] = useState(0);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -33,18 +33,26 @@ const Estoque: React.FC = () => {
     const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await EstoqueService.getAllList();
+            const consulta = await EstoqueService.getAllList(page + 1, filterName);
             if (consulta instanceof Error) {
                 setRows([]);
+                setTotalRecords(0);
+
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
                 // handle array data
-                generateImageUrls(consulta); // Gera URLs para imagens
+                generateImageUrls(consulta);
+                setTotalRecords(consulta.total);
+
             } else if (typeof consulta === 'object') {
                 setRows(consulta.rows);
                 generateImageUrls(consulta.rows); // Gera URLs para imagens
+                setTotalRecords(consulta.total);
+
             } else {
                 setRows([]);
+                setTotalRecords(0);
+
             }
         } catch (error) {
             setRows([]);
@@ -76,14 +84,14 @@ const Estoque: React.FC = () => {
         });
     };
 
-    const handleFilterIdChange = (id: string) => {
-        // setFilterId(id);
+    const handleFilterNameChange = (name: string) => {
+        setFilterName(name);
         setPage(0);
     };
 
     useEffect(() => {
         consultar();
-    }, [page, filterId]);
+    }, [page, filterName]);
 
     const handleVisualizar = (id: number) => {
         setSelectedEstoque(id);
@@ -99,6 +107,7 @@ const Estoque: React.FC = () => {
                 alert(result.message);
                 return;
             }
+            consultar();
 
             alert("Estoque excluído com sucesso!");
 
@@ -155,14 +164,23 @@ const Estoque: React.FC = () => {
         }
     };
 
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0); 
+    };
+
     return (
         <Box>
             <BarraInicial
                 titulo={titulo}
-                onFilterIdChange={handleFilterIdChange}
+                onFilterIdChange={handleFilterNameChange}
             />
             <BarraEstoque listar={listar} />
-            <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
+            <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%', maxHeight: 500, overflowY: 'auto' }}>
                 {isLoading ? (
                     <LinearProgress variant="indeterminate" />
                 ) : (
@@ -171,7 +189,7 @@ const Estoque: React.FC = () => {
                             <Grid item xs={6} sm={4} md={2.1} key={item.id}>
                                 <Card sx={{ maxWidth: 200, minWidth: 200 }}>
                                     <CardMedia
-                                        sx={{ height: 100 }} // Ajusta a altura da imagem para ser menor
+                                        sx={{ height: 200, width: '100%', objectFit: 'contain' }}
                                         image={imageUrls[item.id] || '/static/images/cards/contemplative-reptile.jpg'}
                                         title={item.nome}
                                     />
@@ -188,7 +206,6 @@ const Estoque: React.FC = () => {
                                             <br />
                                             Promoção: {item.promocao || '0'}
                                         </Typography>
-
                                     </CardContent>
                                     <CardActions sx={{ padding: 2, margin: 0, display: 'flex', flexDirection: 'row', gap: 0.5 }}>
                                         <Button
@@ -217,13 +234,21 @@ const Estoque: React.FC = () => {
                                             onClick={() => handleExcluir(item.id)}
                                         />
                                     </CardActions>
-
                                 </Card>
                             </Grid>
                         ))}
                     </Grid>
                 )}
             </TableContainer>
+            <TablePagination
+                rowsPerPageOptions={[5]}
+                component="div"
+                count={totalRecords}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+            />
 
             {selectedEstoque && (
                 <HistoricoModal

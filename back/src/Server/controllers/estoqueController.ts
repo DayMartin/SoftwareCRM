@@ -25,7 +25,7 @@ const estoqueController = {
 
 
 	getEstoquesList: async (req: Request, res: Response) => {
-		const { page = 1, limit = 5, id } = req.query;
+		const { page = 1, limit = 10, id, nome } = req.query;
 		let query = "SELECT * FROM estoque WHERE 1=1";
 		let countQuery = "SELECT COUNT(*) AS total FROM estoque WHERE 1=1";
 		const params: any[] = [];
@@ -34,6 +34,12 @@ const estoqueController = {
 			query += " AND id = ?";
 			countQuery += " AND id = ?";
 			params.push(id);
+		}
+
+		if (nome) {
+			query += " AND nome LIKE ?";
+			countQuery += " AND nome LIKE ?";
+			params.push(`%${nome}%`);
 		}
 
 		// Consulta de contagem total

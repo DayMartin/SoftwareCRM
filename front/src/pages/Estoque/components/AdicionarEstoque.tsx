@@ -302,25 +302,19 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    name="quantidade"
-                    label="Quantidade"
-                    type="number"
-                    value={formData.quantidade}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    name="promocao"
-                    label="Promoção"
-                    value={formData.promocao}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                  />
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel id="promocao">Promoção</InputLabel>
+                    <Select
+                      labelId="promocao"
+                      name="promocao"
+                      value={formData.promocao || ''}
+                      onChange={handleSelectChange}
+                      label="Promoção"
+                    >
+                      <MenuItem value="ativo">Ativo</MenuItem>
+                      <MenuItem value="inativo">Inativo</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
