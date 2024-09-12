@@ -326,6 +326,51 @@ const vendaController = {
 		}
 	},
 	
+	getVendasCompare: async (_: Request, res: Response) => {
+		// Obter a data atual
+		const now = new Date();
+	  
+		// Obter o primeiro e último dia do mês atual
+		const primeiroDiaMesAtual = new Date(now.getFullYear(), now.getMonth(), 1);
+		const ultimoDiaMesAtual = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+	  
+		// Obter o primeiro e último dia do mês anterior
+		const primeiroDiaMesPassado = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+		const ultimoDiaMesPassado = new Date(now.getFullYear(), now.getMonth(), 0);
+	  
+		// Formatar as datas para ISO strings
+		const dataInicioMesAtual = primeiroDiaMesAtual.toISOString();
+		const dataFimMesAtual = ultimoDiaMesAtual.toISOString();
+		const dataInicioMesPassado = primeiroDiaMesPassado.toISOString();
+		const dataFimMesPassado = ultimoDiaMesPassado.toISOString();
+	  
+		// Consultas SQL para contagem de vendas
+		const countQuery = "SELECT COUNT(*) AS total FROM venda WHERE status <> 'cancelado' AND data_criacao BETWEEN ? AND ?";
+	  
+		try {
+		  // Consulta para o mês atual
+		  const totalMesAtualResult = await queryDatabase(countQuery, [dataInicioMesAtual, dataFimMesAtual]);
+		  const totalMesAtual = totalMesAtualResult[0].total;
+	  
+		  // Consulta para o mês passado
+		  const totalMesPassadoResult = await queryDatabase(countQuery, [dataInicioMesPassado, dataFimMesPassado]);
+		  const totalMesPassado = totalMesPassadoResult[0].total;
+	  
+		  // Comparação entre o mês atual e o mês passado
+		  const comparacao = totalMesAtual - totalMesPassado;
+	  
+		  return res.status(200).json({
+			totalMesAtual,
+			totalMesPassado,
+			diferenca: comparacao,
+			porcentagem: ((totalMesAtual - totalMesPassado) / totalMesPassado) * 100 || 0, // Para evitar divisão por zero
+		  });
+		} catch (error) {
+		  console.error(error);
+		  return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	  },
+	  
 	
 	// Função para deletar uma Compra
 	deleteVenda: async (req: Request, res: Response) => {

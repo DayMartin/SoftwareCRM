@@ -100,6 +100,13 @@ export interface ComissaoVendedor {
   totalComissao: number;
 }
 
+export interface VendasCompare {
+  totalMesAtual: number; 
+  totalMesPassado: number
+  diferenca: number;
+  porcentagem: number
+}
+
 const getAllMes = async (): Promise<IApiResponse | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/venda/mes`;
@@ -120,6 +127,23 @@ const getAllMes = async (): Promise<IApiResponse | Error> => {
 const getAllDia = async (): Promise<IApiResponse | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/venda/dia`;
+
+    const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const getCompare = async (): Promise<VendasCompare | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/venda/compare`;
 
     const { data } = await Api.get(urlRelativa);
 
@@ -305,6 +329,7 @@ const getComissaoVendedor = async (
 export const VendasService = {
   getAllMes,
   getAllDia,
+  getCompare,
   create,
   getByID,
   updateById,

@@ -12,6 +12,7 @@ router.route("/venda/delete").put((req, res) => vendaController.deleteVenda(req,
 router.route("/venda/comissaoVendedor").post((req, res) => vendaController.getVendasVendedor(req, res));
 router.route("/venda/mes").get((req, res) => vendaController.getVendasMes(req, res));
 router.route("/venda/dia").get((req, res) => vendaController.getVendasDia(req, res));
+router.route("/venda/compare").get((req, res) => vendaController.getVendasCompare(req, res));
 
 
 export { router as vendaRouter };
