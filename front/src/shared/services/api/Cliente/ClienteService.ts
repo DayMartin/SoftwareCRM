@@ -54,6 +54,23 @@ const getClienteList = async (page = 1, filterId = ''): Promise<IApiResponse | E
   }
 };
 
+const getClientes = async (): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/clientes`;
+
+    const { data } = await Api.post<IApiResponse>(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
 const getCliente = async (): Promise<IListagemCliente[] | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/cliente/list`;
@@ -109,6 +126,7 @@ const ativarById = async (id: string): Promise<void | Error> => {
 
 export const ClienteService = {
   getClienteList,
+  getClientes,
   getCliente,
   create,
   updateById,

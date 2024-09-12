@@ -100,9 +100,26 @@ export interface ComissaoVendedor {
   totalComissao: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<IVendaDetalhe | Error> => {
+const getAllMes = async (): Promise<IApiResponse | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/venda/all`;
+    const urlRelativa = `${Environment.URL_BASE}/venda/mes`;
+
+    const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const getAllDia = async (): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/venda/dia`;
 
     const { data } = await Api.get(urlRelativa);
 
@@ -286,7 +303,8 @@ const getComissaoVendedor = async (
 
 
 export const VendasService = {
-  getAll,
+  getAllMes,
+  getAllDia,
   create,
   getByID,
   updateById,

@@ -52,6 +52,31 @@ const clienteController = {
 		}
 	},
 
+	getClientesCompleto: async (_: Request, res: Response) => {
+		const query = "SELECT * FROM cliente";
+		let countQuery = "SELECT COUNT(*) AS total FROM cliente WHERE 1=1";
+		const params: any[] = [];
+
+
+		try {
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+			const rows = await queryDatabase(query);
+
+			// Verificar se tem cliente cadastrada
+			if (rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum cliente cadastrada" });
+			}
+			return res.status(200).json({
+				rows,
+				total,
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar cliente" });
+		}
+	},
+
 	// Função para criar um novo Cliente
 	createCliente: async (req: Request, res: Response) => {
 		const { cpfcnpj, nome, telefone, endereco, email, status } = req.body;

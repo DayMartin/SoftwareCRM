@@ -10,6 +10,8 @@ router.route("/venda/get").post((req, res) => vendaController.getVenda(req, res)
 // router.route("/venda/totalmes").get((req, res) => vendaController.consultaMes(req, res));
 router.route("/venda/delete").put((req, res) => vendaController.deleteVenda(req, res));
 router.route("/venda/comissaoVendedor").post((req, res) => vendaController.getVendasVendedor(req, res));
+router.route("/venda/mes").get((req, res) => vendaController.getVendasMes(req, res));
+router.route("/venda/dia").get((req, res) => vendaController.getVendasDia(req, res));
 
 
 export { router as vendaRouter };

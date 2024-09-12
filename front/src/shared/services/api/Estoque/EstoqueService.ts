@@ -106,7 +106,7 @@ export interface IApiItemProduto {
 }
 
 
-const getAll = async (): Promise<[IDetalheEstoque] | Error> => {
+const getAll = async (): Promise<IApiResponse | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/estoque/all`;
 

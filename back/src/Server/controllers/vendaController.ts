@@ -251,6 +251,81 @@ const vendaController = {
 			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
+
+	getVendasMes: async (_: Request, res: Response) => {
+	
+		// Obter o mês atual
+		const now = new Date();
+		const primeiroDiaMes = new Date(now.getFullYear(), now.getMonth(), 1);
+		const ultimoDiaMes = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+	
+		// Formatar as datas para ISO strings
+		const dataInicioFormatada = primeiroDiaMes.toISOString();
+		const dataFimFormatada = ultimoDiaMes.toISOString();
+	
+		let query = "SELECT * FROM venda WHERE status <> 'cancelado' AND data_criacao BETWEEN ? AND ?";
+		let countQuery = "SELECT COUNT(*) AS total FROM venda WHERE status <> 'cancelado' AND data_criacao BETWEEN ? AND ?";
+		const params: any[] = [dataInicioFormatada, dataFimFormatada];
+	
+		try {
+			// Consulta de contagem total
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+
+			// Obtenção das vendas
+			const vendas = await queryDatabase(query, params);
+	
+			if (!vendas || vendas.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
+			}
+	
+			return res.status(200).json({
+				total,
+				// vendas
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+	
+	getVendasDia: async (_: Request, res: Response) => {
+
+		// Obter o dia atual
+		const now = new Date();
+		const inicioDia = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0); // 00:00:00 do dia atual
+		const fimDia = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999); // 23:59:59 do dia atual
+	
+		// Formatar as datas para ISO strings
+		const dataInicioFormatada = inicioDia.toISOString();
+		const dataFimFormatada = fimDia.toISOString();
+	
+		let query = "SELECT * FROM venda WHERE status <> 'cancelado' AND data_criacao BETWEEN ? AND ?";
+		let countQuery = "SELECT COUNT(*) AS total FROM venda WHERE status <> 'cancelado' AND data_criacao BETWEEN ? AND ?";
+		const params: any[] = [dataInicioFormatada, dataFimFormatada];
+	
+		try {
+			// Consulta de contagem total
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+	
+			// Obtenção das vendas
+			const vendas = await queryDatabase(query, params);
+	
+			if (!vendas || vendas.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
+			}
+	
+			return res.status(200).json({
+				total,
+				vendas
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+	
 	
 	// Função para deletar uma Compra
 	deleteVenda: async (req: Request, res: Response) => {

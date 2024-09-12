@@ -75,3 +75,11 @@ Content-Type: application/json
   "data_inicio": "2024-09-05",
   "data_fim": "2024-09-05"
 }
+
+### 
+
+GET http://localhost:3048/api/venda/mes
+
+### 
+
+GET http://localhost:3048/api/venda/dia
