@@ -89,24 +89,25 @@ export const Home = () => {
   const cardStyles = {
     minWidth: 100,
     boxShadow: "none",
-    borderRadius: 6,
-    textAlign: "center",
-    color: "#333",
+    borderRadius: 4,
+    textAlign: "left",
+    color: "#0002DB2",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "80%",
+    height: "100%",
   };
 
   const renderCard = (title: string, value: number, color: string) => (
     <Card sx={{ ...cardStyles, backgroundColor: color }}>
       <CardContent>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: '12px' }}>
           {title}
         </Typography>
-        <Typography variant="h4" color="primary">
+        <Typography variant="h4" color="primary" sx={{ fontSize: '20px', marginTop: '5px' }}>
           {value}
         </Typography>
+
       </CardContent>
     </Card>
   );
@@ -163,37 +164,98 @@ export const Home = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <TableContainer component={Paper} sx={{ m: 2, width: 'auto', height: '18vh', ml: '8%', mr: '2%' }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={3}>
-            {renderCard("Vendidos no mês", totalMes, "#F0F8FF")}
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            {renderCard("Vendidos hoje", totalDia, "#F5F5DC")}
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            {renderCard("Itens em estoque", totalEstoque, "#FFDAB9")}
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            {renderCard("Clientes cadastrados", totalCliente, "#FFF5EE")}
-          </Grid>
-        </Grid>
-      </TableContainer>
+      {/* Primeiro Box para os dois TableContainers */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', m: 2 }}>
+        <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '5%' }}>
+          <div style={{ flex: 1 }}>
+            <Grid container spacing={0.6}>
+              <Grid item xs={12} sm={3}>
+                {renderCard("Vendidos no mês", totalMes, "#ADD8E6")}
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                {renderCard("Vendidos hoje", totalDia, "#FFFACD")}
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                {renderCard("Itens em estoque", totalEstoque, "#ADD8E6")}
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                {renderCard("Clientes cadastrados", totalCliente, "#FFFACD")}
+              </Grid>
+            </Grid>
+          </div>
+        </TableContainer>
 
-      <TableContainer
-        component={Paper}
-        sx={{ m: 2, width: 'auto', height: '60vh', ml: '8%', mr: '2%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-      >
-        <div style={{ flex: 1, marginRight: '10px' }}>
-          <Bar data={barData} options={barOptions} />
-        </div>
-        <div style={{ flex: 1, marginLeft: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ width: '50%' }}>
+        <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '2%', mr: '1%' }}>
+          <div style={{ flex: 1, marginRight: '10px' }}>
+            <Grid container spacing={1}>
+              <Grid item xs={6} sm={1.8}>
+                {renderCard("Vendidos no mês", totalMes, "#ADD8E6")}
+              </Grid>
+              <Grid item xs={6} sm={1.8}>
+                {renderCard("Vendidos hoje", totalDia, "#F5F5DC")}
+              </Grid>
+              <Grid item xs={6} sm={1.8}>
+                {renderCard("Itens em estoque", totalEstoque, "#FFDAB9")}
+              </Grid>
+              <Grid item xs={6} sm={1.8}>
+                {renderCard("Clientes cadastrados", totalCliente, "#FFF5EE")}
+              </Grid>
+            </Grid>
+          </div>
+        </TableContainer>
+      </Box>
+
+      {/* Novo Box para os dois gráficos lado a lado */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', m: 2 }}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            width: '30%',
+            height: '60vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            ml: '5%'
+          }}
+        >
+          <div style={{ width: '70%' }}>
             <Pie data={pieData} options={pieOptions} />
           </div>
-        </div>
-      </TableContainer>
+        </TableContainer>
 
+        <TableContainer
+          component={Paper}
+          sx={{
+            width: '30%',
+            height: '60vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ width: '90%' }}>
+            <Bar data={barData} options={barOptions} />
+          </div>
+        </TableContainer>
+
+        <TableContainer
+          component={Paper}
+          sx={{
+            width: '30%',
+            height: '60vh',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            mr: '1%'
+          }}
+        >
+          <div style={{ width: '90%' }}>
+            <Bar data={barData} options={barOptions} />
+          </div>
+        </TableContainer>
+      </Box>
     </Box>
+
+
   );
 };
