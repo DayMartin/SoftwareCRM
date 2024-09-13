@@ -83,3 +83,7 @@ GET http://localhost:3048/api/venda/mes
 ### 
 
 GET http://localhost:3048/api/venda/dia
+
+###
+
+GET http://localhost:3048/api/venda/view/15

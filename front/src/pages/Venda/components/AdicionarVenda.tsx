@@ -73,7 +73,7 @@ interface FormData {
   produtos: {
     quantidade: number;
     id: number;
-    nome_produto: string;
+    nameProduto: string;
     valorUnitario: number;
   }[];
   // ItemProduto: ItemProduto[];
@@ -310,7 +310,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
           ...prevData,
           produtos: [
             ...prevData.produtos,
-            { id: produto.id, quantidade, nome_produto: produto.nome, valorUnitario },
+            { id: produto.id, quantidade, nameProduto: produto.nome, valorUnitario },
           ],
         }));
       }
@@ -753,7 +753,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
 
                           <TableRow key={index}>
                             <TableCell sx={{ p: 0.1, paddingLeft: "8px" }}>
-                              {produto.nome_produto}
+                              {produto.nameProduto}
                             </TableCell>
                             <TableCell sx={{ p: 0.1 }}>
                               {produto.quantidade}

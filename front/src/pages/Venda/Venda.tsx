@@ -13,7 +13,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EmailIcon from '@mui/icons-material/Email';
 import DehazeIcon from '@mui/icons-material/Dehaze';
-
+import { generatePDF } from "../../shared/components/pdf/pdfVendas";
 
 export const Venda: React.VFC = () => {
     const [rows, setRows] = useState<IVendaDetalhe[]>([]);
@@ -29,6 +29,9 @@ export const Venda: React.VFC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
+
+    const [openPDF, setOpenPDF] = useState(false);
+    const [idVenda, setIDVenda] = useState(0)
 
     const titulo = "Vendas";
 
@@ -72,12 +75,12 @@ export const Venda: React.VFC = () => {
 
     const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); 
+        setPage(0);
     };
 
     const handleFilterIdChange = (id: string) => {
         setFilterId(id);
-        setPage(0); 
+        setPage(0);
     };
 
 
@@ -112,7 +115,7 @@ export const Venda: React.VFC = () => {
         }
     };
 
-    const listar = async() => {
+    const listar = async () => {
         try {
             await consultar();
         } catch (error) {
@@ -121,6 +124,26 @@ export const Venda: React.VFC = () => {
         }
     }
 
+    // const handleGeneratePDF = (id: number) => {
+    //     // Renderize o componente PDFVENDAS
+
+    //     const resultado = <PDFVENDAS idVenda={id} />;
+    //     console.log('resultado', resultado)
+    //     return resultado
+    //   };
+
+    //   const handleOpenPDF = (id: number) => {
+    //     // Chame a função para gerar o PDF
+    //     console.log('teste', id)
+    //     handleGeneratePDF(id);
+    //   };
+
+    const handleOpenPDF = (id: number) => {
+        generatePDF(id);
+      };
+    
+    
+    
 
     // const handleSave = async (updatedClient: IListagemCliente) => {
     //     try {
@@ -138,7 +161,7 @@ export const Venda: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraVenda listar={listar}/>
+            <BarraVenda listar={listar} />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
@@ -203,10 +226,10 @@ export const Venda: React.VFC = () => {
                                                 <MenuItem onClick={() => { /* Aqui você pode adicionar a lógica para enviar email */ handleCloseMenu(); }}>
                                                     <EmailIcon sx={{ mr: 1 }} /> Enviar Email
                                                 </MenuItem>
-                                                <MenuItem onClick={() => { /* Aqui você pode adicionar a lógica para gerar PDF */ handleCloseMenu(); }}>
+                                                <MenuItem onClick={() => { handleOpenPDF(currentRow?.id); handleCloseMenu(); }}>
                                                     <PictureAsPdfIcon sx={{ mr: 1 }} /> Gerar PDF
                                                 </MenuItem>
-                                                {currentRow?.status !== 'cancelado' && currentRow?.status !== 'pago' && currentRow?.status !== 'parcial' &&(
+                                                {currentRow?.status !== 'cancelado' && currentRow?.status !== 'pago' && currentRow?.status !== 'parcial' && (
                                                     <MenuItem onClick={() => { cancelarVenda(currentRow.id); handleCloseMenu(); }}>
                                                         <CancelIcon sx={{ mr: 1 }} /> Cancelar
                                                     </MenuItem>
@@ -235,6 +258,7 @@ export const Venda: React.VFC = () => {
                 venda={selectedVenda}
                 isEditing={isEditing}
             />
+
         </Box>
     );
 };

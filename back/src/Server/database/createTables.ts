@@ -356,6 +356,8 @@ export class CreateTables {
 						id INT AUTO_INCREMENT PRIMARY KEY,
 						tipo VARCHAR(50),
 						quantidade INT,
+						nameProduto VARCHAR(50),
+						valorUnitario INT,
 						estoque_id INT,
             			venda_id INT,
 						compra_id INT,

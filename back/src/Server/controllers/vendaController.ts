@@ -55,7 +55,7 @@ const vendaController = {
 		const { cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status, parcelas, produtos, ItemProduto } = req.body;
 		const insertVendaQuery = "INSERT INTO venda (cliente_id, funcionario_id, QTparcelas, valorTotal, valorDesconto, valorPago, valorTotalDesconto, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		const insertFinanceiroQuery = "INSERT INTO parcelas_venda (venda_id, tipoPagamento, parcela, valorParcela, dataPagamento, status) VALUES (?, ?, ?, ?, ?, ?)";
-		const insertProdutoMovimento = "INSERT INTO produto_movimento (tipo, quantidade, estoque_id, venda_id) VALUES (?, ?, ?, ?)";
+		const insertProdutoMovimento = "INSERT INTO produto_movimento (tipo, quantidade, nameProduto, valorUnitario, estoque_id, venda_id) VALUES (?, ?, ?, ?, ?, ?)";
 
 		try {
 			// Inserir na tabela 'os'
@@ -76,7 +76,7 @@ const vendaController = {
 				const saveHistoric = await historicEstoqueService.createHistoricEstoque("Saída", produto.quantidade, produto.id, venda_id)
 				console.log('produtohistoric', saveHistoric)
 				const tipo = "Saída"
-				await queryDatabase(insertProdutoMovimento, [tipo, produto.quantidade, produto.id, venda_id]);
+				await queryDatabase(insertProdutoMovimento, [tipo, produto.quantidade, produto.nameProduto, produto.valorUnitario, produto.id, venda_id]);
 
 			}
 
@@ -112,7 +112,7 @@ const vendaController = {
 		}
 	},
 
-	// Função para buscar uma compra
+	// Função para buscar uma venda
 	getVenda: async (req: Request, res: Response) => {
 		const { id } = req.body;
 		const query = "SELECT * FROM venda WHERE id = ?";
@@ -132,6 +132,28 @@ const vendaController = {
 			return res.status(500).json({ error: "Erro ao buscar Venda" });
 		}
 	},
+
+		// Função para buscar uma venda
+		getVendaByID: async (req: Request, res: Response) => {
+			const { id } = req.params;
+			const query = "SELECT * FROM venda WHERE id = ?";
+	
+			try {
+				const [rows] = await queryDatabase(query, [id]);
+	
+				// Verificar se a Venda foi encontrada
+				if (rows === null || rows === undefined) {
+					return res.status(404).json({ error: "Venda não encontrado" });
+				}
+	
+				// Se a Venda foi encontrado, retornar Venda dados
+				return res.status(200).json(rows);
+			} catch (error) {
+				console.error(error);
+				return res.status(500).json({ error: "Erro ao buscar Venda" });
+			}
+		},
+	
 
 	getVendasListCliente: async (req: Request, res: Response) => {
 		const { page = 1, limit = 5, id, cliente_id } = req.query;

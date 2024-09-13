@@ -40,11 +40,14 @@ export interface IParcela {
   // Interface para um produto de uma venda
   export interface IProduto {
     quantidade: number;
+    nameProduto: string;
+    valorUnitario: number;
     id: number;
   }
   
   // Interface para uma venda
   export interface IVenda {
+    id: number;
     cliente_id: number;
     funcionario_id: number;
     QTparcelas: number;
@@ -55,6 +58,8 @@ export interface IParcela {
     parcelas: IParcelaCreate[];
     produtos: IProduto[];
     ItemProduto	: SetarItemProduto[];
+    data_criacao: string;
+
   }
 
   export interface IVendaDetalhe {
@@ -192,9 +197,9 @@ const getAllListCliente = async (page = 1, filter = '', cliente_id: number): Pro
   }
 };
 
-const getByID = async (id: number): Promise<IVenda[] | Error> => {
+const getByID = async (id: number): Promise<IVenda | Error> => {
   try {
-    const { data } = await Api.get(`/estoque/${id}`); 
+    const { data } = await Api.get(`/venda/view/${id}`); 
 
     if (data) {
       return data;

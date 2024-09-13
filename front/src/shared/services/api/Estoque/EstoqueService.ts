@@ -17,6 +17,7 @@ export interface IEstoque {
   imagem: File
 }
 
+
 export interface IListagemEstoque {
   id: string;
   nome: string;
@@ -58,6 +59,8 @@ export interface IDetalheHistoric {
   id: number;
   tipo: string;
   quantidade: number;
+  nameProduto: string;
+  valorUnitario: number;
   estoque_id: number;
   venda_id: number;
   compra_id: number;

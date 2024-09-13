@@ -219,7 +219,8 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
                   <TableHead>
                     <TableRow>
                       <TableCell>Produto ID</TableCell>
-                      <TableCell>Estoque ID</TableCell>
+                      <TableCell>Name Produto</TableCell>
+                      <TableCell>Valor Unitário</TableCell>
                       <TableCell>Quantidade</TableCell>
                       <TableCell>Tipo</TableCell>
                       <TableCell>Data de Criação</TableCell>
@@ -228,8 +229,9 @@ const VendaDialog: React.FC<VendaDialogProps> = ({
                   <TableBody>
                     {produtos.map((produto, index) => (
                       <TableRow key={index}>
-                        <TableCell>{produto.id}</TableCell>
                         <TableCell>{produto.estoque_id}</TableCell>
+                        <TableCell>{produto.nameProduto}</TableCell>
+                        <TableCell>R${produto.valorUnitario}</TableCell>
                         <TableCell>{produto.quantidade}</TableCell>
                         <TableCell>{produto.tipo}</TableCell>
                         <TableCell>{produto.data_criacao}</TableCell>

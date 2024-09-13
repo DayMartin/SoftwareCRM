@@ -160,7 +160,7 @@ const clienteController = {
 
 	// Função para buscar um Cliente
 	getCliente: async (req: Request, res: Response) => {
-		const { id } = req.body;
+		const { id } = req.params;
 		const query = "SELECT * FROM cliente WHERE id = ?";
 
 		try {

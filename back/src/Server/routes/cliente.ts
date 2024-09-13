@@ -10,5 +10,6 @@ router.route("/cliente/list").get((req: Request, res: Response) => clienteContro
 router.route("/cliente/delete/:id").delete((req: Request, res: Response) => clienteController.desativarCliente(req, res));
 router.route("/cliente/ativar/:id").put((req: Request, res: Response) => clienteController.ativarCliente(req, res));
 router.route("/cliente/edit/:id").put((req: Request, res: Response) => clienteController.editCliente(req, res));
+router.route("/cliente/view/:id").get((req: Request, res: Response) => clienteController.getCliente(req, res));
 
 export { router as clienteRouter };
