@@ -11,6 +11,7 @@ router.route("/venda/view/:id").get((req, res) => vendaController.getVendaByID(r
 // router.route("/venda/totalmes").get((req, res) => vendaController.consultaMes(req, res));
 router.route("/venda/delete").put((req, res) => vendaController.deleteVenda(req, res));
 router.route("/venda/comissaoVendedor").post((req, res) => vendaController.getVendasVendedor(req, res));
+router.route("/venda/comissaoVendedorTotal").post((req, res) => vendaController.getVendasVendedorTotal(req, res));
 router.route("/venda/mes").get((req, res) => vendaController.getVendasMes(req, res));
 router.route("/venda/dia").get((req, res) => vendaController.getVendasDia(req, res));
 router.route("/venda/compare").get((req, res) => vendaController.getVendasCompare(req, res));

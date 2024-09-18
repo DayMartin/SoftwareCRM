@@ -46,9 +46,30 @@ const Comissao: React.FC<ComissaoProps> = ({ open, onClose, funcionario_id, titl
         setIsLoading(false);
     };
 
+    const consultarTotal = async (funcionario_id: number) => {
+        setIsLoading(true);
+        try {
+            // Formatar as datas para o formato aceito pela API
+            const dataInicioFormatada = dataInicio || '';
+            const dataFimFormatada = dataFim || '';
+            const limit = 5;
+            const consulta = await VendasService.getTotalComissaoVendedor(funcionario_id, dataInicioFormatada, dataFimFormatada);
+
+            if (consulta instanceof Error) {
+                setComissao(0)
+            } else {
+                setComissao(consulta.totalComissao)
+            }
+        } catch (error) {
+            setComissao(0)
+        }
+        setIsLoading(false);
+    };
+
     useEffect(() => {
         if (funcionario_id) {
             consultar(funcionario_id);
+            consultarTotal(funcionario_id)
         }
     }, [funcionario_id, page, filterId, dataInicio, dataFim]);
 

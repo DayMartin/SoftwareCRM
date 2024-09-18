@@ -201,57 +201,51 @@ const vendaController = {
 	},
 
 	getVendasVendedor: async (req: Request, res: Response) => {
-		const { page = 1, limit = 5, funcionario_id, data_inicio, data_fim } = req.body;
-		let query = "SELECT * FROM venda WHERE status <> 'cancelado'";
-		let countQuery = "SELECT COUNT(*) AS total FROM venda WHERE status <> 'cancelado'";
+		const { page = 1, limit = 10, funcionario_id, data_inicio, data_fim } = req.body;
+		let baseQuery = "FROM venda WHERE status <> 'cancelado'";
 		const params: any[] = [];
-	
-		console.log('funcionario_id', funcionario_id)
+		
 		let dataInicioFormatada = data_inicio ? new Date(`${data_inicio}T00:00:00.000Z`).toISOString() : null;
 		let dataFimFormatada = data_fim ? new Date(`${data_fim}T23:59:59.999Z`).toISOString() : null;
-	
+		
 		// Filtro por funcionário
 		if (funcionario_id) {
-			query += " AND funcionario_id = ?";
-			countQuery += " AND funcionario_id = ?";
+			baseQuery += " AND funcionario_id = ?";
 			params.push(funcionario_id);
 		}
-	
+		
 		// Filtro por data de venda (entre data_inicio e data_fim)
 		if (data_inicio && data_fim) {
-			query += " AND data_criacao BETWEEN ? AND ?";
-			countQuery += " AND data_criacao BETWEEN ? AND ?";
+			baseQuery += " AND data_criacao BETWEEN ? AND ?";
 			params.push(dataInicioFormatada, dataFimFormatada);
 		}
-	
-		// Consulta de contagem total
+		
+		// Consulta para obter o total de registros e a soma total
+		const countQuery = `SELECT COUNT(*) AS total, SUM(valorTotalDesconto) AS valorTotalVendas ${baseQuery}`;
 		try {
 			const totalResult = await queryDatabase(countQuery, params);
 			const total = totalResult[0].total;
-	
-			// Consulta de paginação
-			query += " LIMIT ? OFFSET ?";
+			const valorTotalVendas = totalResult[0].valorTotalVendas || 0;
+			
+			// Consulta paginada para obter as vendas da página específica
+			const vendasQuery = `SELECT * ${baseQuery} LIMIT ? OFFSET ?`;
 			params.push(parseInt(limit as string));
 			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
-	
-			// Obtenção das vendas
-			const vendas = await queryDatabase(query, params);
-	
-			console.log('vendas', vendas)
-	
+			
+			const vendas = await queryDatabase(vendasQuery, params);
+			
 			if (!vendas || vendas.length === 0) {
 				return res.status(404).json({ error: "Nenhum registro encontrado" });
 			}
-	
-			// Obter a porcentagem de comissão do cliente
+			
+			// Obter a porcentagem de comissão do funcionário, se fornecido
 			let porcentoComissao = 0;
 			if (funcionario_id) {
 				const funcionarioQuery = "SELECT porcentoComissao FROM usuarios WHERE id = ?";
 				const funcionarioResult = await queryDatabase(funcionarioQuery, [funcionario_id]);
-				console.log('funcionarioResult', funcionarioResult)
 				porcentoComissao = funcionarioResult[0]?.porcentoComissao || 0;
 			}
-	
+			
 			// Calcular comissão e valor total de comissão
 			let totalComissao = 0;
 			const vendasComComissao = vendas.map((venda: VendaConsulta) => {
@@ -262,17 +256,83 @@ const vendaController = {
 					comissao
 				};
 			});
-	
+			
+			// Retornar os dados da resposta
 			return res.status(200).json({
 				vendas: vendasComComissao,
 				total,
-				totalComissao
+				totalComissao,
+				valorTotalVendas,
 			});
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
+
+	getVendasVendedorTotal: async (req: Request, res: Response) => {
+		const {  funcionario_id, data_inicio, data_fim } = req.body;
+		let baseQuery = "FROM venda WHERE status <> 'cancelado'";
+		const params: any[] = [];
+		
+		let dataInicioFormatada = data_inicio ? new Date(`${data_inicio}T00:00:00.000Z`).toISOString() : null;
+		let dataFimFormatada = data_fim ? new Date(`${data_fim}T23:59:59.999Z`).toISOString() : null;
+		
+		// Filtro por funcionário
+		if (funcionario_id) {
+			baseQuery += " AND funcionario_id = ?";
+			params.push(funcionario_id);
+		}
+		
+		// Filtro por data de venda (entre data_inicio e data_fim)
+		if (data_inicio && data_fim) {
+			baseQuery += " AND data_criacao BETWEEN ? AND ?";
+			params.push(dataInicioFormatada, dataFimFormatada);
+		}
+		
+		// Consulta para obter o total de registros e a soma total
+		const countQuery = `SELECT COUNT(*) AS total, SUM(valorTotalDesconto) AS valorTotalVendas ${baseQuery}`;
+		try {
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+			
+			const vendasQuery = `SELECT * ${baseQuery}`;
+
+			const vendas = await queryDatabase(vendasQuery, params);
+			
+			if (!vendas || vendas.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
+			}
+			
+			// Obter a porcentagem de comissão do funcionário, se fornecido
+			let porcentoComissao = 0;
+			if (funcionario_id) {
+				const funcionarioQuery = "SELECT porcentoComissao FROM usuarios WHERE id = ?";
+				const funcionarioResult = await queryDatabase(funcionarioQuery, [funcionario_id]);
+				porcentoComissao = funcionarioResult[0]?.porcentoComissao || 0;
+			}
+			
+			// Calcular comissão e valor total de comissão
+			let totalComissao = 0;
+			vendas.map((venda: VendaConsulta) => {
+				const comissao = (venda.valorTotalDesconto * porcentoComissao) / 100;
+				totalComissao += comissao;
+				return {
+					...venda,
+					comissao
+				};
+			});
+			
+			// Retornar os dados da resposta
+			return res.status(200).json({
+				totalComissao,
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+	
 
 	getVendasMes: async (_: Request, res: Response) => {
 	

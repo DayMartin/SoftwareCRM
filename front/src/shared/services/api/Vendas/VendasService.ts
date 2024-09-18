@@ -105,6 +105,10 @@ export interface ComissaoVendedor {
   totalComissao: number;
 }
 
+export interface ComissaoVendedorTotal {
+  totalComissao: number;
+}
+
 export interface VendasCompare {
   totalMesAtual: number; 
   totalMesPassado: number
@@ -330,6 +334,30 @@ const getComissaoVendedor = async (
   }
 };
 
+const getTotalComissaoVendedor = async (
+  funcionario_id: number | null = null,
+  data_inicio: string | '',
+  data_fim: string | ''
+): Promise<ComissaoVendedorTotal | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/venda/comissaoVendedorTotal`;
+
+    // Construa o corpo da requisição
+    const requestBody = {
+      funcionario_id,
+      data_inicio,
+      data_fim
+    };
+
+    // Envie a requisição POST com o corpo correto
+    const { data } = await Api.post<ComissaoVendedorTotal>(urlRelativa, requestBody);
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
 
 export const VendasService = {
   getAllMes,
@@ -345,5 +373,6 @@ export const VendasService = {
   getByProdutoMovimento,
   getAllList,
   getAllListCliente,
-  getComissaoVendedor
+  getComissaoVendedor,
+  getTotalComissaoVendedor
 };
