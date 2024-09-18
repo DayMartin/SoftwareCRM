@@ -93,9 +93,15 @@ const Estoque: React.FC = () => {
         consultar();
     }, [page, filterName]);
 
-    const handleVisualizar = (id: number) => {
+    const handleVisualizarHistoric = (id: number) => {
         setSelectedEstoque(id);
         setOpen(true);
+    };
+
+    const handleVisualizar = (prod: IDetalheEstoque) => {
+        setSelectedProd(prod);
+        setOpenEditView(true);
+        setIsEditing(false);
     };
 
     const handleExcluir = async (id: number) => {
@@ -212,13 +218,13 @@ const Estoque: React.FC = () => {
                                             sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
                                             size="small"
                                             startIcon={<VisibilityIcon />}
-                                            onClick={() => handleVisualizar(item.id)}
+                                            onClick={() => handleVisualizar(item)}
                                         />
                                         <Button
                                             sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
                                             size="small"
                                             startIcon={<AccessTimeFilledIcon />}
-                                            onClick={() => handleVisualizar(item.id)}
+                                            onClick={() => handleVisualizarHistoric(item.id)}
                                         />
                                         <Button
                                             sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
@@ -270,7 +276,7 @@ const Estoque: React.FC = () => {
                 <ProdutoEditViewDialog
                     open={openEditView}
                     prod={selectedProd}
-                    isEditing={true}
+                    isEditing={isEditing}
                     onClose={handleCloseProd}
                     onSave={handleSave}
                 />

@@ -188,7 +188,7 @@ const ProdutoEditViewDialog: React.FC<ProdutoEditViewDialogProps> = ({ open, onC
                                 value={editProd.marca_id || ''}
                                 fullWidth
                                 margin="normal"
-                                disabled
+                                disabled={!isEditing}
                                 onChange={handleChange}
                             />
                         </Grid>
@@ -200,6 +200,7 @@ const ProdutoEditViewDialog: React.FC<ProdutoEditViewDialogProps> = ({ open, onC
                                     name="promocao"
                                     value={editProd.promocao || ''}
                                     onChange={handleSelectChange}
+                                    disabled={!isEditing}
                                     label="Promoção"
                                 >
                                     <MenuItem value="ativo">Ativo</MenuItem>
@@ -215,6 +216,7 @@ const ProdutoEditViewDialog: React.FC<ProdutoEditViewDialogProps> = ({ open, onC
                                 value={editProd.valor_promocional || ''}
                                 fullWidth
                                 margin="normal"
+                                disabled={!isEditing}
                                 onChange={handleChange}
                             />
                         </Grid>
@@ -223,6 +225,7 @@ const ProdutoEditViewDialog: React.FC<ProdutoEditViewDialogProps> = ({ open, onC
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
+                                disabled={!isEditing}
                                 style={{ marginTop: '16px' }}
                             />
                             {imagemPreview ? (
