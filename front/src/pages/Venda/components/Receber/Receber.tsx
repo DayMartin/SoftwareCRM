@@ -23,6 +23,8 @@ export const AReceber: React.VFC = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const titulo = "Contas a Receber";
     const objFilter = { Opcao1: 'pago', Opcao2: 'pendente', Opcao3: 'cancelado' || null};
+    const [newDado, setNewDado] = useState('');
+    const [newFilter, setNewFilter] = useState('');
 
     const consultar = async () => {
         setIsLoading(true);
@@ -53,10 +55,6 @@ export const AReceber: React.VFC = () => {
         }
         setIsLoading(false);
     };
-
-    useEffect(() => {
-        consultar();
-    }, [page, filterId]);
 
     const handleReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
@@ -94,7 +92,9 @@ export const AReceber: React.VFC = () => {
         setIsLoading(true);
 
         if(dado === null){
-            consultar()
+            setNewFilter('');
+            setNewDado('');
+            consultar(); 
         } else {
             try {
                 const filtrar = await ParcelasService.filtro(page + 1, filter, dado);
@@ -117,6 +117,8 @@ export const AReceber: React.VFC = () => {
                     setTotalRecords(0);
     
                 }
+                setNewDado(dado);
+                setNewFilter(filter);
             } catch (error) {
                 // alert('Erro ao filtrarr clientes');
                 setRows([]);
@@ -126,7 +128,23 @@ export const AReceber: React.VFC = () => {
         setIsLoading(false);
     };
 
+    useEffect(() => {
+        consultar(); 
+    }, []);
 
+    useEffect(() => {
+        if (newFilter && newDado) {
+            handleFilterApply(newFilter, newDado);
+        } else {
+            consultar(); 
+        }
+    }, [page, newFilter, newDado]);
+
+    useEffect(() => {
+        if (filterId) {
+            consultar(); 
+        }
+    }, [filterId]);
 
     return (
         <Box>

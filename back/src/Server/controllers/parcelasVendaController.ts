@@ -348,8 +348,8 @@ const parcelasVendaController = {
 	},
 
 	Filtro: async (req: Request, res: Response) => {
-		const { page = 1, limit = 5} = req.params;
-		const { filtro, dado }= req.body;
+		const { filtro, dado, page = 1, limit = 5 } = req.body;
+
 		let query = "SELECT * FROM parcelas_venda WHERE 1=1";
 		let countQuery = "SELECT COUNT(*) AS total FROM parcelas_venda WHERE 1=1";
 		const params: any[] = [];

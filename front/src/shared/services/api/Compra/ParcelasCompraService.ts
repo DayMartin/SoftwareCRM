@@ -98,8 +98,8 @@ const filtro = async (
   dado: string
 ): Promise<IApiResponse | Error> => {
   try {
-    const urlRelativa = `${Environment.URL_BASE}/parcelasCompra/filtro?page=${page}&limit=5&page=1`;
-    const body = { filtro, dado}
+    const urlRelativa = `${Environment.URL_BASE}/parcelasCompra/filtro`;
+    const body = { page, filtro, dado, }
     const { data } = await Api.post<IApiResponse>(urlRelativa, body);
 
     return data;
