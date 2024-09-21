@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
-    TablePagination, Paper, Button, LinearProgress, Box, Avatar 
-} from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, CardActions, Button, Typography, LinearProgress, Box, TableContainer, Paper, TablePagination } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,6 +9,7 @@ import ProdutoEditViewDialog from './components/VisualizarEditarProduto';
 import { EditProducao, EstoqueService, IDetalheEstoque } from '../../shared/services/api/Estoque/EstoqueService';
 import { BarraInicial } from '../../shared/components/barra-inicial/BarraInicial';
 import { BarraEstoque } from './components/BarraEstoque';
+import { ThreeDRotationSharp } from '@mui/icons-material';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 
 const Estoque: React.FC = () => {
@@ -30,6 +28,8 @@ const Estoque: React.FC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [isEditing, setIsEditing] = useState(false);
 
+
+
     const consultar = async () => {
         setIsLoading(true);
         try {
@@ -37,17 +37,22 @@ const Estoque: React.FC = () => {
             if (consulta instanceof Error) {
                 setRows([]);
                 setTotalRecords(0);
+
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
+                // handle array data
                 generateImageUrls(consulta);
                 setTotalRecords(consulta.total);
+
             } else if (typeof consulta === 'object') {
                 setRows(consulta.rows);
-                generateImageUrls(consulta.rows);
+                generateImageUrls(consulta.rows); // Gera URLs para imagens
                 setTotalRecords(consulta.total);
+
             } else {
                 setRows([]);
                 setTotalRecords(0);
+
             }
         } catch (error) {
             setRows([]);
@@ -58,6 +63,7 @@ const Estoque: React.FC = () => {
     const generateImageUrls = (items: IDetalheEstoque[]) => {
         items.forEach(item => {
             if (item.imagem) {
+                // Verifica se `item.imagem` é um Blob
                 if (item.imagem instanceof Blob) {
                     const reader = new FileReader();
                     reader.onloadend = () => {
@@ -65,6 +71,7 @@ const Estoque: React.FC = () => {
                     };
                     reader.readAsDataURL(item.imagem);
                 } else if (item.imagem.type && item.imagem.data) {
+                    // Se `item.imagem` é um objeto com `type` e `data`, converte para Blob
                     const byteArray = new Uint8Array(item.imagem.data);
                     const blob = new Blob([byteArray], { type: item.imagem.type });
                     const reader = new FileReader();
@@ -75,6 +82,11 @@ const Estoque: React.FC = () => {
                 }
             }
         });
+    };
+
+    const handleFilterNameChange = (name: string) => {
+        setFilterName(name);
+        setPage(0);
     };
 
     useEffect(() => {
@@ -95,16 +107,21 @@ const Estoque: React.FC = () => {
     const handleExcluir = async (id: number) => {
         try {
             const result = await EstoqueService.deleteEstoqueById(id);
+
             if (result instanceof Error) {
+                console.error(result.message);
                 alert(result.message);
                 return;
             }
             consultar();
+
             alert("Estoque excluído com sucesso!");
+
         } catch (error) {
             console.error("Erro inesperado:", error);
         }
     };
+
 
     const handleEditar = (prod: IDetalheEstoque) => {
         setSelectedProd(prod);
@@ -128,18 +145,18 @@ const Estoque: React.FC = () => {
         }
     };
 
+
+    const listar = async () => {
+        try {
+            await consultar();
+        } catch (error) {
+            console.error("Erro ao listar:", error)
+        }
+    }
     const titulo = "Estoque";
     const handleClose = () => setOpen(false);
     const handleCloseItemEstoque = () => setOpenItemProduto(false);
 
-    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0); 
-    };
     const getTipoColor = (tipo: string) => {
         switch (tipo) {
             case 'Saída':
@@ -152,54 +169,81 @@ const Estoque: React.FC = () => {
                 return { fontWeight: 'bold' };
         }
     };
+
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0); 
+    };
+
     return (
         <Box>
             <BarraInicial
                 titulo={titulo}
-                onFilterIdChange={setFilterName}
+                onFilterIdChange={handleFilterNameChange}
             />
-            <BarraEstoque listar={consultar} />
+            <BarraEstoque listar={listar} />
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%', maxHeight: 500, overflowY: 'auto' }}>
                 {isLoading ? (
                     <LinearProgress variant="indeterminate" />
                 ) : (
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Imagem</TableCell>
-                                <TableCell>Nome</TableCell>
-                                <TableCell>Quantidade</TableCell>
-                                <TableCell>Valor de Compra</TableCell>
-                                <TableCell>Valor de Venda</TableCell>
-                                <TableCell>Promoção</TableCell>
-                                <TableCell>Ações</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows.map((item: IDetalheEstoque) => (
-                                <TableRow key={item.id}>
-                                    <TableCell>
-                                        <Avatar
-                                            src={imageUrls[item.id] || '/static/images/cards/contemplative-reptile.jpg'}
-                                            alt={item.nome}
-                                            sx={{ width: 56, height: 56 }}
+                    <Grid container spacing={2}>
+                        {rows.map((item: IDetalheEstoque) => (
+                            <Grid item xs={6} sm={4} md={2.1} key={item.id}>
+                                <Card sx={{ maxWidth: 200, minWidth: 200 }}>
+                                    <CardMedia
+                                        sx={{ height: 200, width: '100%', objectFit: 'contain' }}
+                                        image={imageUrls[item.id] || '/static/images/cards/contemplative-reptile.jpg'}
+                                        title={item.nome}
+                                    />
+                                    <CardContent sx={{ padding: 1 }}>
+                                        <Typography gutterBottom variant="body2" component="div" noWrap>
+                                            {item.nome}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                            Quantidade: {item.quantidade || '0'}
+                                            <br />
+                                            Valor compra: {item.valorUnitarioCompra || '0'}
+                                            <br />
+                                            Valor venda: {item.valorUnitarioVenda || '0'}
+                                            <br />
+                                            Promoção: {item.promocao || '0'}
+                                        </Typography>
+                                    </CardContent>
+                                    <CardActions sx={{ padding: 2, margin: 0, display: 'flex', flexDirection: 'row', gap: 0.5 }}>
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            startIcon={<VisibilityIcon />}
+                                            onClick={() => handleVisualizar(item)}
                                         />
-                                    </TableCell>
-                                    <TableCell>{item.nome}</TableCell>
-                                    <TableCell>{item.quantidade || '0'}</TableCell>
-                                    <TableCell>{item.valorUnitarioCompra || '0'}</TableCell>
-                                    <TableCell>{item.valorUnitarioVenda || '0'}</TableCell>
-                                    <TableCell>{item.promocao || '0'}</TableCell>
-                                    <TableCell>
-                                        <Button startIcon={<VisibilityIcon />} onClick={() => handleVisualizar(item)} />
-                                        <Button startIcon={<AccessTimeFilledIcon />} onClick={() => handleVisualizarHistoric(item.id)} />
-                                        <Button startIcon={<EditIcon />} onClick={() => handleEditar(item)} />
-                                        <Button startIcon={<DeleteIcon />} color="error" onClick={() => handleExcluir(item.id)} />
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            startIcon={<AccessTimeFilledIcon />}
+                                            onClick={() => handleVisualizarHistoric(item.id)}
+                                        />
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            startIcon={<EditIcon />}
+                                            onClick={() => handleEditar(item)}
+                                        />
+                                        <Button
+                                            sx={{ padding: 0.5, minWidth: 'auto', width: 30, height: 24 }}
+                                            size="small"
+                                            color="error"
+                                            startIcon={<DeleteIcon />}
+                                            onClick={() => handleExcluir(item.id)}
+                                        />
+                                    </CardActions>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
                 )}
             </TableContainer>
             <TablePagination
@@ -211,6 +255,7 @@ const Estoque: React.FC = () => {
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
             />
+
             {selectedEstoque && (
                 <HistoricoModal
                     open={open}
@@ -234,7 +279,6 @@ const Estoque: React.FC = () => {
                     isEditing={isEditing}
                     onClose={handleCloseProd}
                     onSave={handleSave}
-                
                 />
             )}
         </Box>
@@ -242,3 +286,4 @@ const Estoque: React.FC = () => {
 };
 
 export default Estoque;
+

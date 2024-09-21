@@ -171,6 +171,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
       reader.readAsDataURL(file);
     }
   };
+  
 
   return (
     <Modal
@@ -225,6 +226,7 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
+                    required
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -235,6 +237,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
+                    required
+
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -245,6 +249,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
+                    required
+
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -256,6 +262,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                       value={formData.fornecedor_id}
                       onChange={handleInputChange}
                       displayEmpty
+                      required
+
                     >
                       {fornecedorSelecionado.map((fornecedor) => (
                         <MenuItem key={fornecedor.id} value={fornecedor.id}>
@@ -274,6 +282,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                       value={formData.categoria_id}
                       onChange={handleInputChange}
                       displayEmpty
+                      required
+
                     >
                       {categoriaSelecionada.map((categoria) => (
                         <MenuItem key={categoria.id} value={categoria.id}>
@@ -292,6 +302,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                       value={formData.marca_id}
                       onChange={handleSelectChange}
                       displayEmpty
+                      required
+
                     >
                       {marcaSelecionada.map((marca) => (
                         <MenuItem key={marca.id} value={marca.id}>
@@ -310,6 +322,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                       value={formData.promocao || ''}
                       onChange={handleSelectChange}
                       label="Promoção"
+                      required
+
                     >
                       <MenuItem value="ativo">Ativo</MenuItem>
                       <MenuItem value="inativo">Inativo</MenuItem>
@@ -324,6 +338,8 @@ const AdicionarEstoque: React.FC<AdicionarEstoqueProps> = ({
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
+                    required
+
                   />
                 </Grid>
               </Grid>

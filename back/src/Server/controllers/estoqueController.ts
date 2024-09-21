@@ -33,7 +33,7 @@ const estoqueController = {
 
 
 	getEstoquesList: async (req: Request, res: Response) => {
-		const { page = 1, limit = 10, id, nome } = req.query;
+		const { page = 1, limit = 5, id, nome } = req.query;
 		let query = "SELECT * FROM estoque WHERE 1=1";
 		let countQuery = "SELECT COUNT(*) AS total FROM estoque WHERE 1=1";
 		const params: any[] = [];
