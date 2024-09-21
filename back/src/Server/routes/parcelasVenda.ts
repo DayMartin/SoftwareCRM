@@ -17,5 +17,7 @@ router.route("/parcelas/mestotalpagamento").get((req, res) => parcelasVendaContr
 router.route("/parcelas/status").post((req, res) => parcelasVendaController.PagamentoStatus(req, res));
 router.route("/parcelas/delete").delete((req, res) => parcelasVendaController.deleteParcela(req, res));
 
+router.route("/parcelas/filtro").post((req, res) => parcelasVendaController.Filtro(req, res));
+
 
 export { router as parcelasVendaRouter };

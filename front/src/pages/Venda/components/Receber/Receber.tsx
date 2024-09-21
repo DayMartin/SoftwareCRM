@@ -1,17 +1,18 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, TablePagination } from '@mui/material';
-import { Environment } from "../../../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { BarraInicial } from "../../../../shared/components/barra-inicial/BarraInicial";
-import { BarraAReceber } from "./BarraAReceber";
-import { ParcelasService, IParcela, IParcelaCreate } from "../../../../shared/services/api/Vendas/ParcelasVendaService";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PaymentsIcon from '@mui/icons-material/Payments';
+
+import { BarraAReceber } from "./BarraAReceber";
+import { ParcelasService, IParcela, IParcelaCreate } from "../../../../shared/services/api/Vendas/ParcelasVendaService";
+import { BarraInicial } from "../../../../shared/components/barra-inicial/BarraInicial";
+import { Environment } from "../../../../shared/environment";
 
 export const AReceber: React.VFC = () => {
     const [rows, setRows] = useState<IParcela[]>([]);
@@ -20,8 +21,8 @@ export const AReceber: React.VFC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
-    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
     const titulo = "Contas a Receber";
+    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente', Opcao3: 'cancelado' || null};
 
     const consultar = async () => {
         setIsLoading(true);
@@ -89,13 +90,51 @@ export const AReceber: React.VFC = () => {
     };
 
 
+      const handleFilterApply = async (filter: string, dado: string | null) => {
+        setIsLoading(true);
+
+        if(dado === null){
+            consultar()
+        } else {
+            try {
+                const filtrar = await ParcelasService.filtro(page + 1, filter, dado);
+                if (filtrar instanceof Error) {
+                    // alert(filtrar.message);
+                    setRows([]);
+                    setTotalRecords(0);
+    
+                } else if (Array.isArray(filtrar)) {
+                    setRows(filtrar);
+                    setTotalRecords(filtrar.total);
+    
+                } else if (typeof filtrar === 'object') {
+                    setRows(filtrar.rows);
+                    setTotalRecords(filtrar.total);
+    
+                } else {
+                    setRows([]);
+                    // alert('Dados retornados não são válidos');
+                    setTotalRecords(0);
+    
+                }
+            } catch (error) {
+                // alert('Erro ao filtrarr clientes');
+                setRows([]);
+            }
+        }
+ 
+        setIsLoading(false);
+    };
+
+
+
     return (
         <Box>
             <BarraInicial
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraAReceber />
+            <BarraAReceber opcoes={objFilter} onFilterApply={handleFilterApply}/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>

@@ -359,6 +359,8 @@ const getTotalComissaoVendedor = async (
   }
 };
 
+
+
 export const VendasService = {
   getAllMes,
   getAllDia,

@@ -97,11 +97,29 @@ const refazerReceberById = async (id: number, valorPago: number): Promise<void |
   }
 };
 
+const filtro = async (
+  page = 1,
+  filtro: string,
+  dado: string
+): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/parcelas/filtro?page=${page}&limit=5&page=1`;
+    const body = { filtro, dado}
+    const { data } = await Api.post<IApiResponse>(urlRelativa, body);
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
 
 export const ParcelasService = {
   getAll,
   getByID,
   receberById,
   refazerReceberById,
-  getAllList
+  getAllList,
+  filtro
 };
