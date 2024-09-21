@@ -1,25 +1,25 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Box, Menu, MenuItem, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
-import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
-import { Environment } from "../../shared/environment";
+import { Box, Menu, MenuItem, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableHead, TableRow, Dialog } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
-import VendaDialog from "./components/VisualizarVenda";
-import { BarraVenda } from "./components/BarraVenda";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EmailIcon from '@mui/icons-material/Email';
 import DehazeIcon from '@mui/icons-material/Dehaze';
+
+import { Environment } from "../../shared/environment";
+import { BarraVenda } from "./components/BarraVenda";
+import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import { generatePDF } from "../../shared/components/pdf/pdfVendas";
+import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
+import VendaDialog from "./components/VisualizarVenda";
 
 export const Venda: React.VFC = () => {
     const [rows, setRows] = useState<IVendaDetalhe[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
-
     const [selectedEstoque, setSelectedEstoque] = useState<IVenda | null>(null);
     const [selectedVenda, setSelectedVenda] = useState<IVendaDetalhe | null>(null);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -29,10 +29,13 @@ export const Venda: React.VFC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
+    const [newDado, setNewDado] = useState('');
+    const [newFilter, setNewFilter] = useState('');
 
     const [openPDF, setOpenPDF] = useState(false);
-    const [idVenda, setIDVenda] = useState(0)
+    const [idVenda, setIDVenda] = useState(0);
 
+    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente', Opcao3: 'cancelado', Opcao4: 'parcial' || null };
     const titulo = "Vendas";
 
     const consultar = async () => {
@@ -40,34 +43,23 @@ export const Venda: React.VFC = () => {
         try {
             const consulta = await VendasService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
-                // alert(consulta.message);
                 setRows([]);
                 setTotalRecords(0);
-
             } else if (Array.isArray(consulta)) {
                 setRows(consulta);
                 setTotalRecords(consulta.total);
-
             } else if (typeof consulta === 'object') {
                 setRows(consulta.rows);
                 setTotalRecords(consulta.total);
-
             } else {
                 setRows([]);
-                // alert('Dados retornados não são válidos');
                 setTotalRecords(0);
-
             }
         } catch (error) {
-            // alert('Erro ao consultar clientes');
             setRows([]);
         }
         setIsLoading(false);
     };
-
-    useEffect(() => {
-        consultar();
-    }, [page, filterId,]);
 
     const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -81,14 +73,14 @@ export const Venda: React.VFC = () => {
     const handleFilterIdChange = (id: string) => {
         setFilterId(id);
         setPage(0);
+        consultar(); 
     };
-
 
     const handleClose = () => {
         setOpen(false);
         setSelectedEstoque(null);
         setIsEditing(false);
-        consultar()
+        consultar();
     };
 
     const handleVisualizar = (venda: IVendaDetalhe) => {
@@ -109,51 +101,65 @@ export const Venda: React.VFC = () => {
 
     const cancelarVenda = async (id: number) => {
         try {
-            await VendasService.deleteVenda(id)
+            await VendasService.deleteVenda(id);
+            consultar(); 
         } catch (error) {
-            alert('Erro ao cancelarVenda');
+            alert('Erro ao cancelar venda');
         }
     };
 
-    const listar = async () => {
-        try {
-            await consultar();
-        } catch (error) {
-            console.error("Erro ao listar:", error);
-
+    const handleFilterApply = async (filter: string, dado: string | null) => {
+        setIsLoading(true);
+        if (dado === null) {
+            setNewFilter('');
+            setNewDado('');
+            consultar(); 
+        } else {
+            try {
+                const filtrar = await VendasService.filtro(page + 1, filter, dado);
+                if (filtrar instanceof Error) {
+                    setRows([]);
+                    setTotalRecords(0);
+                } else if (Array.isArray(filtrar)) {
+                    setRows(filtrar);
+                    setTotalRecords(filtrar.total);
+                } else if (typeof filtrar === 'object') {
+                    setRows(filtrar.rows);
+                    setTotalRecords(filtrar.total);
+                } else {
+                    setRows([]);
+                    setTotalRecords(0);
+                }
+                setNewDado(dado);
+                setNewFilter(filter);
+            } catch (error) {
+                setRows([]);
+            }
         }
-    }
-
-    // const handleGeneratePDF = (id: number) => {
-    //     // Renderize o componente PDFVENDAS
-
-    //     const resultado = <PDFVENDAS idVenda={id} />;
-    //     console.log('resultado', resultado)
-    //     return resultado
-    //   };
-
-    //   const handleOpenPDF = (id: number) => {
-    //     // Chame a função para gerar o PDF
-    //     console.log('teste', id)
-    //     handleGeneratePDF(id);
-    //   };
+        setIsLoading(false);
+    };
 
     const handleOpenPDF = (id: number) => {
         generatePDF(id);
-      };
-    
-    
-    
+    };
 
-    // const handleSave = async (updatedClient: IListagemCliente) => {
-    //     try {
-    //         await UsersService.updateById(updatedClient.id, updatedClient);
-    //         await consultar(tipoUsuario);
-    //     } catch (error) {
-    //         alert('Erro ao atualizar cliente');
-    //     }
-    // };
+    useEffect(() => {
+        consultar(); 
+    }, []);
 
+    useEffect(() => {
+        if (newFilter && newDado) {
+            handleFilterApply(newFilter, newDado);
+        } else {
+            consultar(); 
+        }
+    }, [page, newFilter, newDado]);
+
+    useEffect(() => {
+        if (filterId) {
+            consultar(); 
+        }
+    }, [filterId]);
 
     return (
         <Box>
@@ -161,7 +167,7 @@ export const Venda: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraVenda listar={listar} />
+            <BarraVenda listar={consultar} opcoes={objFilter} onFilterApply={handleFilterApply} />
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>
@@ -179,7 +185,6 @@ export const Venda: React.VFC = () => {
                             <TableCell>Ações</TableCell>
                         </TableRow>
                     </TableHead>
-
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
@@ -223,13 +228,13 @@ export const Venda: React.VFC = () => {
                                                 <MenuItem onClick={() => { handleVisualizar(currentRow); handleCloseMenu(); }}>
                                                     <VisibilityIcon sx={{ mr: 1 }} /> Visualizar
                                                 </MenuItem>
-                                                <MenuItem onClick={() => { /* Aqui você pode adicionar a lógica para enviar email */ handleCloseMenu(); }}>
+                                                <MenuItem onClick={() => { handleCloseMenu(); }}>
                                                     <EmailIcon sx={{ mr: 1 }} /> Enviar Email
                                                 </MenuItem>
                                                 <MenuItem onClick={() => { handleOpenPDF(currentRow?.id); handleCloseMenu(); }}>
                                                     <PictureAsPdfIcon sx={{ mr: 1 }} /> Gerar PDF
                                                 </MenuItem>
-                                                {currentRow?.status !== 'cancelado' && currentRow?.status !== 'pago' && currentRow?.status !== 'parcial' && (
+                                                {currentRow?.status !== 'cancelado' && (
                                                     <MenuItem onClick={() => { cancelarVenda(currentRow.id); handleCloseMenu(); }}>
                                                         <CancelIcon sx={{ mr: 1 }} /> Cancelar
                                                     </MenuItem>
@@ -244,7 +249,7 @@ export const Venda: React.VFC = () => {
                 </Table>
             </TableContainer>
             <TablePagination
-                rowsPerPageOptions={[5]}
+                rowsPerPageOptions={[5, 10, 25]}
                 component="div"
                 count={totalRecords}
                 rowsPerPage={rowsPerPage}
@@ -257,8 +262,6 @@ export const Venda: React.VFC = () => {
                 onClose={handleClose}
                 venda={selectedVenda}
                 isEditing={isEditing}
-            />
-
-        </Box>
+            />        </Box>
     );
 };

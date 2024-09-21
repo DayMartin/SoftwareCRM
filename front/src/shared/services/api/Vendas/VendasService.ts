@@ -359,7 +359,22 @@ const getTotalComissaoVendedor = async (
   }
 };
 
+const filtro = async (
+  page = 1,
+  filtro: string,
+  dado: string
+): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/venda/filtro`;
+    const body = { page, filtro, dado, }
+    const { data } = await Api.post<IApiResponse>(urlRelativa, body);
 
+    return data;
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
 
 export const VendasService = {
   getAllMes,
@@ -376,5 +391,6 @@ export const VendasService = {
   getAllList,
   getAllListCliente,
   getComissaoVendedor,
-  getTotalComissaoVendedor
+  getTotalComissaoVendedor,
+  filtro
 };

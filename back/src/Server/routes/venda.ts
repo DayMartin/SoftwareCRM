@@ -16,5 +16,7 @@ router.route("/venda/mes").get((req, res) => vendaController.getVendasMes(req, r
 router.route("/venda/dia").get((req, res) => vendaController.getVendasDia(req, res));
 router.route("/venda/compare").get((req, res) => vendaController.getVendasCompare(req, res));
 
+router.route("/venda/filtro").post((req, res) => vendaController.Filtro(req, res));
+
 
 export { router as vendaRouter };

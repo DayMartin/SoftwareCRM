@@ -6,6 +6,8 @@ interface OpcaoProps {
   Opcao1?: string;
   Opcao2?: string;
   Opcao3?: string;
+  Opcao4?: string;
+
 }
 
 interface FilterProps {
@@ -65,13 +67,16 @@ export const Filter: React.VFC<FilterProps> = ({
       >
         {opcoes?.Opcao1 && (
           <MenuItem onClick={() => handleSelect(opcoes?.Opcao1 ? opcoes.Opcao1 : null)}>Pago</MenuItem>
-        )}   
+        )}
         {opcoes?.Opcao2 && (
           <MenuItem onClick={() => handleSelect(opcoes?.Opcao2 ? opcoes.Opcao2 : null)}>Pendente</MenuItem>
-        )}   
+        )}
         {opcoes?.Opcao3 && (
           <MenuItem onClick={() => handleSelect(opcoes?.Opcao3 ? opcoes.Opcao3 : null)}>Cancelado</MenuItem>
-        )}        
+        )}
+        {opcoes?.Opcao4 && (
+          <MenuItem onClick={() => handleSelect(opcoes?.Opcao4 ? opcoes.Opcao4 : null)}>Parcial</MenuItem>
+        )}
         <MenuItem onClick={() => handleSelect(null)}>Remover Filtros</MenuItem>
       </Menu>
     </div>
