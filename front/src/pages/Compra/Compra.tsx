@@ -1,19 +1,20 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { Box, Menu, MenuItem, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography } from '@mui/material';
-import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
-import { Environment } from "../../shared/environment";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
-import VendaDialog from "./components/VisualizarCompra";
-import { BarraCompra } from "./components/BarraCompra";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EmailIcon from '@mui/icons-material/Email';
 import DehazeIcon from '@mui/icons-material/Dehaze';
+
+import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
 import { CompraService, ICompra, ICompraDetalhe } from "../../shared/services/api/Compra/CompraService";
+import { BarraCompra } from "./components/BarraCompra";
+import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
+import { Environment } from "../../shared/environment";
+import VendaDialog from "./components/VisualizarCompra";
 import CompraDialog from "./components/VisualizarCompra";
 
 

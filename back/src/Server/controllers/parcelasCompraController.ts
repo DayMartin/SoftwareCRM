@@ -90,14 +90,14 @@ const parcelasCompraController = {
 	receberParcela: async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const { valorPago, idcompra } = req.body;
-	
+
 		if (valorPago === undefined || isNaN(Number(valorPago))) {
 			return res.status(400).json({ error: "valorPago é obrigatório e deve ser um número válido." });
 		}
-	
+
 		const valorPagoNumero = Number(valorPago);
 		console.log('valor', valorPagoNumero);
-	
+
 		const queryVerificar = "SELECT * FROM parcelas_compra WHERE id = ?";
 		const atualizarStatus = 'UPDATE parcelas_compra SET status= ? WHERE id = ?';
 		const atualizarCompra = 'UPDATE compra SET valorPago = ? WHERE id = ?';
@@ -105,21 +105,21 @@ const parcelasCompraController = {
 		const consultarTotal = "SELECT valorTotalDesconto FROM compra WHERE id = ?";
 		const atualizarCompraStatus = 'UPDATE compra SET status = ? WHERE id = ?';
 
-	
+
 		try {
 			const [parcela] = await queryDatabase(queryVerificar, [id]);
 			if (!parcela) {
 				return res.status(404).json({ error: "Parcela não encontrada" });
 			}
-	
+
 			const [compra] = await queryDatabase(consultaValor, [parcela.compra_id]);
 			if (!compra) {
 				return res.status(404).json({ error: "Compra não encontrada" });
 			}
-	
+
 			const novoValorPago = Number(compra.valorPago) + valorPagoNumero;
 			console.log('novoValorPago', novoValorPago);
-	
+
 			await queryDatabase(atualizarCompra, [novoValorPago, parcela.compra_id]);
 			await queryDatabase(atualizarStatus, ['pago', id]);
 
@@ -134,16 +134,16 @@ const parcelasCompraController = {
 			if (valorPago == valorTotal) {
 				await queryDatabase(atualizarCompraStatus, ['pago', idcompra]);
 			}
-	
+
 			return res.status(200).json({ message: "Parcela recebida com sucesso" });
-	
+
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao pagar Parcela" });
 		}
 	},
-	
-	
+
+
 	pendeciaParcela: async (req: Request, res: Response) => {
 		const { id } = req.params;
 		const { valorPago } = req.body;
@@ -171,7 +171,7 @@ const parcelasCompraController = {
 			// Calcular o novo valor de 'valorPago'
 			const novoValorPago = compra.valorPago - valorPago;
 
-			if (novoValorPago === 0.00){
+			if (novoValorPago === 0.00) {
 				await queryDatabase(atualizarCompraStatus, ["pendente", parcela.compra_id]);
 			} else {
 				await queryDatabase(atualizarCompraStatus, ["parcial", parcela.compra_id]);
@@ -346,6 +346,45 @@ const parcelasCompraController = {
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao buscar OS" });
+		}
+	},
+
+	Filtro: async (req: Request, res: Response) => {
+		const { page = 1, limit = 5 } = req.params;
+		const { filtro, dado } = req.body;
+		let query = "SELECT * FROM parcelas_compra WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM parcelas_compra WHERE 1=1";
+		const params: any[] = [];
+
+		if (filtro && dado) {
+			query += ` AND ${filtro} = ?`;
+			countQuery += ` AND ${filtro} = ?`;
+			params.push(dado);
+		}
+
+		// Consulta de contagem total
+		try {
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
+			const rows = await queryDatabase(query, params);
+
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
+			}
+
+			return res.status(200).json({
+				rows,
+				total, // Retornando a contagem total
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
 };

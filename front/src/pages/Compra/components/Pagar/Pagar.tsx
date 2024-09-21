@@ -1,17 +1,18 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
 import { Box, Button, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, Typography, TablePagination } from '@mui/material';
-import { Environment } from "../../../../shared/environment";
-import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { BarraInicial } from "../../../../shared/components/barra-inicial/BarraInicial";
-import { BarraAPagar } from "./BarraAPagar"; 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PaymentsIcon from '@mui/icons-material/Payments';
-import { ParcelasService, IParcela } from "../../../../shared/services/api/Compra/ParcelasCompraService";
+
+import { ParcelasCompraService, IParcela } from "../../../../shared/services/api/Compra/ParcelasCompraService";
+import { BarraInicial } from "../../../../shared/components/barra-inicial/BarraInicial";
+import { Environment } from "../../../../shared/environment";
+import { BarraAPagar } from "./BarraAPagar"; 
 
 export const APagar: React.VFC = () => {
     const [rows, setRows] = useState<IParcela[]>([]);
@@ -20,13 +21,13 @@ export const APagar: React.VFC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
-    const [tipoUsuario, setTipoUsuario] = useState<string>('cliente');
     const titulo = "Contas a Pagar";
+    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente' || null};
 
     const consultar = async () => {
         setIsLoading(true);
         try {
-            const consulta = await ParcelasService.getAllList(page + 1, filterId);
+            const consulta = await ParcelasCompraService.getAllList(page + 1, filterId);
             if (consulta instanceof Error) {
                 alert(consulta.message);
                 setRows([]);
@@ -59,7 +60,7 @@ export const APagar: React.VFC = () => {
 
     const handleReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
-            await ParcelasService.receberById(id, idvenda, valorPago);
+            await ParcelasCompraService.receberById(id, idvenda, valorPago);
         } catch (error) {
             alert('Erro ao receber');
         }
@@ -67,7 +68,7 @@ export const APagar: React.VFC = () => {
 
     const handleDesfazerReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
-            await ParcelasService.refazerReceberById(id, valorPago);
+            await ParcelasCompraService.refazerReceberById(id, valorPago);
 
         } catch (error) {
             alert('Erro ao desfazer o receber');
@@ -88,6 +89,42 @@ export const APagar: React.VFC = () => {
         setPage(0);
     };
 
+    const handleFilterApplyPagar = async (filter: string, dado: string | null) => {
+        setIsLoading(true);
+
+        if(dado === null){
+            consultar()
+        } else {
+            try {
+                const filtrar = await ParcelasCompraService.filtro(page + 1, filter, dado);
+                if (filtrar instanceof Error) {
+                    // alert(filtrar.message);
+                    setRows([]);
+                    setTotalRecords(0);
+    
+                } else if (Array.isArray(filtrar)) {
+                    setRows(filtrar);
+                    setTotalRecords(filtrar.total);
+    
+                } else if (typeof filtrar === 'object') {
+                    setRows(filtrar.rows);
+                    setTotalRecords(filtrar.total);
+    
+                } else {
+                    setRows([]);
+                    // alert('Dados retornados não são válidos');
+                    setTotalRecords(0);
+    
+                }
+            } catch (error) {
+                // alert('Erro ao filtrarr clientes');
+                setRows([]);
+            }
+        }
+ 
+        setIsLoading(false);
+    };
+
 
     return (
         <Box>
@@ -95,7 +132,7 @@ export const APagar: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraAPagar />
+            <BarraAPagar opcoes={objFilter} onFilterApply={handleFilterApplyPagar}/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>

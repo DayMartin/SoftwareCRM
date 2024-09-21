@@ -2,14 +2,20 @@ import * as React from "react";
 import { Button, Menu, MenuItem } from "@mui/material";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
+interface OpcaoProps {
+  Opcao1?: string;
+  Opcao2?: string;
+  Opcao3?: string;
+}
+
 interface FilterProps {
-  opcoes: { Opcao1: string, Opcao2: string, Opcao3: string };
-  onApplyFilter: (filter: string, dado: string | null) => void; 
+  opcoes: OpcaoProps;
+  onApplyFilter: (filter: string, dado: string | null) => void;
 }
 
 export const Filter: React.VFC<FilterProps> = ({
   opcoes,
-  onApplyFilter 
+  onApplyFilter
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -22,7 +28,7 @@ export const Filter: React.VFC<FilterProps> = ({
   };
 
   const handleSelect = (option: string | null) => {
-    onApplyFilter('status', option); 
+    onApplyFilter('status', option);
     handleClose();
   };
 
@@ -57,9 +63,15 @@ export const Filter: React.VFC<FilterProps> = ({
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleSelect(opcoes.Opcao1)}>Pago</MenuItem>
-        <MenuItem onClick={() => handleSelect(opcoes.Opcao2)}>Pendente</MenuItem>
-        <MenuItem onClick={() => handleSelect(opcoes.Opcao3)}>Cancelado</MenuItem>
+        {opcoes?.Opcao1 && (
+          <MenuItem onClick={() => handleSelect(opcoes?.Opcao1 ? opcoes.Opcao1 : null)}>Pago</MenuItem>
+        )}   
+        {opcoes?.Opcao2 && (
+          <MenuItem onClick={() => handleSelect(opcoes?.Opcao2 ? opcoes.Opcao2 : null)}>Pendente</MenuItem>
+        )}   
+        {opcoes?.Opcao3 && (
+          <MenuItem onClick={() => handleSelect(opcoes?.Opcao3 ? opcoes.Opcao3 : null)}>Cancelado</MenuItem>
+        )}        
         <MenuItem onClick={() => handleSelect(null)}>Remover Filtros</MenuItem>
       </Menu>
     </div>

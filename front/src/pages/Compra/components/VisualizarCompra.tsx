@@ -19,16 +19,17 @@ import {
   Paper,
   Box,
 } from "@mui/material";
-import { CompraService, IParcela } from "../../../shared/services/api/Compra/CompraService";
-import { ParcelasService } from "../../../shared/services/api/Compra/ParcelasCompraService";
-import { EstoqueService, IDetalheHistoric } from "../../../shared/services/api/Estoque/EstoqueService";
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import PaymentsIcon from '@mui/icons-material/Payments';
+
 import { ICompraDetalhe } from "../../../shared/services/api/Compra/CompraService";
+import { CompraService, IParcela } from "../../../shared/services/api/Compra/CompraService";
+import { EstoqueService, IDetalheHistoric } from "../../../shared/services/api/Estoque/EstoqueService";
+import { ParcelasCompraService } from "../../../shared/services/api/Compra/ParcelasCompraService";
 
 interface CompraDialogProps {
   open: boolean;
@@ -109,7 +110,7 @@ const CompraDialog: React.FC<CompraDialogProps> = ({
 
   const handleReceber = async (id: number, idcompra: number, valorPago: number) => {
     try {
-      await ParcelasService.receberById(id, idcompra, valorPago);
+      await ParcelasCompraService.receberById(id, idcompra, valorPago);
       await BuscarParcelas(idcompra)
     } catch (error) {
       // alert('Erro ao receber');
@@ -118,7 +119,7 @@ const CompraDialog: React.FC<CompraDialogProps> = ({
 
   const handleDesfazerReceber = async (id: number, idcompra: number, valorPago: number) => {
     try {
-      await ParcelasService.refazerReceberById(id, valorPago);
+      await ParcelasCompraService.refazerReceberById(id, valorPago);
       await BuscarParcelas(idcompra)
 
     } catch (error) {

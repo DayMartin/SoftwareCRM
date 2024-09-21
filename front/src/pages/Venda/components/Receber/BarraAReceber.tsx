@@ -6,8 +6,14 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 import { Filter } from "../../../../shared/components/filter/Filter";
 
+interface OpcaoProps {
+    Opcao1?: string;
+    Opcao2?: string;
+    Opcao3?: string;
+  }
+  
 interface BarraProps {
-    opcoes: { Opcao1: string, Opcao2: string, Opcao3: string };
+    opcoes: OpcaoProps;
     onFilterApply: (filter: string, dado: string | null) => void;
 }
 
