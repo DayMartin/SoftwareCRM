@@ -9,12 +9,10 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EmailIcon from '@mui/icons-material/Email';
 import DehazeIcon from '@mui/icons-material/Dehaze';
 
-import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
 import { CompraService, ICompra, ICompraDetalhe } from "../../shared/services/api/Compra/CompraService";
 import { BarraCompra } from "./components/BarraCompra";
 import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial";
 import { Environment } from "../../shared/environment";
-import VendaDialog from "./components/VisualizarCompra";
 import CompraDialog from "./components/VisualizarCompra";
 
 
@@ -32,6 +30,9 @@ export const Compra: React.VFC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
+    const [newDado, setNewDado] = useState('');
+    const [newFilter, setNewFilter] = useState('');
+    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente', Opcao3: 'cancelado', Opcao4: 'parcial' || null };
 
     const titulo = "Compras";
 
@@ -63,10 +64,6 @@ export const Compra: React.VFC = () => {
         }
         setIsLoading(false);
     };
-
-    useEffect(() => {
-        consultar();
-    }, [ page, filterId,]);
 
     const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
@@ -114,6 +111,54 @@ export const Compra: React.VFC = () => {
         }
     };
 
+    const handleFilterApply = async (filter: string, dado: string | null) => {
+        setIsLoading(true);
+        if (dado === null) {
+            setNewFilter('');
+            setNewDado('');
+            consultar(); 
+        } else {
+            try {
+                const filtrar = await CompraService.filtroCompra(page + 1, filter, dado);
+                if (filtrar instanceof Error) {
+                    setRows([]);
+                    setTotalRecords(0);
+                } else if (Array.isArray(filtrar)) {
+                    setRows(filtrar);
+                    setTotalRecords(filtrar.total);
+                } else if (typeof filtrar === 'object') {
+                    setRows(filtrar.rows);
+                    setTotalRecords(filtrar.total);
+                } else {
+                    setRows([]);
+                    setTotalRecords(0);
+                }
+                setNewDado(dado);
+                setNewFilter(filter);
+            } catch (error) {
+                setRows([]);
+            }
+        }
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        consultar(); 
+    }, []);
+
+    useEffect(() => {
+        if (newFilter && newDado) {
+            handleFilterApply(newFilter, newDado);
+        } else {
+            consultar(); 
+        }
+    }, [page, newFilter, newDado]);
+
+    useEffect(() => {
+        if (filterId) {
+            consultar(); 
+        }
+    }, [filterId]);
 
     // const handleSave = async (updatedClient: IListagemCliente) => {
     //     try {
@@ -139,7 +184,7 @@ export const Compra: React.VFC = () => {
                 titulo={titulo}
                 onFilterIdChange={handleFilterIdChange}
             />
-            <BarraCompra listar={listar}/>
+            <BarraCompra listar={listar} opcoes={objFilter} onFilterApply={handleFilterApply}/>
 
             <TableContainer component={Paper} sx={{ m: 1, width: 'auto', marginLeft: '8%', marginRight: '2%' }}>
                 <Table>

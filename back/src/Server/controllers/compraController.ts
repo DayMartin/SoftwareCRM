@@ -236,7 +236,45 @@ const compraController = {
 	// },
 
 
-	// Função para buscar consultas agendadas hoje
+	Filtro: async (req: Request, res: Response) => {
+		const { filtro, dado, page = 1, limit = 5 } = req.body;
+
+		let query = "SELECT * FROM compra WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM compra WHERE 1=1";
+		const params: any[] = [];
+
+		if (filtro && dado) {
+			query += ` AND ${filtro} = ?`;
+			countQuery += ` AND ${filtro} = ?`;
+			params.push(dado);
+		}
+
+		// Consulta de contagem total
+		try {
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
+
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
+			const rows = await queryDatabase(query, params);
+
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
+			}
+
+			return res.status(200).json({
+				rows,
+				total, // Retornando a contagem total
+			});
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+
 }
 
 export { compraController };

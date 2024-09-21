@@ -236,6 +236,22 @@ const deleteCompra = async (id: number): Promise<void | Error> => {
   }
 };
 
+const filtroCompra = async (
+  page = 1,
+  filtro: string,
+  dado: string
+): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/compra/filtro`;
+    const body = { page, filtro, dado, }
+    const { data } = await Api.post<IApiResponse>(urlRelativa, body);
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
 
 export const CompraService = {
   getAll,
@@ -248,5 +264,6 @@ export const CompraService = {
   deleteCompra,
   getByProdutoMovimento,
   getAllList,
-  getAllListFornecedor
+  getAllListFornecedor,
+  filtroCompra
 };

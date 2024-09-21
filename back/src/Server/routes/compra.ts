@@ -10,6 +10,7 @@ router.route("/compra/get/:id").post((req, res) => compraController.getCompra(re
 // router.route("/venda/totalmes").get((req, res) => vendaController.consultaMes(req, res));
 
 router.route("/compra/delete").put((req, res) => compraController.deleteCompra(req, res));
+router.route("/compra/filtro").post((req, res) => compraController.Filtro(req, res));
 
 
 export { router as compraRouter };
