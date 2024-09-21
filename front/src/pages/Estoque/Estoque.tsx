@@ -167,6 +167,7 @@ const Estoque: React.FC = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Imagem</TableCell>
+                                <TableCell>Cod</TableCell>
                                 <TableCell>Nome</TableCell>
                                 <TableCell>Quantidade</TableCell>
                                 <TableCell>Valor de Compra</TableCell>
@@ -185,6 +186,7 @@ const Estoque: React.FC = () => {
                                             sx={{ width: 56, height: 56 }}
                                         />
                                     </TableCell>
+                                    <TableCell>{item.id}</TableCell>
                                     <TableCell>{item.nome}</TableCell>
                                     <TableCell>{item.quantidade || '0'}</TableCell>
                                     <TableCell>{item.valorUnitarioCompra || '0'}</TableCell>
