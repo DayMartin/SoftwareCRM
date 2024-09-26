@@ -62,6 +62,8 @@ export const APagar: React.VFC = () => {
     const handleReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
             await ParcelasCompraService.receberById(id, idvenda, valorPago);
+            consultar();
+
         } catch (error) {
             alert('Erro ao receber');
         }
@@ -70,6 +72,7 @@ export const APagar: React.VFC = () => {
     const handleDesfazerReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
             await ParcelasCompraService.refazerReceberById(id, valorPago);
+            consultar();
 
         } catch (error) {
             alert('Erro ao desfazer o receber');

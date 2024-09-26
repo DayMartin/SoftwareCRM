@@ -7,6 +7,7 @@ export interface IParcela {
     parcela: number;
     valorParcela: number;
     dataPagamento: string;
+    dataPago: string;
     status: string;
     venda_id: number;
     tipoPagamento: string;

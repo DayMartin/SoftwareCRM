@@ -60,6 +60,7 @@ export const AReceber: React.VFC = () => {
     const handleReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
             await ParcelasService.receberById(id, idvenda, valorPago);
+            consultar();
         } catch (error) {
             alert('Erro ao receber');
         }
@@ -68,7 +69,7 @@ export const AReceber: React.VFC = () => {
     const handleDesfazerReceber = async (id: number, idvenda: number, valorPago: number) => {
         try {
             await ParcelasService.refazerReceberById(id, valorPago);
-
+            consultar();
         } catch (error) {
             alert('Erro ao desfazer o receber');
         }
@@ -163,7 +164,8 @@ export const AReceber: React.VFC = () => {
                             <TableCell>parcela</TableCell>
                             <TableCell>valorParcela</TableCell>
                             <TableCell>Status</TableCell>
-                            <TableCell>dataPagamento</TableCell>
+                            <TableCell>Vencimento</TableCell>
+                            <TableCell>dataPago</TableCell>
                             <TableCell>venda_id</TableCell>
                             <TableCell>tipoPagamento</TableCell>
                             <TableCell>Ações</TableCell>
@@ -192,6 +194,7 @@ export const AReceber: React.VFC = () => {
                                         <TableCell>{row.valorParcela}</TableCell>
                                         <TableCell>{row.status}</TableCell>
                                         <TableCell>{row.dataPagamento}</TableCell>
+                                        <TableCell>{row.dataPago}</TableCell>
                                         <TableCell>{row.venda_id}</TableCell>
                                         <TableCell>{row.tipoPagamento}</TableCell>
 
