@@ -103,6 +103,7 @@ const parcelasVendaController = {
 		const consultaValor = "SELECT valorPago FROM venda WHERE id = ?";
 		const consultarTotal = "SELECT valorTotalDesconto FROM venda WHERE id = ?";
 		const atualizarVendaStatus = 'UPDATE venda SET status = ? WHERE id = ?';
+		const atualizarDataPago = 'UPDATE parcelas_venda SET dataPago= ? WHERE id = ?'
 
 	
 		try {
@@ -117,9 +118,12 @@ const parcelasVendaController = {
 			}
 	
 			const novoValorPago = Number(venda.valorPago) + valorPagoNumero;
+			const dataPago = new Date()
+
 	
 			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
 			await queryDatabase(atualizarStatus, ['pago', id]);
+			await queryDatabase(atualizarDataPago, [dataPago, id]);
 
 			const consultarNovoPago = await queryDatabase(consultaValor, [parcela.venda_id]);
 			const consultarValorTotal = await queryDatabase(consultarTotal, [parcela.venda_id]);
@@ -151,6 +155,7 @@ const parcelasVendaController = {
 		const atualizarVenda = "UPDATE venda SET valorPago = ? WHERE id = ?";
 		const consultaValor = "SELECT valorPago FROM venda WHERE id = ?";
 		const atualizarVendaStatus = 'UPDATE venda SET status = ? WHERE id = ?';
+		const atualizarDataPago = 'UPDATE parcelas_venda SET dataPago= ? WHERE id = ?'
 
 		try {
 			const [parcela] = await queryDatabase(queryVerificar, [id]);
@@ -179,6 +184,7 @@ const parcelasVendaController = {
 			// Atualizar o valor de 'valorPago' na tabela 'venda'
 			await queryDatabase(queryPagar, ["pendente", id]);
 			await queryDatabase(atualizarVenda, [novoValorPago, parcela.venda_id]);
+			await queryDatabase(atualizarDataPago, ['', id]);
 
 			return res
 				.status(200)
@@ -217,24 +223,40 @@ const parcelasVendaController = {
 
 	// Função para trazer todas as parcelas do dia
 	PagamentoDia: async (req: Request, res: Response) => {
-		const { diapagamento } = req.body;
-		const query = "SELECT * FROM parcelas_venda WHERE dataPagamento = ?";
+		const { page = 1, limit = 5, dataPagamento } = req.body;
+		let query = "SELECT * FROM parcelas_venda WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM parcelas_venda WHERE 1=1";
+		const params: any[] = [];
 
+		if (dataPagamento) {
+			query += " AND dataPagamento = ?";
+			countQuery += " AND dataPagamento = ?";
+			params.push(dataPagamento);
+		}
+
+		// Consulta de contagem total
 		try {
-			const [rows] = await queryDatabase(query, [diapagamento]);
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
 
-			// Verificar se a Parcela foi encontrada
-			if (rows === null || rows === undefined) {
-				return res
-					.status(404)
-					.json({ error: "Parcela não encontrado" });
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
+			const rows = await queryDatabase(query, params);
+
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
 			}
 
-			// Se a Parcela foi encontrado, retornar os dados
-			return res.status(200).json(rows);
+			return res.status(200).json({
+				rows,
+				total,
+			});
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ error: "Erro ao buscar OS" });
+			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
 

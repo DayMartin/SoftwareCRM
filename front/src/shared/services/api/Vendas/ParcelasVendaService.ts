@@ -115,6 +115,22 @@ const filtro = async (
   }
 };
 
+const diaPagamento = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/parcelas/diapagamento?page=${page}&dataPagamento=${filter}`;
+
+    const { data } = await Api.get<IApiResponse>(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
 
 export const ParcelasService = {
   getAll,
@@ -122,5 +138,6 @@ export const ParcelasService = {
   receberById,
   refazerReceberById,
   getAllList,
-  filtro
+  filtro,
+  diaPagamento
 };

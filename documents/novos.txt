@@ -1,25 +1,2 @@
 porcentagem de desconto
 promoção - se o prouto estiver na promoçãao ai ele cobra o valor da promoção
---- adicionar comissao para os funcionarios
---- listar para cada funcionario as vendas feitas e valor de comissao
---- listar produtos cadastrados para cada TrocaFornecedor
---- gerar relatorio de comissao por mes para cada funcionario
---- poder desativar produto
---- atualzar listagem de constas a receber e apagar em tempo real
-
-
-if motivo === "Defeito" { 
-    excluir codBarra da tabela item_produto
-    adicionar codBarra na tabela troca_fornecedor
-
-} 
-
-
-ok criar entrada de troca em CentroTroca
-ok setar historicVenda com ação realizado troca de:CodBarra_Old para: CodBarra_new
-ok setar status item_produto_novo como vendido
-ok setar status item_produto_velho como disponivel
-ok  if defeito setar status item_produto_velho da tabela item_produto para "devolvidoFornecedor"
-ok  if defeito remover 1 quantidade do estoque
-ok  if defeito adicionar historic produto como Saída e id_devolucao
-ok  if defeito adicionar TrocaFornecedor

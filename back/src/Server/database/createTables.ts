@@ -219,6 +219,7 @@ export class CreateTables {
 						parcela INT,
 						valorParcela DECIMAL(10, 2),
 						dataPagamento VARCHAR(50),
+						dataPago VARCHAR(50),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (venda_id) REFERENCES venda(id)
@@ -250,6 +251,7 @@ export class CreateTables {
 						parcela INT,
 						valorParcela DECIMAL(10, 2),
 						dataPagamento VARCHAR(50),
+						dataPago VARCHAR(50),
 						status VARCHAR(50),
 						data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						FOREIGN KEY (compra_id) REFERENCES compra(id)

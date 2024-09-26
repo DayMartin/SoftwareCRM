@@ -104,7 +104,7 @@ const parcelasCompraController = {
 		const consultaValor = "SELECT valorPago FROM compra WHERE id = ?";
 		const consultarTotal = "SELECT valorTotalDesconto FROM compra WHERE id = ?";
 		const atualizarCompraStatus = 'UPDATE compra SET status = ? WHERE id = ?';
-
+		const atualizarDataPago = 'UPDATE parcelas_compra SET dataPago= ? WHERE id = ?'
 
 		try {
 			const [parcela] = await queryDatabase(queryVerificar, [id]);
@@ -118,10 +118,13 @@ const parcelasCompraController = {
 			}
 
 			const novoValorPago = Number(compra.valorPago) + valorPagoNumero;
-			console.log('novoValorPago', novoValorPago);
+			// console.log('novoValorPago', novoValorPago);
+			const dataPago = new Date()
 
 			await queryDatabase(atualizarCompra, [novoValorPago, parcela.compra_id]);
 			await queryDatabase(atualizarStatus, ['pago', id]);
+			await queryDatabase(atualizarDataPago, [dataPago, id]);
+
 
 			const consultarNovoPago = await queryDatabase(consultaValor, [parcela.compra_id]);
 			const consultarValorTotal = await queryDatabase(consultarTotal, [parcela.compra_id]);
@@ -153,6 +156,7 @@ const parcelasCompraController = {
 		const atualizarCompra = "UPDATE compra SET valorPago = ? WHERE id = ?";
 		const consultaValor = "SELECT valorPago FROM compra WHERE id = ?";
 		const atualizarCompraStatus = 'UPDATE compra SET status = ? WHERE id = ?';
+		const atualizarDataPago = 'UPDATE parcelas_compra SET dataPago= ? WHERE id = ?'
 
 		try {
 			const [parcela] = await queryDatabase(queryVerificar, [id]);
@@ -181,6 +185,8 @@ const parcelasCompraController = {
 			// Atualizar o valor de 'valorPago' na tabela 'compra'
 			await queryDatabase(queryPagar, ["pendente", id]);
 			await queryDatabase(atualizarCompra, [novoValorPago, parcela.compra_id]);
+			await queryDatabase(atualizarDataPago, ['', id]);
+
 
 			return res
 				.status(200)

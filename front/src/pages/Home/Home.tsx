@@ -5,6 +5,7 @@ import { VendasService } from "../../shared/services/api/Vendas/VendasService";
 import { EstoqueService } from "../../shared/services/api/Estoque/EstoqueService";
 import { ClienteService } from "../../shared/services/api/Cliente/ClienteService";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
+import { ParcelasService } from "../../shared/services/api/Vendas/ParcelasVendaService";
 
 // Registrar os componentes do Chart.js que serão usados
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
@@ -19,6 +20,7 @@ export const Home = () => {
   const [totaltotalMesPassado, setTotaltotalMesPassado] = useState(0);
   const [totaldiferenca, setTotaldiferenca] = useState(0);
   const [totalporcentagem, setTotalporcentagem] = useState(0);
+  const [receberHoje, setReceberHoje] = useState(0);
 
   useEffect(() => {
     consultarMes();
@@ -26,6 +28,7 @@ export const Home = () => {
     consultarTotalEstoque();
     consultarTotalCliente();
     consultarCompare();
+    consultarReceberHoje();
   }, []);
 
   const consultarMes = async () => {
@@ -86,6 +89,17 @@ export const Home = () => {
     }
   };
 
+  const consultarReceberHoje = async () => {
+    const hoje = Number(new Date())
+    try {
+      const resultado = await ParcelasService.diaPagamento(hoje);
+      if (!(resultado instanceof Error)) {
+        setReceberHoje(resultado.total);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar a receber hoje", error);
+    }
+  };
   const cardStyles = {
     minWidth: 100,
     boxShadow: "none",
@@ -185,20 +199,20 @@ export const Home = () => {
           </div>
         </TableContainer>
 
-        <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '2%', mr: '1%' }}>
-          <div style={{ flex: 1, marginRight: '10px' }}>
-            <Grid container spacing={1}>
-              <Grid item xs={6} sm={1.8}>
-                {renderCard("Vendidos no mês", totalMes, "#ADD8E6")}
+        <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '5%' }}>
+          <div style={{ flex: 1 }}>
+            <Grid container spacing={0.6}>
+              <Grid item xs={12} sm={3}>
+                {renderCard("A Receber hoje", receberHoje, "#ADD8E6")}
               </Grid>
-              <Grid item xs={6} sm={1.8}>
-                {renderCard("Vendidos hoje", totalDia, "#F5F5DC")}
+              <Grid item xs={12} sm={3}>
+                {renderCard("Vendidos hoje", totalDia, "#FFFACD")}
               </Grid>
-              <Grid item xs={6} sm={1.8}>
-                {renderCard("Itens em estoque", totalEstoque, "#FFDAB9")}
+              <Grid item xs={12} sm={3}>
+                {renderCard("Itens em estoque", totalEstoque, "#ADD8E6")}
               </Grid>
-              <Grid item xs={6} sm={1.8}>
-                {renderCard("Clientes cadastrados", totalCliente, "#FFF5EE")}
+              <Grid item xs={12} sm={3}>
+                {renderCard("Clientes cadastrados", totalCliente, "#FFFACD")}
               </Grid>
             </Grid>
           </div>
