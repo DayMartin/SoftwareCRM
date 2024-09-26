@@ -84,7 +84,7 @@ export const Filter: React.VFC<FilterProps> = ({
           <MenuItem onClick={() => handleSelect(opcoes?.Opcao4 ? opcoes.Opcao4 : null)}>Parcial</MenuItem>
         )}
         {opcoes?.Opcao5 && (
-          <MenuItem onClick={() => handleSelectPagar(opcoes?.Opcao5 ? opcoes.Opcao5 : null)}>A pagar Hoje</MenuItem>
+          <MenuItem onClick={() => handleSelectPagar(opcoes?.Opcao5 ? opcoes.Opcao5 : null)}>Hoje</MenuItem>
         )}
         <MenuItem onClick={() => handleSelect(null)}>Remover Filtros</MenuItem>
       </Menu>

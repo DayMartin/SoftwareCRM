@@ -21,10 +21,11 @@ export const AReceber: React.VFC = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
-    const titulo = "Contas a Receber";
-    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente', Opcao3: 'cancelado' || null};
     const [newDado, setNewDado] = useState('');
     const [newFilter, setNewFilter] = useState('');
+    const titulo = "Contas a Receber";
+    const hoje = new Date().toISOString().slice(0, 10);
+    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente', Opcao5: hoje || null};
 
     const consultar = async () => {
         setIsLoading(true);

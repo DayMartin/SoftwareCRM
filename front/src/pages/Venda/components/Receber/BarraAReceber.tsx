@@ -10,6 +10,8 @@ interface OpcaoProps {
     Opcao1?: string;
     Opcao2?: string;
     Opcao3?: string;
+    Opcao5?: string | null;
+
   }
   
 interface BarraProps {
