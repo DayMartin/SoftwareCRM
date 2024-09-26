@@ -26,6 +26,9 @@ export const Home = () => {
   const [pagarHoje, setPagarHoje] = useState(0);
   const [grafico, setGrafico] = useState<resultadoGrafico[]>([]);
   const [dadosProdutos, setDadosProdutos] = useState<resultadoGrafico[]>([]);
+  const [graficoTopVendas, setGraficoTopVendas] = useState<resultadoGrafico[]>([]);
+  const [graficoTopVendasMes, setGraficoTopVendasMes] = useState<resultadoGrafico[]>([]);
+
 
   useEffect(() => {
     consultarMes();
@@ -36,7 +39,9 @@ export const Home = () => {
     consultarReceberHoje();
     consultarPagarHoje();
     graficoConsulta();
-  }, []);
+    graficoConsultaTopVendas();
+    graficoConsultaTopVendasMes()
+  }, []);;
 
   const consultarMes = async () => {
     try {
@@ -132,6 +137,28 @@ export const Home = () => {
     }
   };
 
+  const graficoConsultaTopVendas = async () => {
+    try {
+      const resultado = await EstoqueService.graficoTopVendas();
+      if (!(resultado instanceof Error)) {
+        setGraficoTopVendas(resultado.resultado);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar a receber hoje", error);
+    }
+  };
+
+  const graficoConsultaTopVendasMes = async () => {
+    try {
+      const resultado = await EstoqueService.graficoTopVendasMes();
+      if (!(resultado instanceof Error)) {
+        setGraficoTopVendasMes(resultado.resultado);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar a receber hoje", error);
+    }
+  };
+
   // Dados para o gráfico de barras de produtos
   const barDataProdutos = {
     labels: grafico.map(item => item.produto), // Nomes dos produtos
@@ -145,6 +172,36 @@ export const Home = () => {
   };
 
   if (!grafico) {
+    return <div>Carregando...</div>;
+  }
+
+  const barDataProdutosTopVendas = {
+    labels: graficoTopVendas.map(item => item.produto),
+    datasets: [
+      {
+        label: 'Quantidade Vendida',
+        data: graficoTopVendas.map(item => item.totalVendido), 
+        backgroundColor: '#36A2EB',
+      },
+    ],
+  };
+
+  if (!graficoTopVendas) {
+    return <div>Carregando...</div>;
+  }
+
+  const barDataProdutosTopVendasMes = {
+    labels: graficoTopVendasMes.map(item => item.produto), 
+    datasets: [
+      {
+        label: 'Quantidade Vendida',
+        data: graficoTopVendasMes.map(item => item.totalVendido), 
+        backgroundColor: '#FF6384',
+      },
+    ],
+  };
+
+  if (!graficoTopVendasMes) {
     return <div>Carregando...</div>;
   }
 
@@ -194,7 +251,7 @@ export const Home = () => {
       },
       title: {
         display: true,
-        text: 'Vendas por Mês (Barras)',
+        text: 'Comparação de vendas mês atual e mês passado',
       },
     },
   };
@@ -219,7 +276,7 @@ export const Home = () => {
       },
       title: {
         display: true,
-        text: 'Distribuição das Vendas por Mês (Pizza)',
+        text: 'Comparação de vendas mês atual e mês passado',
       },
     },
   };
@@ -237,7 +294,34 @@ export const Home = () => {
     },
   };
 
-  
+  const barOptionsProdutosTopVendas = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Top Vendas',
+      },
+
+    },
+  };
+
+  const barOptionsProdutosTopVendasMes = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Top Vendas do Mês',
+      },
+    },
+  };
+
+
     // Renderizando a tabela
     const renderTabelaProdutos = () => (
       <TableContainer component={Paper} sx={{ width: '100%', maxHeight: 'auto', overflowY: 'auto' }}>
@@ -359,8 +443,25 @@ export const Home = () => {
 
 
       </Box>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', m: 2 }}>
       {/* Gráfico de barras de produtos */}
+      <TableContainer
+        component={Paper}
+        sx={{
+          width: '50%',
+          height: '60vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '0 auto',
+          ml: '5%'
+
+        }}
+      >
+        <div style={{ width: '80%' }}>
+          <Bar data={barDataProdutosTopVendas} options={barOptionsProdutosTopVendas} />
+        </div>
+      </TableContainer>
       <TableContainer
         component={Paper}
         sx={{
@@ -373,7 +474,7 @@ export const Home = () => {
         }}
       >
         <div style={{ width: '80%' }}>
-          <Bar data={barDataProdutos} options={barOptionsProdutos} />
+          <Bar data={barDataProdutosTopVendasMes} options={barOptionsProdutosTopVendasMes} />
         </div>
       </TableContainer>
     </Box>

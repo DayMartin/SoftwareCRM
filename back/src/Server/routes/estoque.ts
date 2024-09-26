@@ -18,5 +18,7 @@ router.route("/estoque/create").post(upload.single('imagem'), (req: Request, res
     estoqueController.createEstoque(req, res);
 });
 router.route("/graficoEstoque").get((req: Request, res: Response) => estoqueController.grafico(req, res));
+router.route("/graficoEstoqueTopVendas").get((req: Request, res: Response) => estoqueController.graficoTopVendas(req, res));
+router.route("/graficoEstoqueTopVendasMes").get((req: Request, res: Response) => estoqueController.graficoTopVendasMes(req, res));
 
 export { router as estoqueRouter };

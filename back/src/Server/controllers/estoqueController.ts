@@ -329,45 +329,38 @@ const estoqueController = {
 		let queryEstoque = "SELECT * FROM estoque";
 		
 		try {
-			// 1. Obter os dados de estoque
 			const estoque = await queryDatabase(queryEstoque);
 	
 			if (!estoque || estoque.length === 0) {
 				return res.status(404).json({ error: "Nenhum item no estoque" });
 			}
 	
-			// 2. Criar um array para armazenar os resultados finais
 			const resultadoFinal: any[] = [];
 	
-			// 3. Iterar sobre cada item do estoque
 			for (const item of estoque) {
 				const estoqueId = item.id;
 	
-				// 4. Obter o total de vendas (tipo = 'Saída') e a data da última venda para o item atual
 				const queryHistoric = `
 					SELECT 
-						SUM(quantidade) AS totalVendido,  -- Soma de todas as quantidades de Saída
-						MAX(data_criacao) AS ultimaVenda  -- Data da última venda
+						SUM(quantidade) AS totalVendido,  
+						MAX(data_criacao) AS ultimaVenda 
 					FROM estoqueHistoric 
 					WHERE estoque_id = ? 
 					AND tipo = 'Saída'
 				`;
 				const historicoVendas = await queryDatabase(queryHistoric, [estoqueId]);
 	
-				// 5. Se o produto não teve nenhuma venda, preencher com zero
 				const totalVendido = historicoVendas[0]?.totalVendido || 0;
 				const ultimaVenda = historicoVendas[0]?.ultimaVenda || 'Nenhuma venda registrada';
 	
-				// 6. Adicionar os dados no resultado final
 				resultadoFinal.push({
-					produto: item.nome,                  // Dados do estoque atual
-					totalEmEstoque: item.quantidade, // Quantidade em estoque
-					totalVendido: totalVendido,      // Soma das quantidades vendidas
-					ultimaVenda: ultimaVenda         // Data da última venda
+					produto: item.nome,                 
+					totalEmEstoque: item.quantidade, 
+					totalVendido: totalVendido,      
+					ultimaVenda: ultimaVenda        
 				});
 			}
 	
-			// 7. Retornar os dados formatados
 			return res.status(200).json({
 				resultado: resultadoFinal,
 			});
@@ -378,6 +371,108 @@ const estoqueController = {
 		}
 	},
 	
+	graficoTopVendas: async (req: Request, res: Response) => {
+		let queryEstoque = "SELECT * FROM estoque";
+	
+		try {
+			const estoque = await queryDatabase(queryEstoque);
+	
+			if (!estoque || estoque.length === 0) {
+				return res.status(404).json({ error: "Nenhum item no estoque" });
+			}
+	
+			const resultadoFinal: any[] = [];
+	
+			for (const item of estoque) {
+				const estoqueId = item.id;
+	
+				const queryHistoric = `
+					SELECT 
+						SUM(quantidade) AS totalVendido,  
+						MAX(data_criacao) AS ultimaVenda 
+					FROM estoqueHistoric 
+					WHERE estoque_id = ? 
+					AND tipo = 'Saída'
+				`;
+				const historicoVendas = await queryDatabase(queryHistoric, [estoqueId]);
+	
+				const totalVendido = historicoVendas[0]?.totalVendido || 0;
+				const ultimaVenda = historicoVendas[0]?.ultimaVenda || 'Nenhuma venda registrada';
+	
+				resultadoFinal.push({
+					produto: item.nome,                
+					totalEmEstoque: item.quantidade, 
+					totalVendido: totalVendido,     
+					ultimaVenda: ultimaVenda         
+				});
+			}
+	
+			const topVendas = resultadoFinal.sort((a, b) => b.totalVendido - a.totalVendido).slice(0, 5);
+	
+			return res.status(200).json({
+				resultado: topVendas,
+			});
+	
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+
+	graficoTopVendasMes: async (req: Request, res: Response) => {
+		let queryEstoque = "SELECT * FROM estoque";
+	
+		try {
+			const estoque = await queryDatabase(queryEstoque);
+	
+			if (!estoque || estoque.length === 0) {
+				return res.status(404).json({ error: "Nenhum item no estoque" });
+			}
+	
+			const resultadoFinal: any[] = [];
+	
+			for (const item of estoque) {
+				const estoqueId = item.id;
+	
+				// Obter o mês e o ano atual
+				const dataAtual = new Date();
+				const anoAtual = dataAtual.getFullYear();
+				const mesAtual = dataAtual.getMonth() + 1; 
+	
+				const queryHistoric = `
+					SELECT 
+						SUM(quantidade) AS totalVendido,  
+						MAX(data_criacao) AS ultimaVenda 
+					FROM estoqueHistoric 
+					WHERE estoque_id = ? 
+					AND tipo = 'Saída'
+					AND MONTH(data_criacao) = ? 
+					AND YEAR(data_criacao) = ?
+				`;
+				const historicoVendas = await queryDatabase(queryHistoric, [estoqueId, mesAtual, anoAtual]);
+	
+				const totalVendido = historicoVendas[0]?.totalVendido || 0;
+				const ultimaVenda = historicoVendas[0]?.ultimaVenda || 'Nenhuma venda registrada';
+	
+				resultadoFinal.push({
+					produto: item.nome,                
+					totalEmEstoque: item.quantidade, 
+					totalVendido: totalVendido,     
+					ultimaVenda: ultimaVenda         
+				});
+			}
+	
+			const topVendas = resultadoFinal.sort((a, b) => b.totalVendido - a.totalVendido).slice(0, 6);
+	
+			return res.status(200).json({
+				resultado: topVendas,
+			});
+	
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
 	
 	
 }

@@ -369,6 +369,41 @@ const grafico = async (): Promise<Grafico | Error> => {
   }
 };
 
+const graficoTopVendas = async (): Promise<Grafico | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/graficoEstoqueTopVendas`;
+
+    const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+const graficoTopVendasMes = async (): Promise<Grafico | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/graficoEstoqueTopVendasMes`;
+
+    const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
+
 export const EstoqueService = {
   getAll,
   create,
@@ -383,6 +418,8 @@ export const EstoqueService = {
   getByHistoricList,
   getItemProduto,
   getItemProdutoList,
-  grafico
+  grafico,
+  graficoTopVendas,
+  graficoTopVendasMes
 
 };
