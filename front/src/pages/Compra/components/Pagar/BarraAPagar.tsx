@@ -9,8 +9,10 @@ import { Filter } from "../../../../shared/components/filter/Filter";
 interface OpcaoProps {
     Opcao1?: string;
     Opcao2?: string;
-    Opcao3?: string;
-  }
+    Opcao3?: string | null;
+    Opcao5?: string | null;
+  
+}
 interface BarraProps {
     opcoes: OpcaoProps;
     onFilterApply: (filter: string, dado: string | null) => void;

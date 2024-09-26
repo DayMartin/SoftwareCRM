@@ -22,7 +22,8 @@ export const APagar: React.VFC = () => {
     const [filterId, setFilterId] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
     const titulo = "Contas a Pagar";
-    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente' || null};
+    const hoje = new Date().toISOString().slice(0, 10);
+    const objFilter = { Opcao1: 'pago', Opcao2: 'pendente', Opcao5: hoje || null};
 
     const consultar = async () => {
         setIsLoading(true);
@@ -142,7 +143,8 @@ export const APagar: React.VFC = () => {
                             <TableCell>parcela</TableCell>
                             <TableCell>valorParcela</TableCell>
                             <TableCell>Status</TableCell>
-                            <TableCell>dataPagamento</TableCell>
+                            <TableCell>Vencimento</TableCell>
+                            <TableCell>data Pago</TableCell>
                             <TableCell>venda_id</TableCell>
                             <TableCell>tipoPagamento</TableCell>
                             <TableCell>Ações</TableCell>
@@ -171,6 +173,7 @@ export const APagar: React.VFC = () => {
                                         <TableCell>{row.valorParcela}</TableCell>
                                         <TableCell>{row.status}</TableCell>
                                         <TableCell>{row.dataPagamento}</TableCell>
+                                        <TableCell>{row.dataPago}</TableCell>
                                         <TableCell>{row.compra_id}</TableCell>
                                         <TableCell>{row.tipoPagamento}</TableCell>
 

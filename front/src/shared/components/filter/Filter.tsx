@@ -5,8 +5,9 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 interface OpcaoProps {
   Opcao1?: string;
   Opcao2?: string;
-  Opcao3?: string;
+  Opcao3?: string | null;
   Opcao4?: string;
+  Opcao5?: string | null;
 
 }
 
@@ -31,6 +32,11 @@ export const Filter: React.VFC<FilterProps> = ({
 
   const handleSelect = (option: string | null) => {
     onApplyFilter('status', option);
+    handleClose();
+  };
+
+  const handleSelectPagar = (option: string | null) => {
+    onApplyFilter('dataPagamento', option);
     handleClose();
   };
 
@@ -76,6 +82,9 @@ export const Filter: React.VFC<FilterProps> = ({
         )}
         {opcoes?.Opcao4 && (
           <MenuItem onClick={() => handleSelect(opcoes?.Opcao4 ? opcoes.Opcao4 : null)}>Parcial</MenuItem>
+        )}
+        {opcoes?.Opcao5 && (
+          <MenuItem onClick={() => handleSelectPagar(opcoes?.Opcao5 ? opcoes.Opcao5 : null)}>A pagar Hoje</MenuItem>
         )}
         <MenuItem onClick={() => handleSelect(null)}>Remover Filtros</MenuItem>
       </Menu>
