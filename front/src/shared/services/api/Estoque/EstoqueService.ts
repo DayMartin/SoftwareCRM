@@ -82,6 +82,17 @@ export interface IApiResponse {
   total: number;
 }
 
+export interface resultadoGrafico {
+  produto: string;
+  totalEmEstoque: number;
+  totalVendido: number;
+  ultimaVenda: string;
+}
+
+export interface Grafico {
+  resultado: resultadoGrafico[]
+}
+
 export interface ItemProduto {
   id: number
   codBarras: string;
@@ -341,6 +352,23 @@ const ativarById = async (id: string): Promise<void | Error> => {
   }
 };
 
+const grafico = async (): Promise<Grafico | Error> => {
+  try {
+    const urlRelativa = `${Environment.URL_BASE}/graficoEstoque`;
+
+    const { data } = await Api.get(urlRelativa);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+  }
+};
+
 export const EstoqueService = {
   getAll,
   create,
@@ -354,6 +382,7 @@ export const EstoqueService = {
   getAllList,
   getByHistoricList,
   getItemProduto,
-  getItemProdutoList
+  getItemProdutoList,
+  grafico
 
 };

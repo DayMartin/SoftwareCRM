@@ -17,5 +17,6 @@ router.route("/estoque/delete/:id").delete((req: Request, res: Response) => esto
 router.route("/estoque/create").post(upload.single('imagem'), (req: Request, res: Response) => {
     estoqueController.createEstoque(req, res);
 });
+router.route("/graficoEstoque").get((req: Request, res: Response) => estoqueController.grafico(req, res));
 
 export { router as estoqueRouter };

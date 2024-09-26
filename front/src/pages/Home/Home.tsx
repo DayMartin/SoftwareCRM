@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Card, CardContent, Typography, Paper, TableContainer } from "@mui/material";
+import { Box, Grid, Card, CardContent, Typography, Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import { Bar, Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, ArcElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart } from 'react-chartjs-2';
 import { VendasService } from "../../shared/services/api/Vendas/VendasService";
-import { EstoqueService } from "../../shared/services/api/Estoque/EstoqueService";
+import { EstoqueService, resultadoGrafico } from "../../shared/services/api/Estoque/EstoqueService";
 import { ClienteService } from "../../shared/services/api/Cliente/ClienteService";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { ParcelasService } from "../../shared/services/api/Vendas/ParcelasVendaService";
 import { ParcelasCompraService } from "../../shared/services/api/Compra/ParcelasCompraService";
 
 // Registrar os componentes do Chart.js que serão usados
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
 export const Home = () => {
   const [totalMes, setTotalMes] = useState(0);
@@ -23,6 +24,8 @@ export const Home = () => {
   const [totalporcentagem, setTotalporcentagem] = useState(0);
   const [receberHoje, setReceberHoje] = useState(0);
   const [pagarHoje, setPagarHoje] = useState(0);
+  const [grafico, setGrafico] = useState<resultadoGrafico[]>([]);
+  const [dadosProdutos, setDadosProdutos] = useState<resultadoGrafico[]>([]);
 
   useEffect(() => {
     consultarMes();
@@ -32,6 +35,7 @@ export const Home = () => {
     consultarCompare();
     consultarReceberHoje();
     consultarPagarHoje();
+    graficoConsulta();
   }, []);
 
   const consultarMes = async () => {
@@ -116,6 +120,34 @@ export const Home = () => {
     }
   };
 
+  const graficoConsulta = async () => {
+    try {
+      const resultado = await EstoqueService.grafico();
+      if (!(resultado instanceof Error)) {
+        setGrafico(resultado.resultado);
+        setDadosProdutos(resultado.resultado);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar a receber hoje", error);
+    }
+  };
+
+  // Dados para o gráfico de barras de produtos
+  const barDataProdutos = {
+    labels: grafico.map(item => item.produto), // Nomes dos produtos
+    datasets: [
+      {
+        label: 'Quantidade Vendida',
+        data: grafico.map(item => item.totalVendido), // Quantidade vendida por produto
+        backgroundColor: '#36A2EB',
+      },
+    ],
+  };
+
+  if (!grafico) {
+    return <div>Carregando...</div>;
+  }
+
   const cardStyles = {
     minWidth: 100,
     boxShadow: "none",
@@ -192,13 +224,54 @@ export const Home = () => {
     },
   };
 
+  const barOptionsProdutos = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Produtos e Quantidades Vendidas',
+      },
+    },
+  };
+
+  
+    // Renderizando a tabela
+    const renderTabelaProdutos = () => (
+      <TableContainer component={Paper} sx={{ width: '100%', maxHeight: 'auto', overflowY: 'auto' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Produto</TableCell>
+              <TableCell>Qt Vendida</TableCell>
+              <TableCell>Qt estoque</TableCell>
+              <TableCell>Última venda</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {dadosProdutos.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>{item.produto}</TableCell>
+                <TableCell>{item.totalVendido}</TableCell>
+                <TableCell>{item.totalEmEstoque}</TableCell>
+                <TableCell>{item.ultimaVenda}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+    
+
   return (
     <Box sx={{ p: 2 }}>
       {/* Primeiro Box para os dois TableContainers */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', m: 2 }}>
         <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '5%' }}>
           <div style={{ flex: 1 }}>
-            <Grid container spacing={0.6}>
+            <Grid container spacing={0.1}>
               <Grid item xs={12} sm={3}>
                 {renderCard("Vendidos no mês", totalMes, "#ADD8E6")}
               </Grid>
@@ -215,7 +288,7 @@ export const Home = () => {
           </div>
         </TableContainer>
 
-        <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '5%' }}>
+        <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '1%' }}>
           <div style={{ flex: 1 }}>
             <Grid container spacing={0.6}>
               <Grid item xs={12} sm={6}>
@@ -271,21 +344,39 @@ export const Home = () => {
         <TableContainer
           component={Paper}
           sx={{
-            width: '30%',
+            width: '50%',
             height: '60vh',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            mr: '1%'
           }}
         >
-          <div style={{ width: '90%' }}>
-            <Bar data={barData} options={barOptions} />
+          <div style={{ width: '100%' }}>
+          {renderTabelaProdutos()}
           </div>
         </TableContainer>
+
+
+
       </Box>
+      <Box sx={{ p: 2 }}>
+      {/* Gráfico de barras de produtos */}
+      <TableContainer
+        component={Paper}
+        sx={{
+          width: '50%',
+          height: '60vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '0 auto',
+        }}
+      >
+        <div style={{ width: '80%' }}>
+          <Bar data={barDataProdutos} options={barOptionsProdutos} />
+        </div>
+      </TableContainer>
     </Box>
-
-
+    </Box>
   );
 };

@@ -323,7 +323,63 @@ const estoqueController = {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao deletar o Estoque" });
 		}
-	}
+	},
+
+	grafico: async (req: Request, res: Response) => {
+		let queryEstoque = "SELECT * FROM estoque";
+		
+		try {
+			// 1. Obter os dados de estoque
+			const estoque = await queryDatabase(queryEstoque);
+	
+			if (!estoque || estoque.length === 0) {
+				return res.status(404).json({ error: "Nenhum item no estoque" });
+			}
+	
+			// 2. Criar um array para armazenar os resultados finais
+			const resultadoFinal: any[] = [];
+	
+			// 3. Iterar sobre cada item do estoque
+			for (const item of estoque) {
+				const estoqueId = item.id;
+	
+				// 4. Obter o total de vendas (tipo = 'Saída') e a data da última venda para o item atual
+				const queryHistoric = `
+					SELECT 
+						SUM(quantidade) AS totalVendido,  -- Soma de todas as quantidades de Saída
+						MAX(data_criacao) AS ultimaVenda  -- Data da última venda
+					FROM estoqueHistoric 
+					WHERE estoque_id = ? 
+					AND tipo = 'Saída'
+				`;
+				const historicoVendas = await queryDatabase(queryHistoric, [estoqueId]);
+	
+				// 5. Se o produto não teve nenhuma venda, preencher com zero
+				const totalVendido = historicoVendas[0]?.totalVendido || 0;
+				const ultimaVenda = historicoVendas[0]?.ultimaVenda || 'Nenhuma venda registrada';
+	
+				// 6. Adicionar os dados no resultado final
+				resultadoFinal.push({
+					produto: item.nome,                  // Dados do estoque atual
+					totalEmEstoque: item.quantidade, // Quantidade em estoque
+					totalVendido: totalVendido,      // Soma das quantidades vendidas
+					ultimaVenda: ultimaVenda         // Data da última venda
+				});
+			}
+	
+			// 7. Retornar os dados formatados
+			return res.status(200).json({
+				resultado: resultadoFinal,
+			});
+	
+		} catch (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Erro ao buscar registros" });
+		}
+	},
+	
+	
+	
 }
 
 export { estoqueController };
