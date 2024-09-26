@@ -1,2 +1,12 @@
 porcentagem de desconto
 promoção - se o prouto estiver na promoçãao ai ele cobra o valor da promoção
+
+termo de garantia PDF
+PDF para compras
+orçamento
+grafico de pareto
+login
+filtro na listagem a pagar hoje
+filtro na listagem a receber hoje
+gráfico dos produtos mais vendidos ( total de vendas, total em estoque, data da ultima venda)
+listar o lucro em cima do valor de compra e venda de cada produto
