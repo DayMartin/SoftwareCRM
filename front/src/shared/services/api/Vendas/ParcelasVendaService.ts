@@ -115,11 +115,11 @@ const filtro = async (
   }
 };
 
-const diaPagamento = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
+const diaPagamentoVendas = async (page = 1, filter = ''): Promise<IApiResponse | Error> => {
   try {
     const urlRelativa = `${Environment.URL_BASE}/parcelas/diapagamento?page=${page}&dataPagamento=${filter}`;
 
-    const { data } = await Api.get<IApiResponse>(urlRelativa);
+    const { data } = await Api.post<IApiResponse>(urlRelativa);
 
     if (data) {
       return data;
@@ -139,5 +139,5 @@ export const ParcelasService = {
   refazerReceberById,
   getAllList,
   filtro,
-  diaPagamento
+  diaPagamentoVendas
 };

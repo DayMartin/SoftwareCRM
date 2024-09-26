@@ -225,24 +225,40 @@ const parcelasCompraController = {
 
 	// Função para trazer todas as parcelas do dia
 	PagamentoDia: async (req: Request, res: Response) => {
-		const { diapagamento } = req.body;
-		const query = "SELECT * FROM parcelas_compra WHERE dataPagamento = ?";
+		const { page = 1, limit = 5, dataPagamento } = req.body;
+		let query = "SELECT * FROM parcelas_compra WHERE 1=1";
+		let countQuery = "SELECT COUNT(*) AS total FROM parcelas_compra WHERE 1=1";
+		const params: any[] = [];
 
+		if (dataPagamento) {
+			query += " AND dataPagamento = ?";
+			countQuery += " AND dataPagamento = ?";
+			params.push(dataPagamento);
+		}
+
+		// Consulta de contagem total
 		try {
-			const [rows] = await queryDatabase(query, [diapagamento]);
+			const totalResult = await queryDatabase(countQuery, params);
+			const total = totalResult[0].total;
 
-			// Verificar se a Parcela foi encontrada
-			if (rows === null || rows === undefined) {
-				return res
-					.status(404)
-					.json({ error: "Parcela não encontrado" });
+			// Consulta de paginação
+			query += " LIMIT ? OFFSET ?";
+			params.push(parseInt(limit as string));
+			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
+
+			const rows = await queryDatabase(query, params);
+
+			if (!rows || rows.length === 0) {
+				return res.status(404).json({ error: "Nenhum registro encontrado" });
 			}
 
-			// Se a Parcela foi encontrado, retornar os dados
-			return res.status(200).json(rows);
+			return res.status(200).json({
+				rows,
+				total,
+			});
 		} catch (error) {
 			console.error(error);
-			return res.status(500).json({ error: "Erro ao buscar OS" });
+			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
 

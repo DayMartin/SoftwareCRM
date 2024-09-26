@@ -6,6 +6,7 @@ import { EstoqueService } from "../../shared/services/api/Estoque/EstoqueService
 import { ClienteService } from "../../shared/services/api/Cliente/ClienteService";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { ParcelasService } from "../../shared/services/api/Vendas/ParcelasVendaService";
+import { ParcelasCompraService } from "../../shared/services/api/Compra/ParcelasCompraService";
 
 // Registrar os componentes do Chart.js que serão usados
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
@@ -21,6 +22,7 @@ export const Home = () => {
   const [totaldiferenca, setTotaldiferenca] = useState(0);
   const [totalporcentagem, setTotalporcentagem] = useState(0);
   const [receberHoje, setReceberHoje] = useState(0);
+  const [pagarHoje, setPagarHoje] = useState(0);
 
   useEffect(() => {
     consultarMes();
@@ -29,6 +31,7 @@ export const Home = () => {
     consultarTotalCliente();
     consultarCompare();
     consultarReceberHoje();
+    consultarPagarHoje();
   }, []);
 
   const consultarMes = async () => {
@@ -92,7 +95,7 @@ export const Home = () => {
   const consultarReceberHoje = async () => {
     const hoje = Number(new Date())
     try {
-      const resultado = await ParcelasService.diaPagamento(hoje);
+      const resultado = await ParcelasService.diaPagamentoVendas(hoje);
       if (!(resultado instanceof Error)) {
         setReceberHoje(resultado.total);
       }
@@ -100,6 +103,19 @@ export const Home = () => {
       console.error("Erro ao consultar a receber hoje", error);
     }
   };
+
+  const consultarPagarHoje = async () => {
+    const hoje = Number(new Date())
+    try {
+      const resultado = await ParcelasCompraService.diaPagamentoCompras(hoje);
+      if (!(resultado instanceof Error)) {
+        setPagarHoje(resultado.total);
+      }
+    } catch (error) {
+      console.error("Erro ao consultar a receber hoje", error);
+    }
+  };
+
   const cardStyles = {
     minWidth: 100,
     boxShadow: "none",
@@ -202,18 +218,18 @@ export const Home = () => {
         <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '5%' }}>
           <div style={{ flex: 1 }}>
             <Grid container spacing={0.6}>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={6}>
                 {renderCard("A Receber hoje", receberHoje, "#ADD8E6")}
               </Grid>
-              <Grid item xs={12} sm={3}>
-                {renderCard("Vendidos hoje", totalDia, "#FFFACD")}
+              <Grid item xs={12} sm={6}>
+                {renderCard("A pagar hoje", pagarHoje, "#FFFACD")}
               </Grid>
-              <Grid item xs={12} sm={3}>
+              {/* <Grid item xs={12} sm={3}>
                 {renderCard("Itens em estoque", totalEstoque, "#ADD8E6")}
               </Grid>
               <Grid item xs={12} sm={3}>
                 {renderCard("Clientes cadastrados", totalCliente, "#FFFACD")}
-              </Grid>
+              </Grid> */}
             </Grid>
           </div>
         </TableContainer>
