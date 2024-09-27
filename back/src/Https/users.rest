@@ -55,3 +55,29 @@ Content-Type: application/json
 
 GET http://localhost:3048/api/cliente/view/1
 Content-Type: application/json
+
+###
+
+POST http://localhost:3048/api/user/create
+Content-Type: application/json
+
+{
+  "tipo": "vendedor",
+  "cpfcnpj": "12345678900",
+  "nome": "Doria",
+  "telefone": "(99) 991745323",
+  "endereco": "Rua dr jose maria whitaker",
+  "email": "funcionario@gmail.com",
+  "senha": "giovana0407",
+  "status":"ativo",
+  "porcentoComissao": 2
+}
+###
+
+POST http://localhost:3048/api/login
+Content-Type: application/json
+
+{
+  "email": "funcionario@gmail.com",
+  "senha": "giovana0407"
+}

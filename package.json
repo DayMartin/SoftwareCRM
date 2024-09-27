@@ -5,6 +5,7 @@
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^6.0.2",
     "@mui/x-date-pickers": "^7.15.0",
+    "bcrypt": "^5.1.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.3",
     "makepdf": "^0.1.2"
