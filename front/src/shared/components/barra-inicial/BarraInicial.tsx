@@ -9,6 +9,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField } from "@mui/material";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -24,6 +25,7 @@ export const BarraInicial: React.VFC<BarraInicialProps> = ({
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [debounceTimer, setDebounceTimer] = React.useState<NodeJS.Timeout | null>(null);
+  const { logout } = useAuthContext();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -47,6 +49,11 @@ export const BarraInicial: React.VFC<BarraInicialProps> = ({
     }, 700); 
 
     setDebounceTimer(timer);
+  };
+
+
+  const handleLogout = () => {
+    logout(); 
   };
 
   return (
@@ -117,7 +124,15 @@ export const BarraInicial: React.VFC<BarraInicialProps> = ({
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem
+                  key={setting}
+                  onClick={() => {
+                    handleCloseUserMenu();
+                    if (setting === "Logout") {
+                      handleLogout(); 
+                    }
+                  }}
+                >
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

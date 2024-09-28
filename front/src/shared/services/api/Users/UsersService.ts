@@ -98,24 +98,24 @@ const getUsersList = async (page = 1, filterId = '', filterName = ''): Promise<I
   }
 };
 
-const getByEmail = async (email: string): Promise<IDetalheUsers | Error> => {
-  try {
-    const { data } = await Api.get(`/auth/register/email?email=${email}`); 
+// const getByEmail = async (email: string): Promise<IDetalheUsers | Error> => {
+//   try {
+//     const { data } = await Api.get(`/auth/register/email?email=${email}`); 
 
-    if (data) {
-      return data;
-    }
+//     if (data) {
+//       return data;
+//     }
 
-    return new Error('Erro ao consultar o registro.');
-  } catch (error) {
-    console.error(error);
-    return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
-  }
-};
+//     return new Error('Erro ao consultar o registro.');
+//   } catch (error) {
+//     console.error(error);
+//     return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
+//   }
+// };
 
 const create = async (dados: IDetalheUsers): Promise<void | Error> => {
   try {
-    await Api.post<IDetalheUsers>('user/create', dados);
+    await Api.post<IDetalheUsers>('/user/create', dados);
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao criar o registro.');
@@ -133,7 +133,7 @@ const updateById = async (id: string, dados: IListagemUser): Promise<void | Erro
 
 const deleteById = async (id: string): Promise<void | Error> => {
   try {
-    await Api.delete(`user/delete/${id}`); 
+    await Api.delete(`/user/delete/${id}`); 
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao apagar o registro.');
@@ -142,7 +142,7 @@ const deleteById = async (id: string): Promise<void | Error> => {
 
 const ativarById = async (id: string): Promise<void | Error> => {
   try {
-    await Api.put(`user/ativar/${id}`); 
+    await Api.put(`/user/ativar/${id}`); 
   } catch (error) {
     console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao ativar o usuário.');
@@ -154,7 +154,7 @@ export const UsersService = {
   create,
   updateById,
   deleteById,
-  getByEmail,
+  // getByEmail,
   ativarById,
   getUsers,
   getAll

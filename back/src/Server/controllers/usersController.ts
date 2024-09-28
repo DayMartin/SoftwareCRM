@@ -3,12 +3,14 @@ import { Request, Response } from 'express';
 import queryDatabase from '../database/queryPromise'
 import { UserConsulta } from '../models/users.interface';
 import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
 
 import jwt from 'jsonwebtoken'; 
 
-const JWT_SECRET = "83JDINBD$#@%SSA";
-const JWT_EXPIRATION = "1h";
+dotenv.config();
 
+const JWT_SECRET = process.env.HASH || "UHSUDHK38DSUHDSKJDUSBCBUUH3";
+const JWT_EXPIRATION = "1h";
 const SALT_ROUNDS = 10
 
 const usersController = {
@@ -290,11 +292,11 @@ const usersController = {
             }
     
             const token = jwt.sign(
-                { id: user.id, email: user.email, nome: user.nome }, 
+                { id: user.id, email: user.email}, 
                 JWT_SECRET,
                 { expiresIn: JWT_EXPIRATION } 
             );
-    
+
             return res.status(200).json({
                 message: "Login bem-sucedido",
                 token, 
