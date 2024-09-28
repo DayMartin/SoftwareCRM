@@ -8,7 +8,7 @@ import { EstoqueService, resultadoGrafico } from "../../shared/services/api/Esto
 import { ClienteService } from "../../shared/services/api/Cliente/ClienteService";
 import { ParcelasService } from "../../shared/services/api/Vendas/ParcelasVendaService";
 import { ParcelasCompraService } from "../../shared/services/api/Compra/ParcelasCompraService";
-
+import { BarraInicialHome } from "../../shared/components/barra-inicial/BarraInicialHome";
 // Registrar os componentes do Chart.js que serão usados
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
@@ -351,6 +351,8 @@ export const Home = () => {
 
   return (
     <Box sx={{ p: 2 }}>
+              <BarraInicialHome titulo = 'Home'/>
+
       {/* Primeiro Box para os dois TableContainers */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', m: 2 }}>
         <TableContainer component={Paper} sx={{ width: '50%', height: 'auto', ml: '5%' }}>
