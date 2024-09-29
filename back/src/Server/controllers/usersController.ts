@@ -121,6 +121,7 @@ const usersController = {
     // Função para buscar um usuário
     getUser: async (req: Request, res: Response) => {
         const { id } = req.body;
+		console.log('id', id)
         const query = "SELECT * FROM usuarios WHERE id = ?";
 
         try {

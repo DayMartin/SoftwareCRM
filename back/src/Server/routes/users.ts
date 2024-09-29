@@ -5,7 +5,7 @@ import { authenticateToken } from '../../middleware/autenticacao';
 const router = Router();
 
 router.route("/user/all").get(authenticateToken,(req: Request, res: Response) => usersController.getUsers(req, res));
-router.route("/user/get").post(authenticateToken,(req: Request, res: Response) => usersController.getUser(req, res));
+router.route("/user/get").post((req: Request, res: Response) => usersController.getUser(req, res));
 router.route("/user/getAlltipo").post(authenticateToken,(req: Request, res: Response) => usersController.getUserTipo(req, res));
 router.route("/user/getAlltipoList").get(authenticateToken,(req: Request, res: Response) => usersController.getUserTipoList(req, res));
 router.route("/user/delete/:id").delete(authenticateToken,(req: Request, res: Response) => usersController.desativarUser(req, res));

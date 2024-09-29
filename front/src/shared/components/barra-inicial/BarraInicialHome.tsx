@@ -7,9 +7,8 @@ import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import SearchIcon from "@mui/icons-material/Search";
-import { TextField } from "@mui/material";
 import { useAuthContext } from "../../contexts/AuthContext";
+import PerfilUsuario from "../perfil-usuario/PerfilUsuario";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -18,11 +17,13 @@ interface BarraInicialHomeProps {
 }
 
 export const BarraInicialHome: React.VFC<BarraInicialHomeProps> = ({
-  titulo}) => {
+  titulo,
+}) => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [debounceTimer, setDebounceTimer] = React.useState<NodeJS.Timeout | null>(null);
   const { logout } = useAuthContext();
+  const LOCAL_STORAGE_KEY__ACCESS_USER_ID = "APP_ACCESS_USER_ID";
+  const idUser = Number(localStorage.getItem(LOCAL_STORAGE_KEY__ACCESS_USER_ID));
+  const [open, setOpen] = React.useState(false);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -32,9 +33,18 @@ export const BarraInicialHome: React.VFC<BarraInicialHomeProps> = ({
     setAnchorElUser(null);
   };
 
-
   const handleLogout = () => {
-    logout(); 
+    logout();
+    handleCloseUserMenu(); // Fechar o menu após logout
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpenProfile = () => {
+    setOpen(true);
+    handleCloseUserMenu(); // Fechar o menu após abrir o perfil
   };
 
   return (
@@ -42,12 +52,12 @@ export const BarraInicialHome: React.VFC<BarraInicialHomeProps> = ({
       sx={{
         m: 1,
         width: "auto",
-        height: '80px',
+        height: "80px",
         marginLeft: "6%",
         marginRight: "1%",
-        padding: '2%',
-        backgroundColor: 'white',
-        borderRadius: '8px'
+        padding: "2%",
+        backgroundColor: "white",
+        borderRadius: "8px",
       }}
     >
       <Grid container spacing={2}>
@@ -65,7 +75,11 @@ export const BarraInicialHome: React.VFC<BarraInicialHomeProps> = ({
               {titulo}
             </Typography>
           </Grid>
-          <Grid item xs={2} sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Grid
+            item
+            xs={2}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
@@ -95,9 +109,10 @@ export const BarraInicialHome: React.VFC<BarraInicialHomeProps> = ({
                 <MenuItem
                   key={setting}
                   onClick={() => {
-                    handleCloseUserMenu();
-                    if (setting === "Logout") {
-                      handleLogout(); 
+                    if (setting === "Profile") {
+                      handleOpenProfile();
+                    } else if (setting === "Logout") {
+                      handleLogout();
                     }
                   }}
                 >
@@ -108,6 +123,7 @@ export const BarraInicialHome: React.VFC<BarraInicialHomeProps> = ({
           </Grid>
         </Grid>
       </Grid>
+      <PerfilUsuario open={open} onClose={handleClose} idUser={idUser} />
     </Box>
   );
 };

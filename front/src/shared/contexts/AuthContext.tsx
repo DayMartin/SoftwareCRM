@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
         console.error('decodedPayload.name não está presente ou é inválido');
       }
 
-      console.log('decodedPayload:', decodedPayload);
+      // console.log('decodedPayload:', decodedPayload);
 
       if (decodedPayload && decodedPayload.id) {
           localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_USER_ID, JSON.stringify(decodedPayload.id));

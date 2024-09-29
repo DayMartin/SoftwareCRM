@@ -122,7 +122,7 @@ const create = async (dados: IDetalheUsers): Promise<void | Error> => {
   }
 };
 
-const updateById = async (id: string, dados: IListagemUser): Promise<void | Error> => {
+const updateById = async (id: string, dados: IDetalheUsers): Promise<void | Error> => {
   try {
     await Api.put(`user/edit/${id}`, dados);
   } catch (error) {
@@ -149,6 +149,25 @@ const ativarById = async (id: string): Promise<void | Error> => {
   }
 };
 
+const getByID = async (id: number): Promise<IDetalheUsers | Error> => {
+  try {
+
+  const urlRelativa = `${Environment.URL_BASE}/user/get`;
+  const { data } = await Api.post(urlRelativa, id);
+
+
+  if (data) {
+    return data;
+  }
+
+  return new Error('Erro ao listar os registros.');
+} catch (error) {
+  console.error(error);
+  return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
+}
+};
+
+
 export const UsersService = {
   getUsersList,
   create,
@@ -157,5 +176,6 @@ export const UsersService = {
   // getByEmail,
   ativarById,
   getUsers,
-  getAll
+  getAll,
+  getByID
 };

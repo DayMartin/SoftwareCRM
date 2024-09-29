@@ -81,3 +81,11 @@ Content-Type: application/json
   "email": "funcionario@gmail.com",
   "senha": "giovana0407"
 }
+
+###
+POST http://localhost:3048/api/user/get
+Content-Type: application/json
+
+{
+	"id": 2
+}
