@@ -151,20 +151,19 @@ const ativarById = async (id: string): Promise<void | Error> => {
 
 const getByID = async (id: number): Promise<IDetalheUsers | Error> => {
   try {
+    const urlRelativa = `${Environment.URL_BASE}/user/get`;
+    // Envie o id dentro de um objeto
+    const { data } = await Api.post(urlRelativa, { id });
 
-  const urlRelativa = `${Environment.URL_BASE}/user/get`;
-  const { data } = await Api.post(urlRelativa, id);
+    if (data) {
+      return data;
+    }
 
-
-  if (data) {
-    return data;
+    return new Error('Erro ao listar os registros.');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
   }
-
-  return new Error('Erro ao listar os registros.');
-} catch (error) {
-  console.error(error);
-  return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
-}
 };
 
 

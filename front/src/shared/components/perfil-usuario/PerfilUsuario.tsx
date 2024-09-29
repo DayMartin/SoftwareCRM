@@ -18,7 +18,6 @@ interface BarraPerfilUsuarioProps {
 }
 
 const PerfilUsuario: React.FC<BarraPerfilUsuarioProps> = ({ open, onClose, idUser }) => {
-    console.log('ta chamando aqui', idUser)
     const [editClient, setEditClient] = React.useState<IDetalheUsers | null>(null);
     const isEditing = true;
 
@@ -37,8 +36,12 @@ const PerfilUsuario: React.FC<BarraPerfilUsuarioProps> = ({ open, onClose, idUse
     };
 
     React.useEffect(() => {
-        consultaFuncionario();
-    }, );
+        if (open) {
+            consultaFuncionario(); // Chama a função somente se o modal estiver aberto
+        } else {
+            setEditClient(null); // Limpa os dados quando o modal é fechado
+        }
+    }, [open, idUser]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -68,7 +71,7 @@ const PerfilUsuario: React.FC<BarraPerfilUsuarioProps> = ({ open, onClose, idUse
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{isEditing ? "Editar Cliente" : "Detalhes do Cliente"}</DialogTitle>
+            <DialogTitle>{isEditing ? "Editar Funcionário" : "Detalhes do Funcionário"}</DialogTitle>
             <DialogContent>
                 {editClient ? (
                     <Grid container spacing={2}>
