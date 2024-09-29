@@ -8,7 +8,7 @@ interface IAuthContextData {
   login: (email: string, senha: string) => Promise<string | void>;
   // role: string | null;
   nome: string | null;
-  id: string | null;
+  id: number | null;
 }
 
 const AuthContext = createContext({} as IAuthContextData);
@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string>();
   // const [role, setRole] = useState<string | null>(null);
   const [nome, setName] = useState<string | null>(null);
-  const [id, setId] = useState<string | null>(null);
+  const [id, setId] = useState<number | null>(null);
 
   useEffect(() => {
     const Token = localStorage.getItem(LOCAL_STORAGE_KEY__ACCESS_TOKEN);
@@ -70,14 +70,18 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
         console.error('decodedPayload.name não está presente ou é inválido');
       }
 
-      // if (decodedPayload.id) {
-      //   localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_USER_ID, JSON.stringify(decodedPayload.id));
-      //   setId(decodedPayload.id[0].id); 
-      // } else {
-      //   console.error('decodedPayload.setor não está presente ou é inválido');
-      // }
+      console.log('decodedPayload:', decodedPayload);
+
+      if (decodedPayload && decodedPayload.id) {
+          localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_USER_ID, JSON.stringify(decodedPayload.id));
+          // Certifique-se de que decodedPayload.id é um array
+          if (Array.isArray(decodedPayload.id) && decodedPayload.id.length > 0) {
+              setId(decodedPayload.id[0].id);
+          } else {
+              console.error('decodedPayload.id não é um array ou está vazio');
+          }
+      } 
       
-  
       setToken(result.token);
     }
   }, []);

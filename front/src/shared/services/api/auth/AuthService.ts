@@ -3,7 +3,7 @@ import { Api } from '../axios-config';
 interface IAuth {
   token: string; 
   // role: string;
-  nome: string;
+  id: string;
 
 }
 
@@ -13,7 +13,8 @@ const auth = async (email: string, senha: string): Promise<IAuth | Error> => {
 
     if (data && data.token) { 
       localStorage.setItem('APP_ACCESS_TOKEN', data.token);
-      return { token: data.token, nome: data.nome, };
+      
+      return { token: data.token, id: data.id, };
     }
 
     return new Error('Erro no login.');
