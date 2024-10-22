@@ -47,7 +47,8 @@ export const HistoricoModal: React.VFC<HistoricoModalProps> = ({
 
     useEffect(() => {
         consulta(idHistoric);
-    }, [page, filterId]);
+    }, [idHistoric, page, filterId]);
+    
 
     const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage);
