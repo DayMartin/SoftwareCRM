@@ -24,6 +24,8 @@ const vendaController = {
 			params.push(id);
 		}
 
+		query += " ORDER BY data_criacao DESC";
+
 		// Consulta de contagem total
 		try {
 			const totalResult = await queryDatabase(countQuery, params);
@@ -173,6 +175,8 @@ const vendaController = {
 			params.push(cliente_id);
 		}
 
+		query += " ORDER BY data_criacao DESC";
+
 
 		// Consulta de contagem total
 		try {
@@ -219,6 +223,9 @@ const vendaController = {
 			baseQuery += " AND data_criacao BETWEEN ? AND ?";
 			params.push(dataInicioFormatada, dataFimFormatada);
 		}
+
+		baseQuery += " ORDER BY data_criacao DESC";
+
 		
 		// Consulta para obter o total de registros e a soma total
 		const countQuery = `SELECT COUNT(*) AS total, SUM(valorTotalDesconto) AS valorTotalVendas ${baseQuery}`;

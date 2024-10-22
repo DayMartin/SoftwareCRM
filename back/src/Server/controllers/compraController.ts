@@ -18,38 +18,39 @@ const compraController = {
 		let query = "SELECT * FROM compra WHERE 1=1";
 		let countQuery = "SELECT COUNT(*) AS total FROM compra WHERE 1=1";
 		const params: any[] = [];
-
+	
 		if (id) {
 			query += " AND id = ?";
 			countQuery += " AND id = ?";
 			params.push(id);
 		}
-
-		// Consulta de contagem total
+	
+		query += " ORDER BY data_criacao DESC";
+	
 		try {
 			const totalResult = await queryDatabase(countQuery, params);
 			const total = totalResult[0].total;
-
-			// Consulta de paginação
+	
 			query += " LIMIT ? OFFSET ?";
 			params.push(parseInt(limit as string));
 			params.push((parseInt(page as string) - 1) * parseInt(limit as string));
-
+	
 			const rows = await queryDatabase(query, params);
-
+	
 			if (!rows || rows.length === 0) {
 				return res.status(404).json({ error: "Nenhum registro encontrado" });
 			}
-
+	
 			return res.status(200).json({
 				rows,
-				total, // Retornando a contagem total
+				total,
 			});
 		} catch (error) {
 			console.error(error);
 			return res.status(500).json({ error: "Erro ao buscar registros" });
 		}
 	},
+	
 
 	// Função para criar uma nova Compra
 	createCompra: async (req: Request, res: Response) => {
