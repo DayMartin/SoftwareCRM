@@ -15,6 +15,8 @@ import { BarraInicial } from "../../shared/components/barra-inicial/BarraInicial
 import { generatePDF } from "../../shared/components/pdf/pdfVendas";
 import { VendasService, IVenda, IVendaDetalhe } from "../../shared/services/api/Vendas/VendasService";
 import VendaDialog from "./components/VisualizarVenda";
+import { VendaType } from '../../core/venda.type';
+import { generatePDFOrcamento } from "../../shared/components/pdf/pdfOrcamento";
 
 export const Venda: React.VFC = () => {
     const [rows, setRows] = useState<IVendaDetalhe[]>([]);
@@ -142,6 +144,7 @@ export const Venda: React.VFC = () => {
     const handleOpenPDF = (id: number) => {
         generatePDF(id);
     };
+
 
     useEffect(() => {
         consultar(); 

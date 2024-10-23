@@ -37,6 +37,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { MarcaService, ViewMarca } from "../../../shared/services/api/Estoque/MarcaService";
 import { CategoriaService } from "../../../shared/services/api/Estoque/CategoriaService";
 import { ClienteService, IListagemCliente } from "../../../shared/services/api/Cliente/ClienteService";
+import { VendaType } from "../../../core/venda.type";
+import { generatePDFOrcamento } from "../../../shared/components/pdf/pdfOrcamento";
 
 
 interface AdicionarVendasProps {
@@ -563,6 +565,29 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
       console.error('Erro ao enviar o formulário:', error);
     }
   };
+
+  const Orcamento = (venda: VendaType) => {
+    generatePDFOrcamento(venda);
+  }
+
+
+  const gerPdf = async () => {
+    const erro = TratamentoErro();
+    if (erro) {
+      alert(erro);
+      return; 
+    }
+  
+    try {
+      Orcamento(formData);
+      // onClose();
+      setTimeout(() => {
+        resetForm();
+      }, 5000); 
+    } catch (error) {
+      console.error('Erro ao enviar o formulário:', error);
+    }
+  };
   
   return (
     <Modal
@@ -981,7 +1006,7 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
           </Box>
 
           <Grid container spacing={1} mt={1}>
-            <Grid item xs={6}>
+            <Grid item xs={3}>
               <Button
                 variant="contained"
                 color="primary"
@@ -991,6 +1016,18 @@ const AdicionarVendas: React.FC<AdicionarVendasProps> = ({
                 fullWidth
               >
                 Efetuar venda
+              </Button>
+            </Grid>
+            <Grid item xs={3}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {gerPdf()
+
+                }}
+                fullWidth
+              >
+                Gerar Orçamento
               </Button>
             </Grid>
             <Grid item xs={6}>
